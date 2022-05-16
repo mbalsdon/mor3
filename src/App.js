@@ -36,9 +36,38 @@ app.post('/users/:userid', (req, res) => {
   console.log(`POST /users/${req.body.userid}`)
   try {
     const newUser = new User(req.body)
+    // prevent dupes
     newUser.save()
       .then(savedDoc => {
         res.status(200).json({ username: savedDoc.username })
+      })
+  } catch (err) {
+    res.status(400).json({ error: err.message })
+  }
+})
+
+app.get('/users/:userid', (req, res) => {
+  console.log(`GET /users/${req.params.userid}`)
+  try {
+    User.findOne({ userid: req.params.userid })
+      .then(foundDoc => {
+        if (foundDoc != null) {
+          res.status(200).json({ username: foundDoc.username })
+        } else {
+          res.status(400).json({ error: `userid ${req.params.userid} does not exist`})
+        }
+      })
+  } catch (err) {
+    res.status(400).json({ error: err.message })
+  }
+})
+
+app.delete('/users/:userid', (req, res) => {
+  console.log(`DELETE /users/${req.params.userid}`)
+  try {
+    User.deleteOne({ userid: req.params.userid })
+      .then(deleted => {
+        res.status(200).json({ numDeleted: deleted.deletedCount })
       })
   } catch (err) {
     res.status(400).json({ error: err.message })
