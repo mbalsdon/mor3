@@ -32,35 +32,38 @@ module.exports = class OsuWrapper {
       body: JSON.stringify(data)
     })
       .then((response) => response.json())
-      .then(data => {
+      .then((data) => {
         return new OsuWrapper(data.access_token)
       })
   }
 
-  getToken() {
-    return this.token
-  }
-
-  fetchUsername(userId) {
+  fetchUsername (userId) {
+    console.info(`OsuWrapper::fetchUsername( ${userId} )`)
+    if (isNaN(parseInt(userId)) || parseInt(userId) < 1) {
+      throw new Error('User ID must be a positive number')
+    }
     const url = `${OsuWrapper.API_URL}/users/${userId}/osu`
     const params = {
       key: 'id'
     }
     const headers = {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.token}`
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${this.token}`
     }
-    console.log(url)
     return fetch(url, {
       method: 'GET',
       headers,
       params
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (response.status === 404) {
+          throw new Error(`User ID ${userId} not found`)
+        }
+        return response.json()
+      })
       .then((data) => {
         return data.username
       })
   }
-
 }
