@@ -4,7 +4,10 @@ module.exports = class ServerRoutes {
   facade
 
   constructor () {
-    this.facade = new MorFacade()
+    MorFacade.build()
+      .then((facade) => {
+        this.facade = facade
+      })
     this.addUser = this.addUser.bind(this)
   }
 
@@ -27,8 +30,8 @@ module.exports = class ServerRoutes {
   }
 
   addUser (req, res) {
-    console.log('Server:addUser()')
-    this.facade.addUser(42)
+    console.log(`Server::addUser() - params: ${JSON.stringify(req.params)}`)
+    this.facade.addUser(req.params.id)
       .then((response) => {
         res.status(200).json({ result: response })
       })
@@ -37,3 +40,5 @@ module.exports = class ServerRoutes {
       })
   }
 }
+
+
