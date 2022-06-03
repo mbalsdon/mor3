@@ -56,7 +56,12 @@ module.exports = class OsuWrapper {
       headers,
       params
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (response.status === 404) {
+          throw new Error(`User ID ${userId} not found`)
+        }
+        return response.json()
+      })
       .then((data) => {
         return data.username
       })
