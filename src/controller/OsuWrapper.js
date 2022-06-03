@@ -37,11 +37,11 @@ module.exports = class OsuWrapper {
       })
   }
 
-  getToken() {
-    return this.token
-  }
-
   fetchUsername(userId) {
+    console.log(`OsuWrapper::fetchUsername( ${userId} )`)
+    if (isNaN(parseInt(userId)) || parseInt(userId) < 1) {
+      throw new Error('User ID must be a positive number')
+    }
     const url = `${OsuWrapper.API_URL}/users/${userId}/osu`
     const params = {
       key: 'id'
@@ -51,12 +51,11 @@ module.exports = class OsuWrapper {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${this.token}`
     }
-    console.log(url)
     return fetch(url, {
       method: 'GET',
       headers,
       params
-    })
+      })
       .then((response) => response.json())
       .then((data) => {
         return data.username
