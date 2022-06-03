@@ -28,6 +28,7 @@ module.exports = class Server {
     this.express.get('/echo/:msg', ServerRoutes.echo)
     this.express.post('/users/:id', this.routes.addUser)
     this.express.get('/metadata', this.routes.fetchMetadata)
+    this.express.get('/users', this.routes.fetchUserIds)
   }
 
   start () {
