@@ -32,13 +32,13 @@ module.exports = class OsuWrapper {
       body: JSON.stringify(data)
     })
       .then((response) => response.json())
-      .then(data => {
+      .then((data) => {
         return new OsuWrapper(data.access_token)
       })
   }
 
-  fetchUsername(userId) {
-    console.log(`OsuWrapper::fetchUsername( ${userId} )`)
+  fetchUsername (userId) {
+    console.info(`OsuWrapper::fetchUsername( ${userId} )`)
     if (isNaN(parseInt(userId)) || parseInt(userId) < 1) {
       throw new Error('User ID must be a positive number')
     }
@@ -47,19 +47,18 @@ module.exports = class OsuWrapper {
       key: 'id'
     }
     const headers = {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.token}`
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${this.token}`
     }
     return fetch(url, {
       method: 'GET',
       headers,
       params
-      })
+    })
       .then((response) => response.json())
       .then((data) => {
         return data.username
       })
   }
-
 }
