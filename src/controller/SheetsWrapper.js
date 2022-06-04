@@ -8,6 +8,7 @@ module.exports = class SheetsWrapper {
     keyFile: process.env.GOOGLE_API_KEYFILE,
     scopes: 'https://www.googleapis.com/auth/spreadsheets'
   })
+  static USERS_SHEET_ID = 253307812
 
   sheetsClient
 
@@ -72,4 +73,44 @@ module.exports = class SheetsWrapper {
         return response
       })
   }
+
+  removeUser (userId) {
+    console.info(`SheetsWrapper::removeUser( ${userId} )`)
+    if (isNaN(parseInt(userId)) || parseInt(userId) < 1) {
+      throw new Error('User ID must be a positive number')
+    }
+    
+    return this.fetchUserIds()
+      .then((userIds) => {
+        const idIndex = userIds.indexOf(userId)
+        if (idIndex === -1) {
+          throw new Error(`User ID ${userId} has not been added`)
+        } else {
+          const batchUpdateRequest = {
+            requests: [
+              {
+                deleteDimension: {
+                  range: {
+                    sheetId: SheetsWrapper.USERS_SHEET_ID,
+                    dimension: 'ROWS',
+                    startIndex: idIndex + 1,
+                    endIndex: idIndex + 2
+                  }
+                }
+              }
+            ]
+          }
+      
+          return this.sheetsClient.spreadsheets.batchUpdate({
+            auth: SheetsWrapper.AUTH,
+            spreadsheetId: SheetsWrapper.SPREADSHEET_ID,
+            resource: batchUpdateRequest
+          })
+            .then((response) => {
+              return response
+            })
+        }
+      })
+  }
+
 }

@@ -23,13 +23,22 @@ module.exports = class MorFacade {
       })
   }
 
+  fetchUserIds () {
+    console.info('MorFacade::fetchUserIds()')
+    return new Promise((resolve, reject) => {
+      this.sheets.fetchUserIds()
+        .then((response) => resolve(response))
+        .catch((error) => reject(error))
+    })
+  }
+
   addUser (userId) {
     console.info(`MorFacade::addUser( ${userId} )`)
     return new Promise((resolve, reject) => {
       this.sheets.fetchUserIds()
-        .then((response) => {
+        .then((userIds) => {
           // Check if user ID is already in the sheet
-          if (response.includes(userId)) {
+          if (userIds.includes(userId)) {
             reject(new Error(`User ID ${userId} has already been added`))
           } else {
             // Get username, then put user ID & username in the sheet
@@ -46,6 +55,15 @@ module.exports = class MorFacade {
     })
   }
 
+  deleteUser (userId) {
+    console.info(`MorFacade::deleteUser( ${userId} )`)
+    return new Promise((resolve, reject) => {
+      this.sheets.removeUser(userId)
+        .then((response) => resolve(response))
+        .catch((error) => reject(error))
+    })
+  }
+
   fetchMetadata () {
     console.info('MorFacade::fetchMetadata()')
     return new Promise((resolve, reject) => {
@@ -55,12 +73,4 @@ module.exports = class MorFacade {
     })
   }
 
-  fetchUserIds () {
-    console.info('MorFacade::fetchUserIds()')
-    return new Promise((resolve, reject) => {
-      this.sheets.fetchUserIds()
-        .then((response) => resolve(response))
-        .catch((error) => reject(error))
-    })
-  }
 }
