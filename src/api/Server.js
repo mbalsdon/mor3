@@ -29,6 +29,7 @@ module.exports = class Server {
     this.express.post('/users/:id', this.routes.addUser)
     this.express.get('/metadata', this.routes.fetchMetadata)
     this.express.get('/users', this.routes.fetchUserIds)
+    this.express.delete('/users/:id', this.routes.deleteUser)
   }
 
   start () {

@@ -8,9 +8,10 @@ module.exports = class ServerRoutes {
       .then((facade) => {
         this.facade = facade
       })
-    this.addUser = this.addUser.bind(this)
-    this.fetchMetadata = this.fetchMetadata.bind(this)
     this.fetchUserIds = this.fetchUserIds.bind(this)
+    this.addUser = this.addUser.bind(this)
+    this.deleteUser = this.deleteUser.bind(this)
+    this.fetchMetadata = this.fetchMetadata.bind(this)
   }
 
   static echo (req, res) {
@@ -42,6 +43,28 @@ module.exports = class ServerRoutes {
       })
   }
 
+  fetchUserIds (req, res) {
+    console.info('Server::fetchUserIds()')
+    this.facade.fetchUserIds()
+      .then((response) => {
+        res.status(200).json({ result: response })
+      })
+      .catch((err) => {
+        res.status(400).json({ error: err.message })
+      })
+  }
+
+  deleteUser (req, res) {
+    console.info(`Server::deleteUser() - params: ${JSON.stringify(req.params)}`)
+    this.facade.deleteUser(req.params.id)
+      .then((response) => {
+        res.status(200).json({ result: response })
+      })
+      .catch((err) => {
+        res.status(400).json({ error: err.message })
+      })
+  }
+
   fetchMetadata (req, res) {
     console.info('Server::fetchMetadata()')
     this.facade.fetchMetadata()
@@ -53,14 +76,4 @@ module.exports = class ServerRoutes {
       })
   }
 
-  fetchUserIds (req, res) {
-    console.info('Server::fetchUserIds()')
-    this.facade.fetchUserIds()
-      .then((response) => {
-        res.status(200).json({ result: response })
-      })
-      .catch((err) => {
-        res.status(400).json({ error: err.message })
-      })
-  }
 }
