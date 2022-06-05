@@ -43,11 +43,11 @@ module.exports = class SheetsWrapper {
     return this.sheetsClient.spreadsheets.values.get({
       auth: SheetsWrapper.AUTH,
       spreadsheetId: SheetsWrapper.SPREADSHEET_ID,
-      range: 'Users!A2:A500',
+      range: 'Users!A:A',
       majorDimension: 'COLUMNS'
     })
       .then((response) => {
-        return response.data.values[0]
+        return response.data.values[0].slice(1)
       })
   }
 
@@ -70,7 +70,7 @@ module.exports = class SheetsWrapper {
       }
     })
       .then((response) => {
-        return response
+        return response.data
       })
   }
 
@@ -107,7 +107,7 @@ module.exports = class SheetsWrapper {
             resource: batchUpdateRequest
           })
             .then((response) => {
-              return response
+              return response.data
             })
         }
       })
