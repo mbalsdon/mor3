@@ -23,19 +23,19 @@ module.exports = class MorFacade {
       })
   }
 
-  fetchUserIds () {
-    console.info('MorFacade::fetchUserIds()')
+  getUserIds () {
+    console.info('MorFacade::getUserIds()')
     return new Promise((resolve, reject) => {
-      this.sheets.fetchUserIds()
+      this.sheets.getUserIds()
         .then((response) => resolve(response))
         .catch((error) => reject(error))
     })
   }
 
-  addUser (userId) {
-    console.info(`MorFacade::addUser( ${userId} )`)
+  putUser (userId) {
+    console.info(`MorFacade::putUser( ${userId} )`)
     return new Promise((resolve, reject) => {
-      this.sheets.fetchUserIds()
+      this.sheets.getUserIds()
         .then((userIds) => {
           // Check if user ID is already in the sheet
           if (userIds.includes(userId)) {
@@ -64,13 +64,12 @@ module.exports = class MorFacade {
     })
   }
 
-  fetchMetadata () {
-    console.info('MorFacade::fetchMetadata()')
+  getMetadata () {
+    console.info('MorFacade::getMetadata()')
     return new Promise((resolve, reject) => {
-      this.sheets.fetchMetadata()
+      this.sheets.getMetadata()
         .then((response) => resolve(response))
         .catch((error) => reject(error))
     })
   }
-
 }

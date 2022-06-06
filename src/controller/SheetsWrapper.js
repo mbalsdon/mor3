@@ -8,6 +8,7 @@ module.exports = class SheetsWrapper {
     keyFile: process.env.GOOGLE_API_KEYFILE,
     scopes: 'https://www.googleapis.com/auth/spreadsheets'
   })
+
   static USERS_SHEET_ID = 253307812
 
   sheetsClient
@@ -79,7 +80,7 @@ module.exports = class SheetsWrapper {
     if (isNaN(parseInt(userId)) || parseInt(userId) < 1) {
       throw new Error('User ID must be a positive number')
     }
-    
+
     return this.fetchUserIds()
       .then((userIds) => {
         const idIndex = userIds.indexOf(userId)
@@ -100,7 +101,7 @@ module.exports = class SheetsWrapper {
               }
             ]
           }
-      
+
           return this.sheetsClient.spreadsheets.batchUpdate({
             auth: SheetsWrapper.AUTH,
             spreadsheetId: SheetsWrapper.SPREADSHEET_ID,
@@ -112,5 +113,4 @@ module.exports = class SheetsWrapper {
         }
       })
   }
-
 }
