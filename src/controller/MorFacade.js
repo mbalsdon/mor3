@@ -75,8 +75,18 @@ module.exports = class MorFacade {
 
   scrapeUserTopPlays () {
     console.info('MorFacade::scrapeUserTopPlays()')
-    // collect user top 100s
-    // put them into a dict
-    // ...
+    this.sheets.fetchUserIds()
+      .then((userIds) => {
+        for (const id of userIds) {
+          this.osu.fetchUserTopPlays(id)
+            .then((scores) => {
+              console.log(scores.map((s) => [s.user.username, s.beatmapset.title]))
+              // helper function parse relevant data
+              // put into dict (key=modcombo, val=sorted list by pp)
+              // remember to remove nf,so,sd,pf,etc.
+            })
+        }
+      })
+    // { ... }
   }
 }
