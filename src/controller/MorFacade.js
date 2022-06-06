@@ -26,7 +26,7 @@ module.exports = class MorFacade {
   getUserIds () {
     console.info('MorFacade::getUserIds()')
     return new Promise((resolve, reject) => {
-      this.sheets.getUserIds()
+      this.sheets.fetchUserIds()
         .then((response) => resolve(response))
         .catch((error) => reject(error))
     })
@@ -35,7 +35,7 @@ module.exports = class MorFacade {
   putUser (userId) {
     console.info(`MorFacade::putUser( ${userId} )`)
     return new Promise((resolve, reject) => {
-      this.sheets.getUserIds()
+      this.sheets.fetchUserIds()
         .then((userIds) => {
           // Check if user ID is already in the sheet
           if (userIds.includes(userId)) {
@@ -44,7 +44,7 @@ module.exports = class MorFacade {
             // Get username, then put user ID & username in the sheet
             this.osu.fetchUsername(userId)
               .then((username) => {
-                this.sheets.putUser(userId, username)
+                this.sheets.insertUser(userId, username)
                   .then((response) => resolve(response))
                   .catch((error) => reject(error))
               })
@@ -67,9 +67,16 @@ module.exports = class MorFacade {
   getMetadata () {
     console.info('MorFacade::getMetadata()')
     return new Promise((resolve, reject) => {
-      this.sheets.getMetadata()
+      this.sheets.fetchMetadata()
         .then((response) => resolve(response))
         .catch((error) => reject(error))
     })
+  }
+
+  scrapeUserTopPlays () {
+    console.info('MorFacade::scrapeUserTopPlays()')
+    // collect user top 100s
+    // put them into a dict
+    // ...
   }
 }

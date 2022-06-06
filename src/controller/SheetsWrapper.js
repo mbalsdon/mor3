@@ -52,8 +52,8 @@ module.exports = class SheetsWrapper {
       })
   }
 
-  putUser (userId, username) {
-    console.info(`SheetsWrapper::putUser( ${userId}, ${username} )`)
+  insertUser (userId, username) {
+    console.info(`SheetsWrapper::insertUser( ${userId}, ${username} )`)
     if (isNaN(parseInt(userId)) || parseInt(userId) < 1) {
       throw new Error('User ID must be a positive number')
     } else if (typeof username !== 'string') {
