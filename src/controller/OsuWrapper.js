@@ -42,10 +42,11 @@ module.exports = class OsuWrapper {
     if (isNaN(parseInt(userId)) || parseInt(userId) < 1) {
       throw new Error('User ID must be a positive number')
     }
-    const url = `${OsuWrapper.API_URL}/users/${userId}/osu`
+    const url = new URL(`${OsuWrapper.API_URL}/users/${userId}/osu`)
     const params = {
       key: 'id'
     }
+    Object.keys(params).forEach((key) => url.searchParams.append(key, params[key]))
     const headers = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
@@ -53,8 +54,7 @@ module.exports = class OsuWrapper {
     }
     return fetch(url, {
       method: 'GET',
-      headers,
-      params
+      headers
     })
       .then((response) => {
         if (response.status === 404) {
@@ -65,5 +65,44 @@ module.exports = class OsuWrapper {
       .then((data) => {
         return data.username
       })
+  }
+
+  fetchUserTopPlays (userId) {
+    console.info(`OsuWrapper::fetchUserTopPlays( ${userId} )`)
+    if (isNaN(parseInt(userId)) || parseInt(userId) < 1) {
+      throw new Error('User ID must be a positive number')
+    }
+    const url = new URL(`${OsuWrapper.API_URL}/users/${userId}/scores/best?mode=osu&limit=100`)
+    const params = {
+      mode: 'osu',
+      limit: 100
+    }
+    Object.keys(params).forEach((key) => url.searchParams.append(key, params[key]))
+    const headers = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${this.token}`
+    }
+    return fetch(url, {
+      method: 'GET',
+      headers
+    })
+      .then((response) => {
+        if (response.status === 404) {
+          throw new Error(`User ID ${userId} not found`)
+        }
+        return response.json()
+      })
+      .then((data) => {
+        return data
+      })
+  }
+
+  fetchUserFirstPlacePlays (userId) {
+    console.info(`OsuWrapper::fetchUserFirstPlacePlays( ${userId} )`)
+    if (isNaN(parseInt(userId)) || parseInt(userId) < 1) {
+      throw new Error('User ID must be a positive number')
+    }
+    // TODO
   }
 }
