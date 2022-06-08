@@ -68,9 +68,9 @@ module.exports = class MorFacade {
     const dict = {}
     // Iterate over each user's top 100, putting each score into the dict
     for (const id of userIds) {
+      // Join tops and firsts, remove duplicates
       const tops = await this.#osu.fetchUserTopPlays(id)
       const firsts = await this.#osu.fetchUserFirstPlacePlays(id)
-      // Join tops and firsts, remove duplicates
       const scores = this.#uniqueBy(tops.concat(firsts), (i) => i.id)
       for (const score of scores) {
         const ps = this.#parseScore(score)
@@ -85,16 +85,15 @@ module.exports = class MorFacade {
         }
       }
     }
-
     // Sort each dict array by pp
     for (const k of Object.keys(dict)) {
       dict[k].sort((a, b) => {
         return parseInt(a[4]) - parseInt(b[4])
       })
     }
-
     // TODO: finish scores endpoints before this func
     // TODO: put scores in sheet (Capture.PNG)
+    console.log(dict['NM'])
   }
 
   // Takes arr and key func; removes duplicates from arr based on key
@@ -110,6 +109,7 @@ module.exports = class MorFacade {
   #parseScore (s) {
     return [
       this.#parseModKey([...s.mods]), // key for dict
+      s.id,
       `=HYPERLINK("https://osu.ppy.sh/users/${s.user.id}", ${s.user.username})`,
       `=HYPERLINK("${s.beatmap.url}", "${s.beatmapset.artist} - ${s.beatmapset.title} [${s.beatmap.version}]")`,
       (s.mods.length === 0) ? 'NM' : s.mods.join().replaceAll(',', ''), // turn the mods into a single string

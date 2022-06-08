@@ -110,7 +110,7 @@ module.exports = class SheetsWrapper {
     const response = await this.#sheetsClient.spreadsheets.values.get({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
-      range: `${mods}!A:F`,
+      range: `${mods}!A:G`,
       majorDimension: 'ROWS'
     })
     return response.data.values.slice(1)
