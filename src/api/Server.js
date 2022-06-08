@@ -35,7 +35,7 @@ module.exports = class Server {
 
     this.express.get('/scores/:mods', this.routes.getModScores)
     this.express.get('/scores/:mods/:id', this.routes.getScore)
-    // PUT /scores/:mods/:id
+    this.express.put('/scores/:mods/:id', this.routes.putScore)
     // DEL /scores/:mods/:id
   }
 

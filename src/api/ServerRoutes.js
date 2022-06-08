@@ -16,7 +16,7 @@ module.exports = class ServerRoutes {
 
     this.getModScores = this.getModScores.bind(this)
     this.getScore = this.getScore.bind(this)
-    // PUT /scores/:mods/:id
+    this.putScore = this.putScore.bind(this)
     // DEL /scores/:mods/:id
   }
 
@@ -88,7 +88,12 @@ module.exports = class ServerRoutes {
       .catch((err) => res.status(400).json({ error: err.message }))
   }
 
-  // GET /scores/:mods/:id
+  putScore (req, res) {
+    console.info(`Server::getScore() - params: ${JSON.stringify(req.params)}`)
+    this.#facade.putScore(req.params.mods, req.params.id)
+      .then((response) => res.status(200).json({ result: response }))
+      .catch((err) => res.status(400).json({ error: err.message }))
+  }
   // PUT /scores/:mods/:id
   // DEL /scores/:mods/:id
 }

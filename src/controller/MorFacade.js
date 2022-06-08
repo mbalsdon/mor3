@@ -36,7 +36,7 @@ module.exports = class MorFacade {
     const userIds = await this.#sheets.fetchUserIds()
     // Check if ID already in sheet
     if (userIds.includes(userId)) {
-      throw new Error(`User ID ${userId} has already been added`)
+      throw new Error(`User with hID ${userId} has already been added`)
     // Else put ID & username in sheet
     } else {
       const username = await this.#osu.fetchUsername(userId)
@@ -59,10 +59,26 @@ module.exports = class MorFacade {
 
   async getScore (mods, id) {
     console.info(`MorFacade::getScore( ${mods}, ${id} )`)
-    const score = await this.#sheets.fetchScore(mods, id)
+    // Check if score in sheet
+    const modScores = await this.getModScores(mods)
+    const scoreIndex = modScores.map((s) => { return s[0] }).indexOf(id)
+    if (scoreIndex === -1) {
+      throw new Error(`Score with ID ${id} could not be found`)
+    }
+    const score = await this.#sheets.fetchScore(mods, scoreIndex)
     return score
   }
-  // PUT /scores/:mods/:id
+  async putScore (mods, id) {
+    console.info(`MorFacade::putScore( ${mods}, ${id} )`)
+    const modScores = await this.getModScores(mods)
+    // Check if score already in sheet
+    const scoreIndex = modScores.map((s) => { return s[0] }).indexOf(id)
+    if (scoreIndex !== -1) {
+      throw new Error(`Score with ID ${id} has already been added`)
+    }
+    // TODO: get osu score and parse it
+    // TODO: this.#sheets.insertScore
+  }
   // DEL /scores/:mods/:id
 
   async scrapeUserTopPlays () {

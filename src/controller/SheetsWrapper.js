@@ -116,26 +116,30 @@ module.exports = class SheetsWrapper {
     return response.data.values.slice(1)
   }
 
-  async fetchScore (mods, id) {
-    console.info(`SheetsWrapper::fetchScore( ${mods}, ${id} )`)
+  async fetchScore (mods, rowNum) {
+    console.info(`SheetsWrapper::fetchScore( ${mods}, ${rowNum} )`)
+    if (!Object.keys(Mods).includes(mods)) {
+      throw new Error(`${mods} is not a valid mod combination`)
+    } else if (isNaN(parseInt(rowNum)) || parseInt(rowNum) < 0) {
+      throw new Error('Row number cannot be negative')
+    }
+    const response = await this.#sheetsClient.spreadsheets.values.get({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
+      range: `${mods}!A${rowNum + 2}:G${rowNum + 2}`,
+      majorDimension: 'ROWS',
+      valueRenderOption: 'FORMULA'
+    })
+    return response.data.values[0]
+  }
+
+  async insertScore (mods, score) {
+    console.info(`SheetsWrapper::putScore( ${mods}, ${id} )`)
     if (!Object.keys(Mods).includes(mods)) {
       throw new Error(`${mods} is not a valid mod combination`)
     } else if (isNaN(parseInt(id)) || parseInt(id) < 1) {
       throw new Error('Score ID must be a positive number')
     }
-    // Check if score in sheet
-    const modScores = await this.fetchModScores(mods)
-    const scoreIndex = modScores.map((s) => { return s[0] }).indexOf(id)
-    if (scoreIndex === -1) {
-      throw new Error(`Score with ID ${id} could not be found`)
-    }
-    const response = await this.#sheetsClient.spreadsheets.values.get({
-      auth: SheetsWrapper.#AUTH,
-      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
-      range: `${mods}!A${scoreIndex + 2}:G${scoreIndex + 2}`,
-      majorDimension: 'ROWS',
-      valueRenderOption: 'FORMULA'
-    })
-    return response.data.values[0]
+    // TODO: insert the score
   }
 }
