@@ -94,7 +94,7 @@ module.exports = class MorFacade {
       this.#parseModKey([...s.mods]), // key for dict
       `=HYPERLINK("https://osu.ppy.sh/users/${s.user.id}", ${s.user.username})`,
       `=HYPERLINK("${s.beatmap.url}", "${s.beatmapset.artist} - ${s.beatmapset.title} [${s.beatmap.version}]")`,
-      (s.mods.length === 0) ? 'NM' : s.mods.join(), // turn the mods into a single string
+      (s.mods.length === 0) ? 'NM' : s.mods.join().replaceAll(',', ''), // turn the mods into a single string
       Math.round(s.accuracy * 10000) / 100, // 0.xxxx => xx.xx
       s.pp,
       s.created_at
@@ -114,7 +114,7 @@ module.exports = class MorFacade {
     if (mods.length === 0) {
       return 'NM'
     } else {
-      return mods.join()
+      return mods.join().replaceAll(',', '')
     }
   }
 }
