@@ -1,12 +1,12 @@
 const MorFacade = require('../controller/MorFacade')
 
 module.exports = class ServerRoutes {
-  facade
+  #facade
 
   constructor () {
     MorFacade.build()
       .then((facade) => {
-        this.facade = facade
+        this.#facade = facade
       })
     this.getUserIds = this.getUserIds.bind(this)
     this.putUser = this.putUser.bind(this)
@@ -34,7 +34,7 @@ module.exports = class ServerRoutes {
 
   putUser (req, res) {
     console.info(`Server::putUser() - params: ${JSON.stringify(req.params)}`)
-    this.facade.putUser(req.params.id)
+    this.#facade.putUser(req.params.id)
       .then((response) => {
         res.status(200).json({ result: response })
       })
@@ -45,7 +45,7 @@ module.exports = class ServerRoutes {
 
   getUserIds (req, res) {
     console.info('Server::getUserIds()')
-    this.facade.getUserIds()
+    this.#facade.getUserIds()
       .then((response) => {
         res.status(200).json({ result: response })
       })
@@ -56,7 +56,7 @@ module.exports = class ServerRoutes {
 
   deleteUser (req, res) {
     console.info(`Server::deleteUser() - params: ${JSON.stringify(req.params)}`)
-    this.facade.deleteUser(req.params.id)
+    this.#facade.deleteUser(req.params.id)
       .then((response) => {
         res.status(200).json({ result: response })
       })
@@ -67,7 +67,7 @@ module.exports = class ServerRoutes {
 
   getMetadata (req, res) {
     console.info('Server::getMetadata()')
-    this.facade.getMetadata()
+    this.#facade.getMetadata()
       .then((response) => {
         res.status(200).json({ result: response })
       })

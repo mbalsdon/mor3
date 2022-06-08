@@ -3,42 +3,42 @@ const { google } = require('googleapis')
 require('dotenv').config()
 
 module.exports = class SheetsWrapper {
-  static SPREADSHEET_ID = '1hduRLLIFjVwLGjXyt7ph3301xfXS6qjSnYCm18YP4iA'
-  static USERS_SHEET_ID = 253307812
-  static AUTH = new google.auth.GoogleAuth({
+  static #SPREADSHEET_ID = '1hduRLLIFjVwLGjXyt7ph3301xfXS6qjSnYCm18YP4iA'
+  static #USERS_SHEET_ID = 253307812
+  static #AUTH = new google.auth.GoogleAuth({
     keyFile: process.env.GOOGLE_API_KEYFILE,
     scopes: 'https://www.googleapis.com/auth/spreadsheets'
   })
 
-  sheetsClient
+  #sheetsClient
 
   constructor (sheetsClient) {
     if (typeof sheetsClient === 'undefined') {
       throw new Error('Cannot be called directly')
     }
-    this.sheetsClient = sheetsClient
+    this.#sheetsClient = sheetsClient
   }
 
   static async build () {
-    const authClient = SheetsWrapper.AUTH.getClient()
+    const authClient = SheetsWrapper.#AUTH.getClient()
     const sheetsClient = google.sheets({ version: 'v4', auth: authClient })
     return new SheetsWrapper(sheetsClient)
   }
 
   async fetchMetadata () {
     console.info('SheetsWrapper::fetchMetadata()')
-    const response = await this.sheetsClient.spreadsheets.get({
-      auth: SheetsWrapper.AUTH,
-      spreadsheetId: SheetsWrapper.SPREADSHEET_ID
+    const response = await this.#sheetsClient.spreadsheets.get({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID
     })
     return response.data
   }
 
   async fetchUserIds () {
     console.info('SheetsWrapper::fetchUserIds()')
-    const response = await this.sheetsClient.spreadsheets.values.get({
-      auth: SheetsWrapper.AUTH,
-      spreadsheetId: SheetsWrapper.SPREADSHEET_ID,
+    const response = await this.#sheetsClient.spreadsheets.values.get({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
       range: 'Users!A:A',
       majorDimension: 'COLUMNS'
     })
@@ -53,9 +53,9 @@ module.exports = class SheetsWrapper {
       throw new Error('Username must be a string')
     }
 
-    const response = await this.sheetsClient.spreadsheets.values.append({
-      auth: SheetsWrapper.AUTH,
-      spreadsheetId: SheetsWrapper.SPREADSHEET_ID,
+    const response = await this.#sheetsClient.spreadsheets.values.append({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
       range: 'Users',
       valueInputOption: 'USER_ENTERED',
       insertDataOption: 'INSERT_ROWS',
@@ -82,7 +82,7 @@ module.exports = class SheetsWrapper {
           {
             deleteDimension: {
               range: {
-                sheetId: SheetsWrapper.USERS_SHEET_ID,
+                sheetId: SheetsWrapper.#USERS_SHEET_ID,
                 dimension: 'ROWS',
                 startIndex: idIndex + 1,
                 endIndex: idIndex + 2
@@ -91,9 +91,9 @@ module.exports = class SheetsWrapper {
           }
         ]
       }
-      const response = await this.sheetsClient.spreadsheets.batchUpdate({
-        auth: SheetsWrapper.AUTH,
-        spreadsheetId: SheetsWrapper.SPREADSHEET_ID,
+      const response = await this.#sheetsClient.spreadsheets.batchUpdate({
+        auth: SheetsWrapper.#AUTH,
+        spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
         resource: batchUpdateRequest
       })
       return response.data
