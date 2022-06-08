@@ -134,12 +134,21 @@ module.exports = class SheetsWrapper {
   }
 
   async insertScore (mods, score) {
-    console.info(`SheetsWrapper::putScore( ${mods}, ${id} )`)
+    console.info(`SheetsWrapper::putScore( ${mods}, ${score} )`)
     if (!Object.keys(Mods).includes(mods)) {
       throw new Error(`${mods} is not a valid mod combination`)
-    } else if (isNaN(parseInt(id)) || parseInt(id) < 1) {
-      throw new Error('Score ID must be a positive number')
-    }
-    // TODO: insert the score
+    } // TODO: else if {check the score structure}
+
+    const response = await this.#sheetsClient.spreadsheets.values.append({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
+      range: `${mods}`,
+      valueInputOption: 'USER_ENTERED',
+      insertDataOption: 'INSERT_ROWS',
+      resource: {
+        values: [score]
+      }
+    })
+    return response.data
   }
 }

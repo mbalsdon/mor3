@@ -68,6 +68,7 @@ module.exports = class MorFacade {
     const score = await this.#sheets.fetchScore(mods, scoreIndex)
     return score
   }
+
   async putScore (mods, id) {
     console.info(`MorFacade::putScore( ${mods}, ${id} )`)
     const modScores = await this.getModScores(mods)
@@ -76,8 +77,10 @@ module.exports = class MorFacade {
     if (scoreIndex !== -1) {
       throw new Error(`Score with ID ${id} has already been added`)
     }
-    // TODO: get osu score and parse it
-    // TODO: this.#sheets.insertScore
+    const score = await this.#osu.fetchScore(id)
+    const ps = this.#parseScore(score)
+    const response = this.#sheets.insertScore(mods, ps.slice(1, ps.length))
+    return response
   }
   // DEL /scores/:mods/:id
 
@@ -130,7 +133,7 @@ module.exports = class MorFacade {
     return [
       this.#parseModKey([...s.mods]), // key for dict
       s.id,
-      `=HYPERLINK("https://osu.ppy.sh/users/${s.user.id}", ${s.user.username})`,
+      `=HYPERLINK("https://osu.ppy.sh/users/${s.user.id}", "${s.user.username}")`,
       `=HYPERLINK("${s.beatmap.url}", "${s.beatmapset.artist} - ${s.beatmapset.title} [${s.beatmap.version}]")`,
       (s.mods.length === 0) ? 'NM' : s.mods.join().replaceAll(',', ''), // turn the mods into a single string
       Math.round(s.accuracy * 10000) / 100, // 0.xxxx => xx.xx

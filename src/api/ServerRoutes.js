@@ -94,6 +94,5 @@ module.exports = class ServerRoutes {
       .then((response) => res.status(200).json({ result: response }))
       .catch((err) => res.status(400).json({ error: err.message }))
   }
-  // PUT /scores/:mods/:id
   // DEL /scores/:mods/:id
 }

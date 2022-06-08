@@ -62,6 +62,33 @@ module.exports = class OsuWrapper {
     return data.username
   }
 
+  async fetchScore (id) {
+    console.info(`OsuWrapper::fetchScore( ${id} )`)
+    if (isNaN(parseInt(id)) || parseInt(id) < 1) {
+      throw new Error('Score ID must be a positive number')
+    }
+
+    const url = new URL(`${OsuWrapper.#API_URL}/scores/osu/${id}`)
+    const params = {
+      key: 'id'
+    }
+    Object.keys(params).forEach((key) => url.searchParams.append(key, params[key]))
+    const headers = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${this.#token}`
+    }
+    const response = await fetch(url, {
+      method: 'GET',
+      headers
+    })
+    if (response.status === 404) {
+      throw new Error(`Score ID ${id} not found`)
+    }
+    const data = await response.json()
+    return data
+  }
+
   async fetchUserTopPlays (userId) {
     console.info(`OsuWrapper::fetchUserTopPlays( ${userId} )`)
     if (isNaN(parseInt(userId)) || parseInt(userId) < 1) {
