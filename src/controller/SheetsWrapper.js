@@ -76,7 +76,7 @@ module.exports = class SheetsWrapper {
     const userIds = await this.fetchUserIds()
     const idIndex = userIds.indexOf(userId)
     if (idIndex === -1) {
-      throw new Error(`User ID ${userId} has not been added`)
+      throw new Error(`User with ID ${userId} could not be found`)
     } else {
       const batchUpdateRequest = {
         requests: [
@@ -104,7 +104,7 @@ module.exports = class SheetsWrapper {
   async fetchModScores (mods) {
     console.info(`SheetsWrapper::fetchModScores( ${mods} )`)
     if (!Object.keys(Mods).includes(mods)) {
-      throw new Error(`${mods} is not a valid mod combination.`)
+      throw new Error(`${mods} is not a valid mod combination`)
     }
 
     const response = await this.#sheetsClient.spreadsheets.values.get({
@@ -114,5 +114,28 @@ module.exports = class SheetsWrapper {
       majorDimension: 'ROWS'
     })
     return response.data.values.slice(1)
+  }
+
+  async fetchScore (mods, id) {
+    console.info(`SheetsWrapper::fetchScore( ${mods}, ${id} )`)
+    if (!Object.keys(Mods).includes(mods)) {
+      throw new Error(`${mods} is not a valid mod combination`)
+    } else if (isNaN(parseInt(id)) || parseInt(id) < 1) {
+      throw new Error('Score ID must be a positive number')
+    }
+    // Check if score in sheet
+    const modScores = await this.fetchModScores(mods)
+    const scoreIndex = modScores.map((s) => { return s[0] }).indexOf(id)
+    if (scoreIndex === -1) {
+      throw new Error(`Score with ID ${id} could not be found`)
+    }
+    const response = await this.#sheetsClient.spreadsheets.values.get({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
+      range: `${mods}!A${scoreIndex + 2}:G${scoreIndex + 2}`,
+      majorDimension: 'ROWS',
+      valueRenderOption: 'FORMULA'
+    })
+    return response.data.values[0]
   }
 }

@@ -57,7 +57,11 @@ module.exports = class MorFacade {
     return modScores
   }
 
-  // GET /scores/:mods/:id
+  async getScore (mods, id) {
+    console.info(`MorFacade::getScore( ${mods}, ${id} )`)
+    const score = await this.#sheets.fetchScore(mods, id)
+    return score
+  }
   // PUT /scores/:mods/:id
   // DEL /scores/:mods/:id
 
@@ -93,7 +97,7 @@ module.exports = class MorFacade {
     }
     // TODO: finish scores endpoints before this func
     // TODO: put scores in sheet (Capture.PNG)
-    console.log(dict['NM'])
+    console.log(dict.HDFL)
   }
 
   // Takes arr and key func; removes duplicates from arr based on key
@@ -101,7 +105,7 @@ module.exports = class MorFacade {
     const seen = {}
     return arr.filter((item) => {
       const k = key(item)
-      return seen.hasOwnProperty(k) ? false : (seen[k] = true)
+      return Object.prototype.hasOwnProperty.call(seen, k) ? false : (seen[k] = true)
     })
   }
 

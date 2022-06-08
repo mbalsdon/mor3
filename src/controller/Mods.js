@@ -23,7 +23,7 @@ module.exports = class Mods {
   static HRFL = 'HRFL'
   static HTFL = 'HTFL'
   static HDFL = 'HDFL'
-  
+
   static HDHRDT = 'HDHRDT'
   static HDDTFL = 'HDDTFL'
   static EZHDDT = 'EZHDDT'
@@ -36,7 +36,7 @@ module.exports = class Mods {
   static EZHTFL = 'EZHTFL'
   static EZHDFL = 'EZHDFL'
   static HDHRFL = 'HDHRFL'
-  
+
   static HDHRDTFL = 'HDHRDTFL'
   static EZHDDTFL = 'EZHDDTFL'
   static EZHDHTFL = 'EZHDHTFL'
