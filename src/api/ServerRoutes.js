@@ -8,11 +8,19 @@ module.exports = class ServerRoutes {
       .then((facade) => {
         this.#facade = facade
       })
+    this.getMetadata = this.getMetadata.bind(this)
+
     this.getUserIds = this.getUserIds.bind(this)
     this.putUser = this.putUser.bind(this)
     this.deleteUser = this.deleteUser.bind(this)
-    this.getMetadata = this.getMetadata.bind(this)
+    
+    this.getModScores = this.getModScores.bind(this)
+    // GET /scores/:mods/:id
+    // PUT /scores/:mods/:id
+    // DEL /scores/:mods/:id
   }
+
+  // --- ECHO ---
 
   static echo (req, res) {
     try {
@@ -32,47 +40,48 @@ module.exports = class ServerRoutes {
     }
   }
 
+  // --- METADATA ---
+
   getMetadata (req, res) {
     console.info('Server::getMetadata()')
     this.#facade.getMetadata()
-      .then((response) => {
-        res.status(200).json({ result: response })
-      })
-      .catch((err) => {
-        res.status(400).json({ error: err.message })
-      })
+      .then((response) => res.status(200).json({ result: response }))
+      .catch((err) => res.status(400).json({ error: err.message }))
   }
+
+  // --- USERS ---
 
   getUserIds (req, res) {
     console.info('Server::getUserIds()')
     this.#facade.getUserIds()
-      .then((response) => {
-        res.status(200).json({ result: response })
-      })
-      .catch((err) => {
-        res.status(400).json({ error: err.message })
-      })
+      .then((response) => res.status(200).json({ result: response }))
+      .catch((err) => res.status(400).json({ error: err.message }))
   }
 
   putUser (req, res) {
     console.info(`Server::putUser() - params: ${JSON.stringify(req.params)}`)
     this.#facade.putUser(req.params.id)
-      .then((response) => {
-        res.status(200).json({ result: response })
-      })
-      .catch((err) => {
-        res.status(400).json({ error: err.message })
-      })
+      .then((response) => res.status(200).json({ result: response }))
+      .catch((err) => res.status(400).json({ error: err.message }))
   }
 
   deleteUser (req, res) {
     console.info(`Server::deleteUser() - params: ${JSON.stringify(req.params)}`)
     this.#facade.deleteUser(req.params.id)
-      .then((response) => {
-        res.status(200).json({ result: response })
-      })
-      .catch((err) => {
-        res.status(400).json({ error: err.message })
-      })
+      .then((response) => res.status(200).json({ result: response }))
+      .catch((err) => res.status(400).json({ error: err.message }))
   }
+
+  // --- SCORES ---
+
+  getModScores (req, res) {
+    console.info(`Server::getModScores() - params: ${JSON.stringify(req.params)}`)
+    this.#facade.getModScores(req.params.mods)
+      .then((response) => res.status(200).json({ result: response }))
+      .catch((err) => res.status(400).json({ error: err.message }))
+  }
+
+  // GET /scores/:mods/:id
+  // PUT /scores/:mods/:id
+  // DEL /scores/:mods/:id
 }

@@ -1,4 +1,5 @@
 const { google } = require('googleapis')
+const Mods = require('./Mods')
 
 require('dotenv').config()
 
@@ -98,5 +99,20 @@ module.exports = class SheetsWrapper {
       })
       return response.data
     }
+  }
+
+  async fetchModScores (mods) {
+    console.info(`SheetsWrapper::fetchModScores( ${mods} )`)
+    if (!Object.keys(Mods).includes(mods)) {
+      throw new Error(`${mods} is not a valid mod combination.`)
+    }
+
+    const response = await this.#sheetsClient.spreadsheets.values.get({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
+      range: `${mods}!A:F`,
+      majorDimension: 'ROWS'
+    })
+    return response.data.values.slice(1)
   }
 }

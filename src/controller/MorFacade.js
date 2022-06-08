@@ -51,6 +51,16 @@ module.exports = class MorFacade {
     return response
   }
 
+  async getModScores (mods) {
+    console.info(`MorFacade::getModScores( ${mods} )`)
+    const modScores = await this.#sheets.fetchModScores(mods)
+    return modScores
+  }
+
+  // GET /scores/:mods/:id
+  // PUT /scores/:mods/:id
+  // DEL /scores/:mods/:id
+
   async scrapeUserTopPlays () {
     console.info('MorFacade::scrapeUserTopPlays()')
     const userIds = await this.#sheets.fetchUserIds()
@@ -83,11 +93,7 @@ module.exports = class MorFacade {
       })
     }
 
-    // TODO: endpoints before finishing this function
-    // GET /scores/:mods
-    // PUT /scores/:mods/:id
-    // DEL /scores/:mods/:id
-    
+    // TODO: finish scores endpoints before this func
     // TODO: put scores in sheet (Capture.PNG)
   }
 
