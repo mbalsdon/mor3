@@ -19,6 +19,12 @@ module.exports = class MorFacade {
     return new MorFacade(osuWrapper, sheetsWrapper)
   }
 
+  async getMetadata () {
+    console.info('MorFacade::getMetadata()')
+    const response = await this.#sheets.fetchMetadata()
+    return response
+  }
+
   async getUserIds () {
     console.info('MorFacade::getUserIds()')
     const userIds = await this.#sheets.fetchUserIds()
@@ -45,12 +51,6 @@ module.exports = class MorFacade {
     return response
   }
 
-  async getMetadata () {
-    console.info('MorFacade::getMetadata()')
-    const response = await this.#sheets.fetchMetadata()
-    return response
-  }
-
   async scrapeUserTopPlays () {
     console.info('MorFacade::scrapeUserTopPlays()')
     const userIds = await this.#sheets.fetchUserIds()
@@ -73,13 +73,19 @@ module.exports = class MorFacade {
       }
     }
 
+    // Sort each dict array by pp
     for (const k of Object.keys(dict)) {
       dict[k].sort((a, b) => {
         return parseInt(a[4]) - parseInt(b[4])
       })
     }
 
-    // TODO: put the dict in sheet
+    // TODO: endpoints before finishing this function
+    // GET /scores/:mods
+    // PUT /scores/:mods/:id
+    // DEL /scores/:mods/:id
+    
+    // TODO: put scores in sheet (Capture.PNG)
   }
 
   // Takes a Score object (https://osu.ppy.sh/docs/index.html#score)
