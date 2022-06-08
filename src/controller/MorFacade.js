@@ -13,64 +13,42 @@ module.exports = class MorFacade {
     this.sheets = sheetsWrapper
   }
 
-  static build () {
-    return OsuWrapper.build()
-      .then((osuWrapper) => {
-        return SheetsWrapper.build()
-          .then((sheetsWrapper) => {
-            return new MorFacade(osuWrapper, sheetsWrapper)
-          })
-      })
+  static async build () {
+    const osuWrapper = await OsuWrapper.build()
+    const sheetsWrapper = await SheetsWrapper.build()
+    return new MorFacade(osuWrapper, sheetsWrapper)
   }
 
-  getUserIds () {
+  async getUserIds () {
     console.info('MorFacade::getUserIds()')
-    return new Promise((resolve, reject) => {
-      this.sheets.fetchUserIds()
-        .then((response) => resolve(response))
-        .catch((error) => reject(error))
-    })
+    const userIds = await this.sheets.fetchUserIds()
+    return userIds
   }
 
-  putUser (userId) {
+  async putUser (userId) {
     console.info(`MorFacade::putUser( ${userId} )`)
-    return new Promise((resolve, reject) => {
-      this.sheets.fetchUserIds()
-        .then((userIds) => {
-          // Check if user ID is already in the sheet
-          if (userIds.includes(userId)) {
-            reject(new Error(`User ID ${userId} has already been added`))
-          } else {
-            // Get username, then put user ID & username in the sheet
-            this.osu.fetchUsername(userId)
-              .then((username) => {
-                this.sheets.insertUser(userId, username)
-                  .then((response) => resolve(response))
-                  .catch((error) => reject(error))
-              })
-              .catch((error) => reject(error))
-          }
-        })
-        .catch((error) => reject(error))
-    })
+    const userIds = await this.sheets.fetchUserIds()
+    // Check if ID already in sheet
+    if (userIds.includes(userId)) {
+      throw new Error(`User ID ${userId} has already been added`)
+    // Else put ID & username in sheet
+    } else {
+      const username = await this.osu.fetchUsername(userId)
+      const response = await this.sheets.insertUser(userId, username)
+      return response
+    }
   }
 
-  deleteUser (userId) {
+  async deleteUser (userId) {
     console.info(`MorFacade::deleteUser( ${userId} )`)
-    return new Promise((resolve, reject) => {
-      this.sheets.removeUser(userId)
-        .then((response) => resolve(response))
-        .catch((error) => reject(error))
-    })
+    const response = await this.sheets.removeUser(userId)
+    return response
   }
 
-  getMetadata () {
+  async getMetadata () {
     console.info('MorFacade::getMetadata()')
-    return new Promise((resolve, reject) => {
-      this.sheets.fetchMetadata()
-        .then((response) => resolve(response))
-        .catch((error) => reject(error))
-    })
+    const response = await this.sheets.fetchMetadata()
+    return response
   }
 
   async scrapeUserTopPlays () {
@@ -100,7 +78,7 @@ module.exports = class MorFacade {
         return parseInt(a[4]) - parseInt(b[4])
       })
     }
-    
+
     // TODO: put the dict in sheet
   }
 
@@ -118,6 +96,7 @@ module.exports = class MorFacade {
     ]
   }
 
+  // private
   // takes mods (array of str) from Score obj, returns "normalized form" (e.g. HDNC => HDDT; NF => NM)
   parseModKey (mods) {
     // NC => DT
