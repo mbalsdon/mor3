@@ -58,7 +58,10 @@ module.exports = class MorFacade {
     const dict = {}
     // Iterate over each user's top 100, putting each score into the dict
     for (const id of userIds) {
-      const scores = await this.#osu.fetchUserTopPlays(id)
+      const tops = await this.#osu.fetchUserTopPlays(id)
+      const firsts = await this.#osu.fetchUserFirstPlacePlays(id)
+      // Join tops and firsts, remove duplicates
+      const scores = this.#uniqueBy(tops.concat(firsts), (i) => i.id)
       for (const score of scores) {
         const ps = this.#parseScore(score)
         const key = ps[0]
@@ -86,6 +89,15 @@ module.exports = class MorFacade {
     // DEL /scores/:mods/:id
     
     // TODO: put scores in sheet (Capture.PNG)
+  }
+
+  // Takes arr and key func; removes duplicates from arr based on key
+  #uniqueBy (arr, key) {
+    const seen = {}
+    return arr.filter((item) => {
+      const k = key(item)
+      return seen.hasOwnProperty(k) ? false : (seen[k] = true)
+    })
   }
 
   // Takes a Score object (https://osu.ppy.sh/docs/index.html#score)

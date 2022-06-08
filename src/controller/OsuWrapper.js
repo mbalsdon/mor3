@@ -68,7 +68,7 @@ module.exports = class OsuWrapper {
       throw new Error('User ID must be a positive number')
     }
 
-    const url = new URL(`${OsuWrapper.#API_URL}/users/${userId}/scores/best?mode=osu&limit=100`)
+    const url = new URL(`${OsuWrapper.#API_URL}/users/${userId}/scores/best`)
     const params = {
       mode: 'osu',
       limit: 100
@@ -91,11 +91,32 @@ module.exports = class OsuWrapper {
     return data
   }
 
-  fetchUserFirstPlacePlays (userId) {
+  async fetchUserFirstPlacePlays (userId) {
     console.info(`OsuWrapper::fetchUserFirstPlacePlays( ${userId} )`)
     if (isNaN(parseInt(userId)) || parseInt(userId) < 1) {
       throw new Error('User ID must be a positive number')
     }
-    // TODO
+
+    const url = new URL(`${OsuWrapper.#API_URL}/users/${userId}/scores/firsts`)
+    const params = {
+      mode: 'osu',
+      limit: 100
+    }
+    Object.keys(params).forEach((key) => url.searchParams.append(key, params[key]))
+    const headers = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${this.#token}`
+    }
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers
+    })
+    if (response.status === 404) {
+      throw new Error(`User ID ${userId} not found`)
+    }
+    const data = await response.json()
+    return data
   }
 }
