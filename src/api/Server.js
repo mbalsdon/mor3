@@ -26,10 +26,17 @@ module.exports = class Server {
 
   registerRoutes () {
     this.express.get('/echo/:msg', ServerRoutes.echo)
-    this.express.put('/users/:id', this.routes.putUser)
+
     this.express.get('/metadata', this.routes.getMetadata)
+
     this.express.get('/users', this.routes.getUserIds)
+    this.express.put('/users/:id', this.routes.putUser)
     this.express.delete('/users/:id', this.routes.deleteUser)
+
+    this.express.get('/scores/:mods', this.routes.getModScores)
+    this.express.get('/scores/:mods/:id', this.routes.getScore)
+    // this.express.put('/scores/:mods/:id', this.routes.putScore)
+    this.express.delete('/scores/:mods/:id', this.routes.deleteScore)
   }
 
   start () {
