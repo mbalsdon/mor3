@@ -16,8 +16,10 @@ module.exports = class ServerRoutes {
 
     this.getModScores = this.getModScores.bind(this)
     this.getScore = this.getScore.bind(this)
-    // this.putScore = this.putScore.bind(this)
     this.deleteScore = this.deleteScore.bind(this)
+
+    this.getSubmittedScores = this.getSubmittedScores.bind(this)
+    this.putSubmittedScore = this.putSubmittedScore.bind(this)
   }
 
   // --- ECHO ---
@@ -88,16 +90,25 @@ module.exports = class ServerRoutes {
       .catch((err) => res.status(400).json({ error: err.message }))
   }
 
-  putScore (req, res) {
-    console.info(`Server::getScore() - params: ${JSON.stringify(req.params)}`)
-    this.#facade.putScore(req.params.mods, req.params.id)
+  deleteScore (req, res) {
+    console.info(`Server::deleteScore() - params: ${JSON.stringify(req.params)}`)
+    this.#facade.deleteScore(req.params.mods, req.params.id)
       .then((response) => res.status(200).json({ result: response }))
       .catch((err) => res.status(400).json({ error: err.message }))
   }
 
-  deleteScore (req, res) {
-    console.info(`Server::deleteScore() - params: ${JSON.stringify(req.params)}`)
-    this.#facade.deleteScore(req.params.mods, req.params.id)
+  // --- SUBMITTED SCORES ---
+
+  getSubmittedScores (req, res) {
+    console.info('Server::getSubmittedScores()')
+    this.#facade.getSubmittedScores()
+      .then((response) => res.status(200).json({ result: response }))
+      .catch((err) => res.status(400).json({ error: err.message }))
+  }
+
+  putSubmittedScore (req, res) {
+    console.info(`Server::putSubmittedScore() - params: ${JSON.stringify(req.params)}`)
+    this.#facade.putSubmittedScore(req.params.id)
       .then((response) => res.status(200).json({ result: response }))
       .catch((err) => res.status(400).json({ error: err.message }))
   }

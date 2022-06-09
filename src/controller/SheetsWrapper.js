@@ -112,7 +112,7 @@ module.exports = class SheetsWrapper {
       spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
       range: `${mods}!A:G`,
       majorDimension: 'ROWS',
-      valueRenderOption: valueRenderOption
+      valueRenderOption
     })
     return response.data.values.slice(1)
   }
@@ -134,27 +134,6 @@ module.exports = class SheetsWrapper {
     return response.data.values[0]
   }
 
-  // // Doesn't check if scores already in sheet
-  // async insertScores (mods, scores) {
-  //   console.info(`SheetsWrapper::insertScores( ${mods}, array of ${scores.length} scores )`)
-  //   if (Mods.toSheetId(mods) === -1) throw new Error(`${mods} is not a valid mod combination`)
-  //   for (const score of scores) {
-  //     if (!this.#isScore(score)) throw new Error(`Invalid score: [${score}]`)
-  //   }
-
-  //   const response = await this.#sheetsClient.spreadsheets.values.append({
-  //     auth: SheetsWrapper.#AUTH,
-  //     spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
-  //     range: `${mods}`,
-  //     valueInputOption: 'USER_ENTERED',
-  //     insertDataOption: 'INSERT_ROWS',
-  //     resource: {
-  //       values: scores
-  //     }
-  //   })
-  //   return response.data
-  // }
-
   async removeScore (mods, id) {
     console.info(`SheetsWrapper::removeScore( ${mods}, ${id} )`)
     if (Mods.toSheetId(mods) === -1) {
@@ -163,26 +142,77 @@ module.exports = class SheetsWrapper {
       throw new Error('Score ID must be a positive number')
     }
 
-    const scores = await this.fetchModScores(mods, 'FORMATTED_VALUE')
-    const scoreIndex = scores.map((s) => s[0]).indexOf(id)
-    if (scoreIndex === -1) {
-      throw new Error(`Score with ID ${id} could not be found`)
-    }
-    const batchUpdateRequest = {
-      requests: [
-        {
-          deleteDimension: {
-            range: {
-              sheetId: Mods.toSheetId(mods),
-              dimension: 'ROWS',
-              startIndex: scoreIndex + 1,
-              endIndex: scoreIndex + 2
+    const sScores = await this.fetchSubmittedScores()
+    const sScoreIndex = sScores.indexOf(id)
+    const mScores = await this.fetchModScores(mods, 'FORMATTED_VALUE')
+    const mScoreIndex = mScores.map((s) => s[0]).indexOf(id)
+
+    let batchUpdateRequest = {}
+    let response = {}
+
+    // Score is in both sheets
+    if (mScoreIndex !== -1 && sScoreIndex !== -1) {
+      batchUpdateRequest = {
+        requests: [
+          {
+            deleteDimension: {
+              range: {
+                sheetId: Mods.toSheetId(mods),
+                dimension: 'ROWS',
+                startIndex: mScoreIndex + 1,
+                endIndex: mScoreIndex + 2
+              }
+            }
+          },
+          {
+            deleteDimension: {
+              range: {
+                sheetId: process.env.SUBMITTED_SCORES,
+                dimension: 'ROWS',
+                startIndex: sScoreIndex + 1,
+                endIndex: sScoreIndex + 2
+              }
             }
           }
-        }
-      ]
+        ]
+      }
+    // Score is in mod scores sheet
+    } else if (mScoreIndex !== -1) {
+      batchUpdateRequest = {
+        requests: [
+          {
+            deleteDimension: {
+              range: {
+                sheetId: Mods.toSheetId(mods),
+                dimension: 'ROWS',
+                startIndex: mScoreIndex + 1,
+                endIndex: mScoreIndex + 2
+              }
+            }
+          }
+        ]
+      }
+    // Score is in submitted scores sheet
+    } else if (sScoreIndex !== -1) {
+      batchUpdateRequest = {
+        requests: [
+          {
+            deleteDimension: {
+              range: {
+                sheetId: process.env.SUBMITTED_SCORES,
+                dimension: 'ROWS',
+                startIndex: sScoreIndex + 1,
+                endIndex: sScoreIndex + 2
+              }
+            }
+          }
+        ]
+      }
+    // Score is in neither sheet
+    } else {
+      throw new Error(`Score with ID ${id} could not be found`)
     }
-    const response = await this.#sheetsClient.spreadsheets.batchUpdate({
+    response = await this.#sheetsClient.spreadsheets.batchUpdate({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
       resource: batchUpdateRequest
@@ -206,6 +236,41 @@ module.exports = class SheetsWrapper {
     })
     return response.data
   }
+
+  async fetchSubmittedScores () {
+    console.info('SheetsWrapper::fetchSubmittedScores()')
+    const response = await this.#sheetsClient.spreadsheets.values.get({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
+      range: 'Submitted Scores!A:A',
+      majorDimension: 'COLUMNS'
+    })
+    return response.data.values[0].slice(1)
+  }
+
+  // Doesn't check if scores already in sheet
+  async submitScore (id) {
+    console.info(`SheetsWrapper::submitScore( ${id} )`)
+    if (isNaN(parseInt(id)) || parseInt(id) < 1) {
+      throw new Error('Score ID must be a positive number')
+    }
+
+    const response = await this.#sheetsClient.spreadsheets.values.append({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
+      range: 'Submitted Scores',
+      valueInputOption: 'USER_ENTERED',
+      insertDataOption: 'INSERT_ROWS',
+      resource: {
+        values: [[id]]
+      }
+    })
+    return response.data
+  }
+
+  /* --- --- --- --- --- ---
+     --- PRIVATE METHODS ---
+     --- --- --- --- --- --- */
 
   // Returns true if score is typed properly, false otherwise
   // Doesn't check things like if ID exists, if hyperlink is proper, 0<acc<100, etc.

@@ -146,4 +146,21 @@ module.exports = class OsuWrapper {
     const data = await response.json()
     return data
   }
+
+  // Doesn't check if score IDs exist
+  async fetchScores (scoreIds) {
+    console.info(`OsuWrapper::fetchScores( ${scoreIds} )`)
+    if (!Array.isArray(scoreIds)) {
+      throw new Error('scoreIds must be an array')
+    }
+
+    const ret = []
+    for (const id of scoreIds) {
+      if (isNaN(parseInt(id)) || parseInt(id) < 1) {
+        throw new Error('Score IDs must be positive numbers')
+      }
+      ret.push(await this.fetchScore(id))
+    }
+    return ret
+  }
 }
