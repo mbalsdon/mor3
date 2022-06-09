@@ -142,26 +142,77 @@ module.exports = class SheetsWrapper {
       throw new Error('Score ID must be a positive number')
     }
 
-    const scores = await this.fetchModScores(mods, 'FORMATTED_VALUE')
-    const scoreIndex = scores.map((s) => s[0]).indexOf(id)
-    if (scoreIndex === -1) {
-      throw new Error(`Score with ID ${id} could not be found`)
-    }
-    const batchUpdateRequest = {
-      requests: [
-        {
-          deleteDimension: {
-            range: {
-              sheetId: Mods.toSheetId(mods),
-              dimension: 'ROWS',
-              startIndex: scoreIndex + 1,
-              endIndex: scoreIndex + 2
+    const sScores = await this.fetchSubmittedScores()
+    const sScoreIndex = sScores.indexOf(id)
+    const mScores = await this.fetchModScores(mods, 'FORMATTED_VALUE')
+    const mScoreIndex = mScores.map((s) => s[0]).indexOf(id)
+
+    let batchUpdateRequest = {}
+    let response = {}
+
+    // Score is in both sheets
+    if (mScoreIndex !== -1 && sScoreIndex !== -1) {
+      batchUpdateRequest = {
+        requests: [
+          {
+            deleteDimension: {
+              range: {
+                sheetId: Mods.toSheetId(mods),
+                dimension: 'ROWS',
+                startIndex: mScoreIndex + 1,
+                endIndex: mScoreIndex + 2
+              }
+            }
+          },
+          {
+            deleteDimension: {
+              range: {
+                sheetId: process.env.SUBMITTED_SCORES,
+                dimension: 'ROWS',
+                startIndex: sScoreIndex + 1,
+                endIndex: sScoreIndex + 2
+              }
             }
           }
-        }
-      ]
+        ]
+      }
+    // Score is in mod scores sheet
+    } else if (mScoreIndex !== -1) {
+      batchUpdateRequest = {
+        requests: [
+          {
+            deleteDimension: {
+              range: {
+                sheetId: Mods.toSheetId(mods),
+                dimension: 'ROWS',
+                startIndex: mScoreIndex + 1,
+                endIndex: mScoreIndex + 2
+              }
+            }
+          }
+        ]
+      }
+    // Score is in submitted scores sheet
+    } else if (sScoreIndex !== -1) {
+      batchUpdateRequest = {
+        requests: [
+          {
+            deleteDimension: {
+              range: {
+                sheetId: process.env.SUBMITTED_SCORES,
+                dimension: 'ROWS',
+                startIndex: sScoreIndex + 1,
+                endIndex: sScoreIndex + 2
+              }
+            }
+          }
+        ]
+      }
+    // Score is in neither sheet
+    } else {
+      throw new Error(`Score with ID ${id} could not be found`)
     }
-    const response = await this.#sheetsClient.spreadsheets.batchUpdate({
+    response = await this.#sheetsClient.spreadsheets.batchUpdate({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
       resource: batchUpdateRequest
