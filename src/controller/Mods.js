@@ -1,5 +1,5 @@
 /* TODO: If other people are to use this code, spreadsheet IDs must be custom populated;
-  Maybe write a script to automatically enter them down the line
+  Maybe write a script to automatically create sheets, get their IDs, populate .env, etc.
 */
 
 require('dotenv').config()
@@ -8,6 +8,23 @@ require('dotenv').config()
 // Usage: Object.keys(Mods).includes(str)
 
 module.exports = class Mods {
+  // Takes mods (array of str) from Score obj, returns "normalized form" (e.g. HDNC => HDDT; NF => NM)
+  static parseModKey (mods) {
+    // NC => DT
+    if (mods.includes('NC')) mods.splice(mods.indexOf('NC'), 1, 'DT')
+    // NF / SO / SD / PF => remove it
+    if (mods.includes('NF')) mods.splice(mods.indexOf('NF'), 1)
+    if (mods.includes('SO')) mods.splice(mods.indexOf('SO'), 1)
+    if (mods.includes('SD')) mods.splice(mods.indexOf('SD'), 1)
+    if (mods.includes('PF')) mods.splice(mods.indexOf('PF'), 1)
+    // Empty => NM
+    if (mods.length === 0) {
+      return 'NM'
+    } else {
+      return mods.join().replaceAll(',', '')
+    }
+  }
+
   // Takes mod combination string, returns corresponding sheet ID. If input is invalid, returns -1.
   static toSheetId (mods) {
     if (mods === 'NM') return process.env.NM

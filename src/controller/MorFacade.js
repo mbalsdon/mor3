@@ -1,5 +1,6 @@
 const OsuWrapper = require('./OsuWrapper')
 const SheetsWrapper = require('./SheetsWrapper')
+const Mods = require('./Mods')
 
 module.exports = class MorFacade {
   #osu
@@ -51,7 +52,7 @@ module.exports = class MorFacade {
 
   async getModScores (mods) {
     console.info(`MorFacade::getModScores( ${mods} )`)
-    const modScores = await this.#sheets.fetchModScores(mods)
+    const modScores = await this.#sheets.fetchModScores(mods, 'FORMATTED_VALUE')
     return modScores
   }
 
@@ -67,19 +68,19 @@ module.exports = class MorFacade {
     return score
   }
 
-  async putScore (mods, id) {
-    console.info(`MorFacade::putScore( ${mods}, ${id} )`)
-    const modScores = await this.getModScores(mods)
-    // Check if score already in sheet
-    const scoreIndex = modScores.map((s) => { return s[0] }).indexOf(id)
-    if (scoreIndex !== -1) {
-      throw new Error(`Score with ID ${id} has already been added`)
-    }
-    const score = await this.#osu.fetchScore(id)
-    const ps = this.#parseScore(score)
-    const response = this.#sheets.insertScores(mods, [ps.slice(1, ps.length)])
-    return response
-  }
+  // async putScore (mods, id) {
+  //   console.info(`MorFacade::putScore( ${mods}, ${id} )`)
+  //   const modScores = await this.getModScores(mods)
+  //   // Check if score already in sheet
+  //   const scoreIndex = modScores.map((s) => { return s[0] }).indexOf(id)
+  //   if (scoreIndex !== -1) {
+  //     throw new Error(`Score with ID ${id} has already been added`)
+  //   }
+  //   const score = await this.#osu.fetchScore(id)
+  //   const ps = this.#parseScore(score)
+  //   const response = this.#sheets.insertScores(mods, [ps.slice(1, ps.length)])
+  //   return response
+  // }
 
   async deleteScore (mods, id) {
     console.info(`MorFacade::deleteScore( ${mods}, ${id} )`)
@@ -114,12 +115,22 @@ module.exports = class MorFacade {
     // Sort each dict array by pp
     for (const k of Object.keys(dict)) {
       dict[k].sort((a, b) => {
-        return parseInt(a[4]) - parseInt(b[4])
+        return parseInt(b[5]) - parseInt(a[5])
       })
     }
-    // TODO: finish scores endpoints before this func
-    // TODO: put scores in sheet (Capture.PNG)
-    console.log(dict.HDFL)
+    // Grab sheet scores, insert new scores into it, then put them back in the sheet
+    for (const k of Object.keys(dict)) {
+      const sheetScores = await this.#sheets.fetchModScores(k, 'FORMULA')
+      for (const dictScore of dict[k]) {
+        // If it wasn't in the sheet scores, insert it
+        if (!(sheetScores.filter((s) => s[0] === dictScore[0]).length > 0)) {
+          const ssi = this.#sortedScoreIndex(sheetScores, dictScore)
+          sheetScores.splice(ssi, 0, dictScore)
+        }
+      }
+      await this.#sheets.replaceScores(k, sheetScores)
+    }
+    return 'good'
   }
 
   // Takes arr and key func; removes duplicates from arr based on key
@@ -134,8 +145,8 @@ module.exports = class MorFacade {
   // Takes a Score object (https://osu.ppy.sh/docs/index.html#score)
   #parseScore (s) {
     return [
-      this.#parseModKey([...s.mods]), // key for dict
-      s.id,
+      Mods.parseModKey([...s.mods]), // key for dict
+      `=HYPERLINK("https://osu.ppy.sh/scores/osu/${s.id}", "${s.id}")`,
       `=HYPERLINK("https://osu.ppy.sh/users/${s.user.id}", "${s.user.username}")`,
       `=HYPERLINK("${s.beatmap.url}", "${s.beatmapset.artist} - ${s.beatmapset.title} [${s.beatmap.version}]")`,
       (s.mods.length === 0) ? 'NM' : s.mods.join().replaceAll(',', ''), // turn the mods into a single string
@@ -145,20 +156,18 @@ module.exports = class MorFacade {
     ]
   }
 
-  // Takes mods (array of str) from Score obj, returns "normalized form" (e.g. HDNC => HDDT; NF => NM)
-  #parseModKey (mods) {
-    // NC => DT
-    if (mods.includes('NC')) mods.splice(mods.indexOf('NC'), 1, 'DT')
-    // NF / SO / SD / PF => remove it
-    if (mods.includes('NF')) mods.splice(mods.indexOf('NF'), 1)
-    if (mods.includes('SO')) mods.splice(mods.indexOf('SO'), 1)
-    if (mods.includes('SD')) mods.splice(mods.indexOf('SD'), 1)
-    if (mods.includes('PF')) mods.splice(mods.indexOf('PF'), 1)
-    // Empty => NM
-    if (mods.length === 0) {
-      return 'NM'
-    } else {
-      return mods.join().replaceAll(',', '')
+  #sortedScoreIndex (arr, val) {
+    let low = 0
+    let high = arr.length
+
+    while (low < high) {
+      let mid = (low + high) >>> 1
+      if (arr[mid][5] > val[5]) { // <
+        low = mid + 1
+      } else {
+        high = mid
+      }
     }
+    return low
   }
 }

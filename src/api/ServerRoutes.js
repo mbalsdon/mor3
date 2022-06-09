@@ -16,7 +16,7 @@ module.exports = class ServerRoutes {
 
     this.getModScores = this.getModScores.bind(this)
     this.getScore = this.getScore.bind(this)
-    this.putScore = this.putScore.bind(this)
+    // this.putScore = this.putScore.bind(this)
     this.deleteScore = this.deleteScore.bind(this)
   }
 

@@ -5,7 +5,7 @@ MorFacade.build()
   .then((facade) => {
     facade.scrapeUserTopPlays()
       .then((response) => {
-        console.log()
+        console.log(response)
       })
   })
 

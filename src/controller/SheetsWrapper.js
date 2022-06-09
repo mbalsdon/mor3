@@ -4,8 +4,7 @@ const Mods = require('./Mods')
 require('dotenv').config()
 
 module.exports = class SheetsWrapper {
-  static #SPREADSHEET_ID = '1hduRLLIFjVwLGjXyt7ph3301xfXS6qjSnYCm18YP4iA'
-  static #USERS_SHEET_ID = 253307812
+  static #SPREADSHEET_ID = process.env.SPREADSHEET_ID
   static #AUTH = new google.auth.GoogleAuth({
     keyFile: process.env.GOOGLE_API_KEYFILE,
     scopes: 'https://www.googleapis.com/auth/spreadsheets'
@@ -83,7 +82,7 @@ module.exports = class SheetsWrapper {
         {
           deleteDimension: {
             range: {
-              sheetId: SheetsWrapper.#USERS_SHEET_ID,
+              sheetId: process.env.USERS,
               dimension: 'ROWS',
               startIndex: idIndex + 1,
               endIndex: idIndex + 2
@@ -100,17 +99,20 @@ module.exports = class SheetsWrapper {
     return response.data
   }
 
-  async fetchModScores (mods) {
-    console.info(`SheetsWrapper::fetchModScores( ${mods} )`)
+  async fetchModScores (mods, valueRenderOption) {
+    console.info(`SheetsWrapper::fetchModScores( ${mods}, ${valueRenderOption} )`)
     if (Mods.toSheetId(mods) === -1) {
       throw new Error(`${mods} is not a valid mod combination`)
+    } else if (valueRenderOption !== 'FORMATTED_VALUE' && valueRenderOption !== 'UNFORMATTED_VALUE' && valueRenderOption !== 'FORMULA') {
+      throw new Error('valueRenderOption must be one of FORMATTED_VALUE, UNFORMATTED_VALUE, or FORMULA')
     }
 
     const response = await this.#sheetsClient.spreadsheets.values.get({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
       range: `${mods}!A:G`,
-      majorDimension: 'ROWS'
+      majorDimension: 'ROWS',
+      valueRenderOption: valueRenderOption
     })
     return response.data.values.slice(1)
   }
@@ -127,31 +129,31 @@ module.exports = class SheetsWrapper {
       spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
       range: `${mods}!A${rowNum + 2}:G${rowNum + 2}`,
       majorDimension: 'ROWS',
-      valueRenderOption: 'FORMULA'
+      valueRenderOption: 'FORMATTED_VALUE'
     })
     return response.data.values[0]
   }
 
-  // Doesn't check if scores are already in the sheet
-  async insertScores (mods, scores) {
-    console.info(`SheetsWrapper::insertScores( ${mods}, array of ${scores.length} scores )`)
-    if (Mods.toSheetId(mods) === -1) throw new Error(`${mods} is not a valid mod combination`)
-    for (const score of scores) {
-      if (!this.#isScore(score)) throw new Error(`Invalid score: [${score}]`)
-    }
+  // // Doesn't check if scores already in sheet
+  // async insertScores (mods, scores) {
+  //   console.info(`SheetsWrapper::insertScores( ${mods}, array of ${scores.length} scores )`)
+  //   if (Mods.toSheetId(mods) === -1) throw new Error(`${mods} is not a valid mod combination`)
+  //   for (const score of scores) {
+  //     if (!this.#isScore(score)) throw new Error(`Invalid score: [${score}]`)
+  //   }
 
-    const response = await this.#sheetsClient.spreadsheets.values.append({
-      auth: SheetsWrapper.#AUTH,
-      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
-      range: `${mods}`,
-      valueInputOption: 'USER_ENTERED',
-      insertDataOption: 'INSERT_ROWS',
-      resource: {
-        values: scores
-      }
-    })
-    return response.data
-  }
+  //   const response = await this.#sheetsClient.spreadsheets.values.append({
+  //     auth: SheetsWrapper.#AUTH,
+  //     spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
+  //     range: `${mods}`,
+  //     valueInputOption: 'USER_ENTERED',
+  //     insertDataOption: 'INSERT_ROWS',
+  //     resource: {
+  //       values: scores
+  //     }
+  //   })
+  //   return response.data
+  // }
 
   async removeScore (mods, id) {
     console.info(`SheetsWrapper::removeScore( ${mods}, ${id} )`)
@@ -161,7 +163,7 @@ module.exports = class SheetsWrapper {
       throw new Error('Score ID must be a positive number')
     }
 
-    const scores = await this.fetchModScores(mods)
+    const scores = await this.fetchModScores(mods, 'FORMATTED_VALUE')
     const scoreIndex = scores.map((s) => s[0]).indexOf(id)
     if (scoreIndex === -1) {
       throw new Error(`Score with ID ${id} could not be found`)
@@ -188,12 +190,29 @@ module.exports = class SheetsWrapper {
     return response.data
   }
 
+  // Doesn't check if scores already in sheet, or if scores are valid
+  async replaceScores (mods, scores) {
+    console.info(`SheetsWrapper::replaceScores( ${mods}, array of ${scores.length} scores )`)
+    if (Mods.toSheetId(mods) === -1) throw new Error(`${mods} is not a valid mod combination`)
+
+    const response = await this.#sheetsClient.spreadsheets.values.update({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
+      range: `${mods}!A2:G${scores.length + 1}`,
+      valueInputOption: 'USER_ENTERED',
+      resource: {
+        values: scores
+      }
+    })
+    return response.data
+  }
+
   // Returns true if score is typed properly, false otherwise
   // Doesn't check things like if ID exists, if hyperlink is proper, 0<acc<100, etc.
   #isScore (score) {
     if (!Array.isArray(score)) return false
     if (score.length !== 7) return false
-    if (typeof score[0] !== 'number') return false
+    if (typeof score[0] !== 'string' && !(score[1] instanceof String)) return false
     if (typeof score[1] !== 'string' && !(score[1] instanceof String)) return false
     if (typeof score[2] !== 'string' && !(score[2] instanceof String)) return false
     if (Mods.toSheetId(score[3]) === -1) return false
