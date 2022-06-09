@@ -77,33 +77,32 @@ module.exports = class SheetsWrapper {
     const idIndex = userIds.indexOf(userId)
     if (idIndex === -1) {
       throw new Error(`User with ID ${userId} could not be found`)
-    } else {
-      const batchUpdateRequest = {
-        requests: [
-          {
-            deleteDimension: {
-              range: {
-                sheetId: SheetsWrapper.#USERS_SHEET_ID,
-                dimension: 'ROWS',
-                startIndex: idIndex + 1,
-                endIndex: idIndex + 2
-              }
-            }
-          }
-        ]
-      }
-      const response = await this.#sheetsClient.spreadsheets.batchUpdate({
-        auth: SheetsWrapper.#AUTH,
-        spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
-        resource: batchUpdateRequest
-      })
-      return response.data
     }
+    const batchUpdateRequest = {
+       requests: [
+         {
+           deleteDimension: {
+             range: {
+               sheetId: SheetsWrapper.#USERS_SHEET_ID,
+               dimension: 'ROWS',
+               startIndex: idIndex + 1,
+               endIndex: idIndex + 2
+             }
+           }
+        }
+      ]
+    }
+    const response = await this.#sheetsClient.spreadsheets.batchUpdate({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
+      resource: batchUpdateRequest
+    })
+    return response.data
   }
 
   async fetchModScores (mods) {
     console.info(`SheetsWrapper::fetchModScores( ${mods} )`)
-    if (!Object.keys(Mods).includes(mods)) {
+    if (Mods.toSheetId(mods) === -1) {
       throw new Error(`${mods} is not a valid mod combination`)
     }
 
@@ -118,7 +117,7 @@ module.exports = class SheetsWrapper {
 
   async fetchScore (mods, rowNum) {
     console.info(`SheetsWrapper::fetchScore( ${mods}, ${rowNum} )`)
-    if (!Object.keys(Mods).includes(mods)) {
+    if (Mods.toSheetId(mods) === -1) {
       throw new Error(`${mods} is not a valid mod combination`)
     } else if (isNaN(parseInt(rowNum)) || parseInt(rowNum) < 0) {
       throw new Error('Row number cannot be negative')
@@ -135,7 +134,7 @@ module.exports = class SheetsWrapper {
 
   async insertScore (mods, score) {
     console.info(`SheetsWrapper::putScore( ${mods}, ${score} )`)
-    if (!Object.keys(Mods).includes(mods)) {
+    if (Mods.toSheetId(mods) === -1) {
       throw new Error(`${mods} is not a valid mod combination`)
     } // TODO: else if {check the score structure}
 
@@ -148,6 +147,41 @@ module.exports = class SheetsWrapper {
       resource: {
         values: [score]
       }
+    })
+    return response.data
+  }
+
+  async removeScore (mods, id) {
+    console.info(`SheetsWrapper::removeScore( ${mods}, ${id} )`)
+    if (Mods.toSheetId(mods) === -1) {
+      throw new Error(`${mods} is not a valid mod combination`)
+    } else if (isNaN(parseInt(id)) || parseInt(id) < 1) {
+      throw new Error('Score ID must be a positive number')
+    }
+
+    const scores = await this.fetchModScores(mods)
+    const scoreIndex = scores.map((s) => s[0]).indexOf(id)
+    if (scoreIndex === -1) {
+      throw new Error(`Score with ID ${id} could not be found`)
+    }
+    const batchUpdateRequest = {
+      requests: [
+        {
+          deleteDimension: {
+            range: {
+              sheetId: Mods.toSheetId(mods),
+              dimension: 'ROWS',
+              startIndex: scoreIndex + 1,
+              endIndex: scoreIndex + 2
+            }
+          }
+        }
+      ]
+    }
+    const response = await this.#sheetsClient.spreadsheets.batchUpdate({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
+      resource: batchUpdateRequest
     })
     return response.data
   }

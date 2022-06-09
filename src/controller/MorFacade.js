@@ -36,13 +36,11 @@ module.exports = class MorFacade {
     const userIds = await this.#sheets.fetchUserIds()
     // Check if ID already in sheet
     if (userIds.includes(userId)) {
-      throw new Error(`User with hID ${userId} has already been added`)
-    // Else put ID & username in sheet
-    } else {
-      const username = await this.#osu.fetchUsername(userId)
-      const response = await this.#sheets.insertUser(userId, username)
-      return response
+      throw new Error(`User with ID ${userId} has already been added`)
     }
+    const username = await this.#osu.fetchUsername(userId)
+    const response = await this.#sheets.insertUser(userId, username)
+    return response
   }
 
   async deleteUser (userId) {
@@ -82,7 +80,12 @@ module.exports = class MorFacade {
     const response = this.#sheets.insertScore(mods, ps.slice(1, ps.length))
     return response
   }
-  // DEL /scores/:mods/:id
+
+  async deleteScore (mods, id) {
+    console.info(`MorFacade::deleteScore( ${mods}, ${id} )`)
+    const response = await this.#sheets.removeScore(mods, id)
+    return response
+  }
 
   async scrapeUserTopPlays () {
     console.info('MorFacade::scrapeUserTopPlays()')

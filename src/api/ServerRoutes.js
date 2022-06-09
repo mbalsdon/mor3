@@ -17,7 +17,7 @@ module.exports = class ServerRoutes {
     this.getModScores = this.getModScores.bind(this)
     this.getScore = this.getScore.bind(this)
     this.putScore = this.putScore.bind(this)
-    // DEL /scores/:mods/:id
+    this.deleteScore = this.deleteScore.bind(this)
   }
 
   // --- ECHO ---
@@ -94,5 +94,11 @@ module.exports = class ServerRoutes {
       .then((response) => res.status(200).json({ result: response }))
       .catch((err) => res.status(400).json({ error: err.message }))
   }
-  // DEL /scores/:mods/:id
+  
+  deleteScore (req, res) {
+    console.info(`Server::deleteScore() - params: ${JSON.stringify(req.params)}`)
+    this.#facade.deleteScore(req.params.mods, req.params.id)
+      .then((response) => res.status(200).json({ result: response }))
+      .catch((err) => res.status(400).json({ error: err.message }))
+  }
 }
