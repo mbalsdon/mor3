@@ -79,16 +79,16 @@ module.exports = class SheetsWrapper {
       throw new Error(`User with ID ${userId} could not be found`)
     }
     const batchUpdateRequest = {
-       requests: [
-         {
-           deleteDimension: {
-             range: {
-               sheetId: SheetsWrapper.#USERS_SHEET_ID,
-               dimension: 'ROWS',
-               startIndex: idIndex + 1,
-               endIndex: idIndex + 2
-             }
-           }
+      requests: [
+        {
+          deleteDimension: {
+            range: {
+              sheetId: SheetsWrapper.#USERS_SHEET_ID,
+              dimension: 'ROWS',
+              startIndex: idIndex + 1,
+              endIndex: idIndex + 2
+            }
+          }
         }
       ]
     }
@@ -132,11 +132,13 @@ module.exports = class SheetsWrapper {
     return response.data.values[0]
   }
 
-  async insertScore (mods, score) {
-    console.info(`SheetsWrapper::putScore( ${mods}, ${score} )`)
-    if (Mods.toSheetId(mods) === -1) {
-      throw new Error(`${mods} is not a valid mod combination`)
-    } // TODO: else if {check the score structure}
+  // Doesn't check if scores are already in the sheet
+  async insertScores (mods, scores) {
+    console.info(`SheetsWrapper::insertScores( ${mods}, array of ${scores.length} scores )`)
+    if (Mods.toSheetId(mods) === -1) throw new Error(`${mods} is not a valid mod combination`)
+    for (const score of scores) {
+      if (!this.#isScore(score)) throw new Error(`Invalid score: [${score}]`)
+    }
 
     const response = await this.#sheetsClient.spreadsheets.values.append({
       auth: SheetsWrapper.#AUTH,
@@ -145,7 +147,7 @@ module.exports = class SheetsWrapper {
       valueInputOption: 'USER_ENTERED',
       insertDataOption: 'INSERT_ROWS',
       resource: {
-        values: [score]
+        values: scores
       }
     })
     return response.data
@@ -184,5 +186,21 @@ module.exports = class SheetsWrapper {
       resource: batchUpdateRequest
     })
     return response.data
+  }
+
+  // Returns true if score is typed properly, false otherwise
+  // Doesn't check things like if ID exists, if hyperlink is proper, 0<acc<100, etc.
+  #isScore (score) {
+    if (!Array.isArray(score)) return false
+    if (score.length !== 7) return false
+    if (typeof score[0] !== 'number') return false
+    if (typeof score[1] !== 'string' && !(score[1] instanceof String)) return false
+    if (typeof score[2] !== 'string' && !(score[2] instanceof String)) return false
+    if (Mods.toSheetId(score[3]) === -1) return false
+    if (typeof score[4] !== 'number') return false
+    if (typeof score[5] !== 'number') return false
+    if (typeof score[6] !== 'string' && !(score[6] instanceof String)) return false
+
+    return true
   }
 }

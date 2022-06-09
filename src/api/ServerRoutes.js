@@ -94,7 +94,7 @@ module.exports = class ServerRoutes {
       .then((response) => res.status(200).json({ result: response }))
       .catch((err) => res.status(400).json({ error: err.message }))
   }
-  
+
   deleteScore (req, res) {
     console.info(`Server::deleteScore() - params: ${JSON.stringify(req.params)}`)
     this.#facade.deleteScore(req.params.mods, req.params.id)

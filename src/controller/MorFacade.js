@@ -77,7 +77,7 @@ module.exports = class MorFacade {
     }
     const score = await this.#osu.fetchScore(id)
     const ps = this.#parseScore(score)
-    const response = this.#sheets.insertScore(mods, ps.slice(1, ps.length))
+    const response = this.#sheets.insertScores(mods, [ps.slice(1, ps.length)])
     return response
   }
 
