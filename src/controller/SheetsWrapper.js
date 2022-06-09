@@ -112,7 +112,7 @@ module.exports = class SheetsWrapper {
       spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
       range: `${mods}!A:G`,
       majorDimension: 'ROWS',
-      valueRenderOption: valueRenderOption
+      valueRenderOption
     })
     return response.data.values.slice(1)
   }
@@ -133,27 +133,6 @@ module.exports = class SheetsWrapper {
     })
     return response.data.values[0]
   }
-
-  // // Doesn't check if scores already in sheet
-  // async insertScores (mods, scores) {
-  //   console.info(`SheetsWrapper::insertScores( ${mods}, array of ${scores.length} scores )`)
-  //   if (Mods.toSheetId(mods) === -1) throw new Error(`${mods} is not a valid mod combination`)
-  //   for (const score of scores) {
-  //     if (!this.#isScore(score)) throw new Error(`Invalid score: [${score}]`)
-  //   }
-
-  //   const response = await this.#sheetsClient.spreadsheets.values.append({
-  //     auth: SheetsWrapper.#AUTH,
-  //     spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
-  //     range: `${mods}`,
-  //     valueInputOption: 'USER_ENTERED',
-  //     insertDataOption: 'INSERT_ROWS',
-  //     resource: {
-  //       values: scores
-  //     }
-  //   })
-  //   return response.data
-  // }
 
   async removeScore (mods, id) {
     console.info(`SheetsWrapper::removeScore( ${mods}, ${id} )`)
@@ -206,6 +185,41 @@ module.exports = class SheetsWrapper {
     })
     return response.data
   }
+
+  async fetchSubmittedScores () {
+    console.info('SheetsWrapper::fetchSubmittedScores()')
+    const response = await this.#sheetsClient.spreadsheets.values.get({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
+      range: 'Submitted Scores!A:A',
+      majorDimension: 'COLUMNS'
+    })
+    return response.data.values[0].slice(1)
+  }
+
+  // Doesn't check if scores already in sheet
+  async submitScore (id) {
+    console.info(`SheetsWrapper::submitScore( ${id} )`)
+    if (isNaN(parseInt(id)) || parseInt(id) < 1) {
+      throw new Error('Score ID must be a positive number')
+    }
+
+    const response = await this.#sheetsClient.spreadsheets.values.append({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
+      range: 'Submitted Scores',
+      valueInputOption: 'USER_ENTERED',
+      insertDataOption: 'INSERT_ROWS',
+      resource: {
+        values: [[id]]
+      }
+    })
+    return response.data
+  }
+
+  /* --- --- --- --- --- ---
+     --- PRIVATE METHODS ---
+     --- --- --- --- --- --- */
 
   // Returns true if score is typed properly, false otherwise
   // Doesn't check things like if ID exists, if hyperlink is proper, 0<acc<100, etc.

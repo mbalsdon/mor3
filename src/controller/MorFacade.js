@@ -68,70 +68,76 @@ module.exports = class MorFacade {
     return score
   }
 
-  // async putScore (mods, id) {
-  //   console.info(`MorFacade::putScore( ${mods}, ${id} )`)
-  //   const modScores = await this.getModScores(mods)
-  //   // Check if score already in sheet
-  //   const scoreIndex = modScores.map((s) => { return s[0] }).indexOf(id)
-  //   if (scoreIndex !== -1) {
-  //     throw new Error(`Score with ID ${id} has already been added`)
-  //   }
-  //   const score = await this.#osu.fetchScore(id)
-  //   const ps = this.#parseScore(score)
-  //   const response = this.#sheets.insertScores(mods, [ps.slice(1, ps.length)])
-  //   return response
-  // }
-
   async deleteScore (mods, id) {
     console.info(`MorFacade::deleteScore( ${mods}, ${id} )`)
     const response = await this.#sheets.removeScore(mods, id)
     return response
   }
 
+  async getSubmittedScores () {
+    console.info('MorFacade::getSubmittedScores()')
+    const response = await this.#sheets.fetchSubmittedScores()
+    return response
+  }
+
+  async putSubmittedScore (id) {
+    console.info(`MorFacade::putSubmittedScore( ${id} )`)
+    // Check if score already in sheet
+    const submittedScores = await this.getSubmittedScores()
+    console.log(submittedScores)
+    const index = submittedScores.indexOf(id)
+    if (index !== -1) {
+      throw new Error(`Score with ID ${id} has already been submitted`)
+    }
+    const response = await this.#sheets.submitScore(id)
+    return response
+  }
+
   async scrapeUserTopPlays () {
+    console.time('MorFacade::scrapeUserTopPlays() time elapsed')
     console.info('MorFacade::scrapeUserTopPlays()')
-    const userIds = await this.#sheets.fetchUserIds()
     // Key = Mod string; Value = Array sorted by pp
     const dict = {}
+    let numInserted = 0
     // Iterate over each user's top 100, putting each score into the dict
+    const userIds = await this.#sheets.fetchUserIds()
     for (const id of userIds) {
-      // Join tops and firsts, remove duplicates
+      // Put user's top plays and first place plays in the dictionary
       const tops = await this.#osu.fetchUserTopPlays(id)
       const firsts = await this.#osu.fetchUserFirstPlacePlays(id)
-      const scores = this.#uniqueBy(tops.concat(firsts), (i) => i.id)
-      for (const score of scores) {
-        const ps = this.#parseScore(score)
-        const key = ps[0]
-        const formattedScore = ps.slice(1, ps.length)
-        // The key exists
-        if (Object.keys(dict).includes(key)) {
-          dict[key].push(formattedScore)
-        // The key doesn't exist
-        } else {
-          dict[key] = [formattedScore]
-        }
-      }
+      const userScores = this.#uniqueBy(tops.concat(firsts), (i) => i.id)
+      this.#populateDict(dict, userScores)
     }
-    // Sort each dict array by pp
+    // Put submitted scores in the dictionary (the submitted scores sheet works as a buffer to reduce API calls)
+    const submittedScoreIds = await this.#sheets.fetchSubmittedScores()
+    const submitted = await this.#osu.fetchScores(submittedScoreIds)
+    this.#populateDict(dict, submitted)
+    // Sort each array in the dictionary by pp
     for (const k of Object.keys(dict)) {
       dict[k].sort((a, b) => {
         return parseInt(b[5]) - parseInt(a[5])
       })
     }
-    // Grab sheet scores, insert new scores into it, then put them back in the sheet
+    // Grab sheet scores, insert any new scores into it, then put them back in the sheet
     for (const k of Object.keys(dict)) {
       const sheetScores = await this.#sheets.fetchModScores(k, 'FORMULA')
       for (const dictScore of dict[k]) {
-        // If it wasn't in the sheet scores, insert it
+        // Checks if it was already in the sheet scores, inserts if not
         if (!(sheetScores.filter((s) => s[0] === dictScore[0]).length > 0)) {
           const ssi = this.#sortedScoreIndex(sheetScores, dictScore)
           sheetScores.splice(ssi, 0, dictScore)
+          numInserted = numInserted + 1
         }
       }
       await this.#sheets.replaceScores(k, sheetScores)
     }
-    return 'good'
+    console.timeEnd('MorFacade::scrapeUserTopPlays() time elapsed')
+    return `MorFacade::scrapeUserTopPlays() completed at ${new Date(Date.now()).toISOString()}, inserted ${numInserted} new plays`
   }
+
+  /* --- --- --- --- --- ---
+     --- PRIVATE METHODS ---
+     --- --- --- --- --- --- */
 
   // Takes arr and key func; removes duplicates from arr based on key
   #uniqueBy (arr, key) {
@@ -140,6 +146,22 @@ module.exports = class MorFacade {
       const k = key(item)
       return Object.prototype.hasOwnProperty.call(seen, k) ? false : (seen[k] = true)
     })
+  }
+
+  // Puts scores into dict based on mod
+  #populateDict (dict, scores) {
+    for (const score of scores) {
+      const ps = this.#parseScore(score)
+      const key = ps[0]
+      const formattedScore = ps.slice(1, ps.length)
+      // The key exists
+      if (Object.keys(dict).includes(key)) {
+        dict[key].push(formattedScore)
+      // The key doesn't exist
+      } else {
+        dict[key] = [formattedScore]
+      }
+    }
   }
 
   // Takes a Score object (https://osu.ppy.sh/docs/index.html#score)
@@ -161,7 +183,7 @@ module.exports = class MorFacade {
     let high = arr.length
 
     while (low < high) {
-      let mid = (low + high) >>> 1
+      const mid = (low + high) >>> 1
       if (arr[mid][5] > val[5]) { // <
         low = mid + 1
       } else {

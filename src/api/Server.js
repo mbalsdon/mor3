@@ -35,8 +35,10 @@ module.exports = class Server {
 
     this.express.get('/scores/:mods', this.routes.getModScores)
     this.express.get('/scores/:mods/:id', this.routes.getScore)
-    // this.express.put('/scores/:mods/:id', this.routes.putScore)
     this.express.delete('/scores/:mods/:id', this.routes.deleteScore)
+
+    this.express.get('/submitted', this.routes.getSubmittedScores)
+    this.express.put('/submitted/:id', this.routes.putSubmittedScore)
   }
 
   start () {
