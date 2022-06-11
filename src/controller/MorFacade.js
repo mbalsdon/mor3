@@ -101,16 +101,21 @@ module.exports = class MorFacade {
     let numInserted = 0
     // Iterate over each user's top 100, putting each score into the dict
     const userIds = await this.#sheets.fetchUserIds()
+    await this.#sleep(1000)
     for (const id of userIds) {
       // Put user's top plays and first place plays in the dictionary
       const tops = await this.#osu.fetchUserTopPlays(id)
+      await this.#sleep(1000)
       const firsts = await this.#osu.fetchUserFirstPlacePlays(id)
+      await this.#sleep(1000)
       const userScores = this.#uniqueBy(tops.concat(firsts), (i) => i.id)
       this.#populateDict(dict, userScores)
     }
     // Put submitted scores in the dictionary (the submitted scores sheet works as a buffer to reduce API calls)
     const submittedScoreIds = await this.#sheets.fetchSubmittedScores()
+    await this.#sleep(1000)
     const submitted = await this.#osu.fetchScores(submittedScoreIds)
+    await this.#sleep(1000)
     this.#populateDict(dict, submitted)
     // Sort each array in the dictionary by pp
     for (const k of Object.keys(dict)) {
@@ -121,6 +126,7 @@ module.exports = class MorFacade {
     // Grab sheet scores, insert any new scores into it, then put them back in the sheet
     for (const k of Object.keys(dict)) {
       const sheetScores = await this.#sheets.fetchModScores(k, 'FORMULA')
+      await this.#sleep(1000)
       for (const dictScore of dict[k]) {
         // Checks if it was already in the sheet scores, inserts if not
         if (!(sheetScores.filter((s) => s[0] === dictScore[0]).length > 0)) {
@@ -130,6 +136,7 @@ module.exports = class MorFacade {
         }
       }
       await this.#sheets.replaceScores(k, sheetScores)
+      await this.#sleep(1000)
     }
     console.timeEnd('MorFacade::scrapeUserTopPlays() time elapsed')
     return `MorFacade::scrapeUserTopPlays() completed at ${new Date(Date.now()).toISOString()}, inserted ${numInserted} new plays`
@@ -138,6 +145,12 @@ module.exports = class MorFacade {
   /* --- --- --- --- --- ---
      --- PRIVATE METHODS ---
      --- --- --- --- --- --- */
+
+  #sleep (ms) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms)
+    })
+  }
 
   // Takes arr and key func; removes duplicates from arr based on key
   #uniqueBy (arr, key) {
