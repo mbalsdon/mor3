@@ -1,23 +1,27 @@
 const OsuWrapper = require('./OsuWrapper')
 const SheetsWrapper = require('./SheetsWrapper')
+const DriveWrapper = require('./DriveWrapper')
 const Mods = require('./Mods')
 
 module.exports = class MorFacade {
   #osu
   #sheets
+  #drive
 
-  constructor (osuWrapper, sheetsWrapper) {
+  constructor (osuWrapper, sheetsWrapper, driveWrapper) {
     if (typeof sheetsWrapper === 'undefined' || typeof osuWrapper === 'undefined') {
       throw new Error('Cannot be called directly')
     }
     this.#osu = osuWrapper
     this.#sheets = sheetsWrapper
+    this.#drive = driveWrapper
   }
 
   static async build () {
     const osuWrapper = await OsuWrapper.build()
     const sheetsWrapper = await SheetsWrapper.build()
-    return new MorFacade(osuWrapper, sheetsWrapper)
+    const driveWrapper = await DriveWrapper.build(0)
+    return new MorFacade(osuWrapper, sheetsWrapper, driveWrapper)
   }
 
   async getMetadata () {
@@ -138,8 +142,12 @@ module.exports = class MorFacade {
       await this.#sheets.replaceScores(k, sheetScores)
       await this.#sleep(1000)
     }
+    // Archive the spreadsheet
+    
+    const dateString = new Date(Date.now()).toISOString()
+    await this.#drive.copyFile(process.env.SPREADSHEET_ID, `mor3 ${dateString}`)
     console.timeEnd('MorFacade::scrapeUserTopPlays() time elapsed')
-    return `MorFacade::scrapeUserTopPlays() completed at ${new Date(Date.now()).toISOString()}, inserted ${numInserted} new plays`
+    return `MorFacade::scrapeUserTopPlays() completed at ${dateString}, inserted ${numInserted} new plays`
   }
 
   /* --- --- --- --- --- ---
