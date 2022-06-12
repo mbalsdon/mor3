@@ -4,7 +4,6 @@ const Mods = require('./Mods')
 require('dotenv').config()
 
 module.exports = class SheetsWrapper {
-  static #SPREADSHEET_ID = process.env.SPREADSHEET_ID
   static #AUTH = new google.auth.GoogleAuth({
     keyFile: process.env.GOOGLE_API_KEYFILE,
     scopes: 'https://www.googleapis.com/auth/spreadsheets'
@@ -29,7 +28,7 @@ module.exports = class SheetsWrapper {
     console.info('SheetsWrapper::fetchMetadata()')
     const response = await this.#sheetsClient.spreadsheets.get({
       auth: SheetsWrapper.#AUTH,
-      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID
+      spreadsheetId: process.env.SPREADSHEET_ID
     })
     return response.data
   }
@@ -38,7 +37,7 @@ module.exports = class SheetsWrapper {
     console.info('SheetsWrapper::fetchUserIds()')
     const response = await this.#sheetsClient.spreadsheets.values.get({
       auth: SheetsWrapper.#AUTH,
-      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
+      spreadsheetId: process.env.SPREADSHEET_ID,
       range: 'Users!A:A',
       majorDimension: 'COLUMNS'
     })
@@ -55,7 +54,7 @@ module.exports = class SheetsWrapper {
 
     const response = await this.#sheetsClient.spreadsheets.values.append({
       auth: SheetsWrapper.#AUTH,
-      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
+      spreadsheetId: process.env.SPREADSHEET_ID,
       range: 'Users',
       valueInputOption: 'USER_ENTERED',
       insertDataOption: 'INSERT_ROWS',
@@ -93,7 +92,7 @@ module.exports = class SheetsWrapper {
     }
     const response = await this.#sheetsClient.spreadsheets.batchUpdate({
       auth: SheetsWrapper.#AUTH,
-      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
+      spreadsheetId: process.env.SPREADSHEET_ID,
       resource: batchUpdateRequest
     })
     return response.data
@@ -109,7 +108,7 @@ module.exports = class SheetsWrapper {
 
     const response = await this.#sheetsClient.spreadsheets.values.get({
       auth: SheetsWrapper.#AUTH,
-      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
+      spreadsheetId: process.env.SPREADSHEET_ID,
       range: `${mods}!A:G`,
       majorDimension: 'ROWS',
       valueRenderOption
@@ -126,7 +125,7 @@ module.exports = class SheetsWrapper {
     }
     const response = await this.#sheetsClient.spreadsheets.values.get({
       auth: SheetsWrapper.#AUTH,
-      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
+      spreadsheetId: process.env.SPREADSHEET_ID,
       range: `${mods}!A${rowNum + 2}:G${rowNum + 2}`,
       majorDimension: 'ROWS',
       valueRenderOption: 'FORMATTED_VALUE'
@@ -214,7 +213,7 @@ module.exports = class SheetsWrapper {
     }
     response = await this.#sheetsClient.spreadsheets.batchUpdate({
       auth: SheetsWrapper.#AUTH,
-      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
+      spreadsheetId: process.env.SPREADSHEET_ID,
       resource: batchUpdateRequest
     })
     return response.data
@@ -227,7 +226,7 @@ module.exports = class SheetsWrapper {
 
     const response = await this.#sheetsClient.spreadsheets.values.update({
       auth: SheetsWrapper.#AUTH,
-      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
+      spreadsheetId: process.env.SPREADSHEET_ID,
       range: `${mods}!A2:G${scores.length + 1}`,
       valueInputOption: 'USER_ENTERED',
       resource: {
@@ -241,7 +240,7 @@ module.exports = class SheetsWrapper {
     console.info('SheetsWrapper::fetchSubmittedScores()')
     const response = await this.#sheetsClient.spreadsheets.values.get({
       auth: SheetsWrapper.#AUTH,
-      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
+      spreadsheetId: process.env.SPREADSHEET_ID,
       range: 'Submitted Scores!A:A',
       majorDimension: 'COLUMNS'
     })
@@ -257,7 +256,7 @@ module.exports = class SheetsWrapper {
 
     const response = await this.#sheetsClient.spreadsheets.values.append({
       auth: SheetsWrapper.#AUTH,
-      spreadsheetId: SheetsWrapper.#SPREADSHEET_ID,
+      spreadsheetId: process.env.SPREADSHEET_ID,
       range: 'Submitted Scores',
       valueInputOption: 'USER_ENTERED',
       insertDataOption: 'INSERT_ROWS',
