@@ -16,4 +16,8 @@ class App {
 
 console.info('App - starting')
 const app = new App()
-app.initServer(process.env.LOCAL_PORT)
+let port = process.env.PORT
+if (port == null || port == "") {
+  port = process.env.LOCAL_PORT
+}
+app.initServer(port)
