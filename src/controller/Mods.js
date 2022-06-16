@@ -4,11 +4,8 @@
 
 require('dotenv').config()
 
-// Enumerates all possible mod combinations and associated spreadsheet IDs
-// Usage: Object.keys(Mods).includes(str)
-
 module.exports = class Mods {
-  // Takes mods (array of str) from Score obj, returns "normalized form" (e.g. HDNC => HDDT; NF => NM)
+  // Takes mods (array of str), returns "normalized form" as str (e.g. [HD,NC] => 'HDDT'; [NF] => 'NM')
   static parseModKey (mods) {
     // NC => DT
     if (mods.includes('NC')) mods.splice(mods.indexOf('NC'), 1, 'DT')
