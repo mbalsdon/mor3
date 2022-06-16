@@ -17,6 +17,7 @@ export default class OsuWrapper {
   }
 
   static async build () {
+    console.info('OsuWrapper::build()')
     const headers = {
       Accept: 'application/json',
       'Content-Type': 'application/json'

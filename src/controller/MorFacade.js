@@ -18,6 +18,7 @@ export default class MorFacade {
   }
 
   static async build () {
+    console.info('MorFacade::build()')
     const osuWrapper = await OsuWrapper.build()
     const sheetsWrapper = await SheetsWrapper.build()
     const driveWrapper = await DriveWrapper.build()
