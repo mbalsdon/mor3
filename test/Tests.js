@@ -1,6 +1,6 @@
-const DriveWrapper = require('../src/controller/DriveWrapper')
-const MorFacade = require('../src/controller/MorFacade')
-const SheetsWrapper = require('../src/controller/SheetsWrapper')
+import DriveWrapper from '../src/controller/DriveWrapper.js'
+import MorFacade from '../src/controller/MorFacade.js'
+import SheetsWrapper from '../src/controller/SheetsWrapper.js'
 
 MorFacade.build()
   .then((facade) => {

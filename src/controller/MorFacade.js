@@ -1,9 +1,9 @@
-const OsuWrapper = require('./OsuWrapper')
-const SheetsWrapper = require('./SheetsWrapper')
-const DriveWrapper = require('./DriveWrapper')
-const Mods = require('./Mods')
+import OsuWrapper from './OsuWrapper.js'
+import SheetsWrapper from './SheetsWrapper.js'
+import DriveWrapper from './DriveWrapper.js'
+import Mods from './Mods.js'
 
-module.exports = class MorFacade {
+export default class MorFacade {
   #osu
   #sheets
   #drive
@@ -20,7 +20,7 @@ module.exports = class MorFacade {
   static async build () {
     const osuWrapper = await OsuWrapper.build()
     const sheetsWrapper = await SheetsWrapper.build()
-    const driveWrapper = await DriveWrapper.build(0)
+    const driveWrapper = await DriveWrapper.build()
     return new MorFacade(osuWrapper, sheetsWrapper, driveWrapper)
   }
 
@@ -88,7 +88,6 @@ module.exports = class MorFacade {
     console.info(`MorFacade::putSubmittedScore( ${id} )`)
     // Check if score already in sheet
     const submittedScores = await this.getSubmittedScores()
-    console.log(submittedScores)
     const index = submittedScores.indexOf(id)
     if (index !== -1) {
       throw new Error(`Score with ID ${id} has already been submitted`)

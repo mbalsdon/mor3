@@ -1,9 +1,9 @@
-const { google } = require('googleapis')
-const Mods = require('./Mods')
+import { google } from 'googleapis'
+import Mods from './Mods.js'
 
-require('dotenv').config()
+import 'dotenv/config'
 
-module.exports = class SheetsWrapper {
+export default class SheetsWrapper {
   static #AUTH = new google.auth.GoogleAuth({
     keyFile: process.env.GOOGLE_API_KEYFILE,
     scopes: 'https://www.googleapis.com/auth/spreadsheets'

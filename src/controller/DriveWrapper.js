@@ -1,8 +1,7 @@
-const { google } = require('googleapis')
+import { google } from 'googleapis'
+import 'dotenv/config'
 
-require('dotenv').config()
-
-module.exports = class DriveWrapper {
+export default class DriveWrapper {
   static #AUTH = new google.auth.GoogleAuth({
     keyFile: process.env.GOOGLE_API_KEYFILE,
     scopes: 'https://www.googleapis.com/auth/drive'

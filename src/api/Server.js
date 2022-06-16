@@ -1,9 +1,9 @@
-const express = require('express')
-const cors = require('cors')
-const ServerRoutes = require('./ServerRoutes')
-const scheduledFunctions = require('../controller/ScheduledJobs')
+import express from 'express'
+import cors from 'cors'
+import ServerRoutes from './ServerRoutes.js'
+import { initScheduledJobs } from '../controller/ScheduledJobs.js'
 
-module.exports = class Server {
+export default class Server {
   port
   express
   server
@@ -49,7 +49,7 @@ module.exports = class Server {
         console.error('Server::start() - server already listening')
         reject(new Error('Server is already listening'))
       } else {
-        scheduledFunctions.initScheduledJobs()
+        initScheduledJobs()
         this.server = this.express.listen(this.port, () => {
           console.info(`Server::start() - server listening on port ${this.port}`)
           resolve()

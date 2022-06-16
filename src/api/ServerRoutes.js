@@ -1,6 +1,6 @@
-const MorFacade = require('../controller/MorFacade')
+import MorFacade from '../controller/MorFacade.js'
 
-module.exports = class ServerRoutes {
+export default class ServerRoutes {
   #facade
 
   constructor () {
