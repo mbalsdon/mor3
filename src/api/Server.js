@@ -49,7 +49,7 @@ export default class Server {
         console.error('Server::start() - server already listening')
         reject(new Error('Server is already listening'))
       } else {
-        // initScheduledJobs()
+        initScheduledJobs()
         this.server = this.express.listen(this.port, () => {
           console.info(`Server::start() - server listening on port ${this.port}`)
           resolve()
