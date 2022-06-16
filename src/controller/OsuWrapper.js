@@ -1,8 +1,9 @@
 // TODO: how to register new OAuth apps short guide (in readme)
 
-require('dotenv').config()
+import fetch from 'node-fetch'
+import 'dotenv/config'
 
-module.exports = class OsuWrapper {
+export default class OsuWrapper {
   static #API_URL = 'https://osu.ppy.sh/api/v2'
   static #TOKEN_URL = 'https://osu.ppy.sh/oauth/token'
 

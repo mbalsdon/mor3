@@ -2,9 +2,9 @@
   Maybe write a script to automatically create sheets, get their IDs, populate .env, etc.
 */
 
-require('dotenv').config()
+import 'dotenv/config'
 
-module.exports = class Mods {
+export default class Mods {
   // Takes mods (array of str), returns "normalized form" as str (e.g. [HD,NC] => 'HDDT'; [NF] => 'NM')
   static parseModKey (mods) {
     // NC => DT

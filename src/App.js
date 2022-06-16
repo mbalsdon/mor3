@@ -1,5 +1,5 @@
-require('dotenv').config()
-const Server = require('./api/Server')
+import 'dotenv/config'
+import Server from './api/Server.js'
 
 class App {
   initServer (port) {
@@ -16,4 +16,4 @@ class App {
 
 console.info('App - starting')
 const app = new App()
-app.initServer(process.env.PORT)
+app.initServer(process.env.LOCAL_PORT)

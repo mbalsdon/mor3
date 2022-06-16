@@ -1,7 +1,7 @@
-const cron = require('node-cron')
-const MorFacade = require('./MorFacade')
+import cron from 'node-cron'
+import MorFacade from './MorFacade.js'
 
-exports.initScheduledJobs = () => {
+export function initScheduledJobs () {
   const scheduledJobFunction = cron.schedule('0 */24 * * *', () => {
     MorFacade.build()
       .then((facade) => {
