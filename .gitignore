@@ -130,6 +130,3 @@ dist
 .pnp.*
 
 # - - End of template - - #
-
-# Google Sheets API keys
-credentials.json
