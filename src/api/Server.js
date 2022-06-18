@@ -1,7 +1,6 @@
 import express from 'express'
 import cors from 'cors'
 import ServerRoutes from './ServerRoutes.js'
-import { initScheduledJobs } from '../controller/ScheduledJobs.js'
 
 export default class Server {
   port
@@ -49,7 +48,6 @@ export default class Server {
         console.error('Server::start() - server already listening')
         reject(new Error('Server is already listening'))
       } else {
-        initScheduledJobs()
         this.server = this.express.listen(this.port, () => {
           console.info(`Server::start() - server listening on port ${this.port}`)
           resolve()
