@@ -1,4 +1,4 @@
-import MorFacade from '../controller/MorFacade'
+import MorFacade from '../controller/MorFacade.js'
 
 MorFacade.build()
   .then((facade) => {
