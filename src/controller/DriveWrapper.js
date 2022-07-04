@@ -17,7 +17,7 @@ export default class DriveWrapper {
   }
 
   static async build () {
-    console.info('DriveFacade::build()')
+    console.info('DriveWrapper::build()')
     const authClient = DriveWrapper.#AUTH.getClient()
     const driveClient = google.drive({ version: 'v3', auth: authClient })
     return new DriveWrapper(driveClient)
