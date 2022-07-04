@@ -143,7 +143,7 @@ export default class MorFacade {
       await this.#sleep(1000)
     }
     // Archive the spreadsheet
-    
+
     const dateString = new Date(Date.now()).toISOString()
     await this.#drive.copyFile(process.env.SPREADSHEET_ID, `mor3 ${dateString}`)
     console.timeEnd('MorFacade::scrapeUserTopPlays() time elapsed')
