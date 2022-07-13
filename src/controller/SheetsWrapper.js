@@ -5,7 +5,7 @@ import 'dotenv/config'
 
 export default class SheetsWrapper {
   static #AUTH = new google.auth.GoogleAuth({
-    keyFile: process.env.GOOGLE_API_KEYFILE,
+    keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,
     scopes: 'https://www.googleapis.com/auth/spreadsheets'
   })
 
