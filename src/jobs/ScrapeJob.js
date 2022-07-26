@@ -53,6 +53,7 @@ for (const k of Object.keys(dict)) {
   // Archive the spreadsheet
   const dateString = new Date(Date.now()).toISOString()
   await drive.copyFile(process.env.SPREADSHEET_ID, `mor3 ${dateString}`)
+  await sheets.lastUpdated(dateString)
   
   console.timeEnd('ScrapeJob.js time elapsed')
   console.log(`Scrape job completed at ${dateString}, inserted ${numInserted} new plays`)

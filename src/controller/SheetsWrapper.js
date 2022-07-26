@@ -268,23 +268,23 @@ export default class SheetsWrapper {
     return response.data
   }
 
+  async lastUpdated (date) {
+    console.info(`SheetsWrapper::lastUpdated( ${date} )`)
+    
+    const response = await this.#sheetsClient.spreadsheets.values.update({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: process.env.SPREADSHEET_ID,
+      range: 'Main!A1:A1',
+      valueInputOption: 'USER_ENTERED',
+      resource: {
+        values: [[date]]
+      }
+    })
+    return response.data
+  }
+
   /* --- --- --- --- --- ---
      --- PRIVATE METHODS ---
      --- --- --- --- --- --- */
 
-  // Returns true if score is typed properly, false otherwise
-  // Doesn't check things like if ID exists, if hyperlink is proper, 0<acc<100, etc.
-  #isScore (score) {
-    if (!Array.isArray(score)) return false
-    if (score.length !== 7) return false
-    if (typeof score[0] !== 'string' && !(score[1] instanceof String)) return false
-    if (typeof score[1] !== 'string' && !(score[1] instanceof String)) return false
-    if (typeof score[2] !== 'string' && !(score[2] instanceof String)) return false
-    if (Mods.toSheetId(score[3]) === -1) return false
-    if (typeof score[4] !== 'number') return false
-    if (typeof score[5] !== 'number') return false
-    if (typeof score[6] !== 'string' && !(score[6] instanceof String)) return false
-
-    return true
-  }
 }
