@@ -5,19 +5,16 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "node test/Tests.js",
-    "start": "node src/App.js",
-    "watch": "nodemon index.js",
+    "start": "node ./src/client/deploy-commands.js && node index.js",
+    "watch": "node ./src/client/deploy-commands.js && nodemon index.js",
     "lint": "./node_modules/.bin/eslint src --ext .js"
   },
   "author": "spreadnuts",
   "license": "ISC",
   "dependencies": {
     "@discordjs/rest": "^1.0.0",
-    "cors": "^2.8.5",
     "discord.js": "^14.0.3",
     "dotenv": "^16.0.1",
-    "express": "^4.18.1",
     "googleapis": "^100.0.0",
     "node-fetch": "^3.2.6"
   },
