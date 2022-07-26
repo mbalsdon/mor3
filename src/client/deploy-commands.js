@@ -7,28 +7,48 @@ const clientId = '1001153701299363861'
 const guildId = '941208827599151134'
 
 const commands = [
-	new SlashCommandBuilder()
-	.setName('ping')
-	.setDescription('Checks if the bot is alive'),
+  new SlashCommandBuilder()
+    .setName('ping')
+    .setDescription('Checks if the bot is alive'),
 
-	new SlashCommandBuilder()
-	.setName('echo')
-	.setDescription('Stop copying me!')
-	.addStringOption(option => 
-		option.setName('input')
-			.setDescription('The message to echo back')
-			.setRequired(true)),
+  new SlashCommandBuilder()
+    .setName('echo')
+    .setDescription('Stop copying me!')
+    .addStringOption(option =>
+      option.setName('input')
+        .setDescription('The message to echo back')
+        .setRequired(true)),
 
-	new SlashCommandBuilder()
-	.setName('metadata')
-	.setDescription('Return mor3 sheet metadata'),
+  new SlashCommandBuilder()
+    .setName('metadata')
+    .setDescription('Returns mor3 sheet metadata (WIP)'),
 
-	// new SlashCommandBuilder ...
+  new SlashCommandBuilder()
+    .setName('users')
+    .setDescription('Returns list of tracked users (WIP)'),
+
+  new SlashCommandBuilder()
+    .setName('track')
+    .setDescription('Adds a user for their top plays to be tracked (WIP)')
+    .addStringOption(option =>
+      option.setName('user ID')
+        .setDescription('The ID of the user to be tracked')
+        .setRequired(true)),
+
+  new SlashCommandBuilder()
+    .setName('untrack')
+    .setDescription('Removes a user from being tracked (WIP)')
+    .addStringOption(option =>
+      option.setName('user ID')
+        .setDescription('The ID of the user to be tracked')
+        .setRequired(true))
+
+  // { ... }
 ]
   .map(command => command.toJSON())
 
-const rest = new REST({ version: '10' }).setToken(token);
+const rest = new REST({ version: '10' }).setToken(token)
 
 rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: commands })
-	.then(() => console.log('Successfully registered application commands.'))
-	.catch(console.error);
+  .then(() => console.log('Successfully registered application commands.'))
+  .catch(console.error)

@@ -1,6 +1,6 @@
 import 'dotenv/config'
-import { Client, GatewayIntentBits } from 'discord.js';
-import MorFacade from '../controller/MorFacade.js';
+import { Client, GatewayIntentBits } from 'discord.js'
+import MorFacade from '../controller/MorFacade.js'
 
 export default class Bot {
   #facade
@@ -29,12 +29,12 @@ export default class Bot {
     })
 
     this.#client.on('interactionCreate', async interaction => {
-      if (!interaction.isChatInputCommand()) return;
-    
-      const { commandName } = interaction;
-    
+      if (!interaction.isChatInputCommand()) return
+
+      const { commandName } = interaction
+
       if (commandName === 'ping') {
-        await interaction.reply('pong!');
+        await interaction.reply('pong!')
       } else if (commandName === 'echo') {
         const input = interaction.options.getString('input')
         await interaction.reply(input)
@@ -42,8 +42,8 @@ export default class Bot {
         const metadata = await this.#facade.getMetadata()
         await interaction.reply(JSON.stringify(metadata))
       }
-    });
-    
+    })
+
     // Must be the last line of code
     this.#client.login(process.env.DISCORD_API_BOT_TOKEN)
   }
