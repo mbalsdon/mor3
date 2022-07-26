@@ -1,9 +1,5 @@
 import MorFacade from '../controller/MorFacade.js'
 
-MorFacade.build()
-  .then((facade) => {
-    facade.scrapeUserTopPlays()
-      .then((response) => {
-        console.log(response)
-      })
-  })
+const facade = await MorFacade.build()
+const response = await facade.scrapeUserTopPlays()
+console.log(response)
