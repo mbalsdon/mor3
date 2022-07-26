@@ -31,7 +31,7 @@ const commands = [
     .setName('track')
     .setDescription('Adds a user for their top plays to be tracked (WIP)')
     .addStringOption(option =>
-      option.setName('user ID')
+      option.setName('id')
         .setDescription('The ID of the user to be tracked')
         .setRequired(true)),
 
@@ -39,7 +39,7 @@ const commands = [
     .setName('untrack')
     .setDescription('Removes a user from being tracked (WIP)')
     .addStringOption(option =>
-      option.setName('user ID')
+      option.setName('id')
         .setDescription('The ID of the user to be tracked')
         .setRequired(true))
 

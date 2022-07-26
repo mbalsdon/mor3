@@ -35,12 +35,28 @@ export default class Bot {
 
       if (commandName === 'ping') {
         await interaction.reply('pong!')
+
       } else if (commandName === 'echo') {
         const input = interaction.options.getString('input')
         await interaction.reply(input)
+
       } else if (commandName === 'metadata') {
         const metadata = await this.#facade.getMetadata()
-        await interaction.reply(JSON.stringify(metadata))
+        await interaction.reply('Not implemented yet...')
+
+      } else if (commandName === 'users') {
+        const users = await this.#facade.getUserIds()
+        await interaction.reply('Not implemented yet...')
+
+      } else if (commandName === 'track') {
+        // const userId = interaction.options.getString('id')
+        // const response = await this.#facade.putUser(userId)
+        await interaction.reply('Not implemented yet...')
+
+      } else if (commandName === 'untrack') {
+        // const userId = interaction.options.getString('id')
+        // const response = await this.#facade.deleteUser(userId)
+        await interaction.reply('Not implemented yet...')
       }
     })
 
