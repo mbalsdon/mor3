@@ -1,10 +1,12 @@
 import 'dotenv/config'
 import { Client, GatewayIntentBits } from 'discord.js';
+import MorFacade from './src/controller/MorFacade.js';
 
+const facade = await MorFacade.build()
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 client.once('ready', () => {
-	console.log('Ready!');
+	console.log('MOR3 is online!');
 });
 
 client.on('interactionCreate', async interaction => {
@@ -14,10 +16,12 @@ client.on('interactionCreate', async interaction => {
 
 	if (commandName === 'ping') {
 		await interaction.reply('pong!');
-	} else if (commandName === 'server') {
-		await interaction.reply(`Server name: ${interaction.guild.name}\nTotal members: ${interaction.guild.memberCount}`);
-	} else if (commandName === 'user') {
-		await interaction.reply(`Your tag: ${interaction.user.tag}\nYour id: ${interaction.user.id}`);
+	} else if (commandName === 'echo') {
+		const input = interaction.options.getString('input')
+		await interaction.reply(input)
+	} else if (commandName === 'metadata') {
+		const metadata = await facade.getMetadata()
+		await interaction.reply(JSON.stringify(metadata))
 	}
 });
 

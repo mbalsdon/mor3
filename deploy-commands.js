@@ -7,9 +7,23 @@ const clientId = '1001153701299363861'
 const guildId = '941208827599151134'
 
 const commands = [
-	new SlashCommandBuilder().setName('ping').setDescription('Checks if the bot is alive'),
-	new SlashCommandBuilder().setName('server').setDescription('Returns server information.'),
-	new SlashCommandBuilder().setName('user').setDescription('Returns user information.'),
+	new SlashCommandBuilder()
+	.setName('ping')
+	.setDescription('Checks if the bot is alive'),
+
+	new SlashCommandBuilder()
+	.setName('echo')
+	.setDescription('Stop copying me!')
+	.addStringOption(option => 
+		option.setName('input')
+			.setDescription('The message to echo back')
+			.setRequired(true)),
+
+	new SlashCommandBuilder()
+	.setName('metadata')
+	.setDescription('Return mor3 sheet metadata'),
+
+	// new SlashCommandBuilder ...
 ]
   .map(command => command.toJSON())
 
