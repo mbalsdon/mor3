@@ -273,6 +273,22 @@ export default class SheetsWrapper {
     return response.data
   }
 
+  // Doesn't check if users already in sheet, or if users are valid
+  async replaceUsers (users) {
+    console.info(`SheetsWrapper::replaceUsers( array of ${users.length} users )`)
+
+    const response = await this.#sheetsClient.spreadsheets.values.update({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: process.env.SPREADSHEET_ID,
+      range: `Users!A2:D${users.length + 1}`,
+      valueInputOption: 'USER_ENTERED',
+      resource: {
+        values: users
+      }
+    })
+    return response.data
+  }
+
   async fetchSubmittedScores () {
     console.info('SheetsWrapper::fetchSubmittedScores()')
     const response = await this.#sheetsClient.spreadsheets.values.get({

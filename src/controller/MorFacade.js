@@ -33,6 +33,12 @@ export default class MorFacade {
     return response
   }
 
+  async getUser (id) {
+    console.info(`MorFacade::getUser( ${id} )`)
+    const user = await this.#osu.fetchUser()
+    return user
+  }
+
   async getUserIds () {
     console.info('MorFacade::getUserIds()')
     const userIds = await this.#sheets.fetchUserIds()
