@@ -56,6 +56,17 @@ export default class SheetsWrapper {
     return response.data.values[0].slice(1)
   }
 
+  async fetchUsers () {
+    console.info('SheetsWrapper::fetchUsers()')
+    const response = await this.#sheetsClient.spreadsheets.values.get({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: process.env.SPREADSHEET_ID,
+      range: 'Users!A:D',
+      majorDimension: 'ROWS'
+    })
+    return response.data.values.slice(1)
+  }
+
   async insertUser (userId, username, rank, pp) {
     console.info(`SheetsWrapper::insertUser( ${userId}, ${username}, ${rank}, ${pp} )`)
     if (isNaN(parseInt(userId)) || parseInt(userId) < 1) {

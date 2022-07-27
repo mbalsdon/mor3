@@ -3,7 +3,7 @@ import { REST } from '@discordjs/rest'
 import { SlashCommandBuilder, Routes } from 'discord.js'
 
 const token = process.env.DISCORD_API_BOT_TOKEN
-const clientId = '1001153701299363861'
+const clientId = process.env.DISCORD_API_CLIENT_ID
 const guildId = '941208827599151134'
 
 const commands = [
@@ -25,7 +25,11 @@ const commands = [
 
   new SlashCommandBuilder()
     .setName('users')
-    .setDescription('Returns list of tracked users (WIP)'),
+    .setDescription('Returns list of tracked users (WIP)')
+    .addNumberOption(option => 
+      option.setName('page')
+        .setDescription('Page number of tracked user list')
+        .setRequired(true)),
 
   new SlashCommandBuilder()
     .setName('track')
