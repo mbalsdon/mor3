@@ -3,7 +3,7 @@ import SheetsWrapper from '../controller/SheetsWrapper.js'
 import OsuWrapper from '../controller/OsuWrapper.js'
 import DriveWrapper from '../controller/DriveWrapper.js'
 
-console.time('ScrapeJob.js time elapsed')
+console.time('ScrapeTopPlays.js time elapsed')
 console.log('Scraping user top 100s...')
 
 const osu = await OsuWrapper.build()
@@ -55,8 +55,8 @@ for (const k of Object.keys(dict)) {
   await drive.copyFile(process.env.SPREADSHEET_ID, `mor3 ${dateString}`)
   await sheets.lastUpdated(dateString)
   
-  console.timeEnd('ScrapeJob.js time elapsed')
-  console.log(`Scrape job completed at ${dateString}, inserted ${numInserted} new plays`)
+  console.timeEnd('ScrapeTopPlays.js time elapsed')
+  console.log(`Scrape top plays job completed at ${dateString}, inserted ${numInserted} new plays`)
 }
 
 /* --- --- --- --- --- ---
