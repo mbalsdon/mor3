@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import { Client, GatewayIntentBits } from 'discord.js'
+import { Client, EmbedBuilder, GatewayIntentBits } from 'discord.js'
 import MorFacade from '../controller/MorFacade.js'
 
 export default class Bot {
@@ -35,24 +35,23 @@ export default class Bot {
 
       if (commandName === 'ping') {
         await interaction.reply('pong!')
-
       } else if (commandName === 'echo') {
         const input = interaction.options.getString('input')
-        await interaction.reply(input)
+        const exampleEmbed = new EmbedBuilder()
+          .setColor(0xFF05E6)
+          .setTitle(input)
 
+        await interaction.reply({ embeds: [exampleEmbed] })
       } else if (commandName === 'metadata') {
         const metadata = await this.#facade.getMetadata()
         await interaction.reply('Not implemented yet...')
-
       } else if (commandName === 'users') {
         const users = await this.#facade.getUserIds()
         await interaction.reply('Not implemented yet...')
-
       } else if (commandName === 'track') {
         // const userId = interaction.options.getString('id')
         // const response = await this.#facade.putUser(userId)
         await interaction.reply('Not implemented yet...')
-
       } else if (commandName === 'untrack') {
         // const userId = interaction.options.getString('id')
         // const response = await this.#facade.deleteUser(userId)
