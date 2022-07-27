@@ -37,8 +37,8 @@ export default class OsuWrapper {
     return new OsuWrapper(token.access_token)
   }
 
-  async fetchUsername (userId) {
-    console.info(`OsuWrapper::fetchUsername( ${userId} )`)
+  async fetchUser (userId) {
+    console.info(`OsuWrapper::fetchUser( ${userId} )`)
     if (isNaN(parseInt(userId)) || parseInt(userId) < 1) {
       throw new Error('User ID must be a positive number')
     }
@@ -61,7 +61,7 @@ export default class OsuWrapper {
       throw new Error(`User ID ${userId} not found`)
     }
     const data = await response.json()
-    return data.username
+    return data
   }
 
   async fetchScore (id) {

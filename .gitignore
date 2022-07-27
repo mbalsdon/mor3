@@ -129,4 +129,9 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-# - - End of template - - #
+# 
+# END OF TEMPLATE
+#
+
+# google apis
+gcp_key.json

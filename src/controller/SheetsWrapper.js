@@ -45,22 +45,58 @@ export default class SheetsWrapper {
     return response.data.values[0].slice(1)
   }
 
-  async insertUser (userId, username) {
-    console.info(`SheetsWrapper::insertUser( ${userId}, ${username} )`)
+  async fetchUserPps () {
+    console.info('SheetsWrapper::fetchUserPps()')
+    const response = await this.#sheetsClient.spreadsheets.values.get({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: process.env.SPREADSHEET_ID,
+      range: 'Users!D:D',
+      majorDimension: 'COLUMNS'
+    })
+    return response.data.values[0].slice(1)
+  }
+
+  async insertUser (userId, username, rank, pp) {
+    console.info(`SheetsWrapper::insertUser( ${userId}, ${username}, ${rank}, ${pp} )`)
     if (isNaN(parseInt(userId)) || parseInt(userId) < 1) {
       throw new Error('User ID must be a positive number')
     } else if (typeof username !== 'string') {
       throw new Error('Username must be a string')
     }
 
-    const response = await this.#sheetsClient.spreadsheets.values.append({
+    // Could do binary search for the index since it's already sorted but I'm not a NERD!! 🤣
+    const userPps = await this.fetchUserPps()
+    userPps.push(pp)
+    userPps.sort((a, b) => {
+      return parseInt(b) - parseInt(a)
+    })
+    const userIndex = userPps.indexOf(pp)
+    const batchUpdateRequest = {
+      requests: [
+        {
+          insertDimension: {
+            range: {
+              sheetId: process.env.USERS,
+              dimension: 'ROWS',
+              startIndex: userIndex + 1,
+              endIndex: userIndex + 2
+            }
+          }
+        }
+      ]
+    }
+    await this.#sheetsClient.spreadsheets.batchUpdate({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: process.env.SPREADSHEET_ID,
-      range: 'Users',
+      resource: batchUpdateRequest
+    })
+    const response = await this.#sheetsClient.spreadsheets.values.update({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: process.env.SPREADSHEET_ID,
+      range: `Users!A${userIndex + 2}:D${userIndex + 2}`,
       valueInputOption: 'USER_ENTERED',
-      insertDataOption: 'INSERT_ROWS',
       resource: {
-        values: [[userId, username]]
+        values: [[userId, username, rank, pp]]
       }
     })
     return response.data
@@ -237,6 +273,22 @@ export default class SheetsWrapper {
     return response.data
   }
 
+  // Doesn't check if users already in sheet, or if users are valid
+  async replaceUsers (users) {
+    console.info(`SheetsWrapper::replaceUsers( array of ${users.length} users )`)
+
+    const response = await this.#sheetsClient.spreadsheets.values.update({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: process.env.SPREADSHEET_ID,
+      range: `Users!A2:D${users.length + 1}`,
+      valueInputOption: 'USER_ENTERED',
+      resource: {
+        values: users
+      }
+    })
+    return response.data
+  }
+
   async fetchSubmittedScores () {
     console.info('SheetsWrapper::fetchSubmittedScores()')
     const response = await this.#sheetsClient.spreadsheets.values.get({
@@ -268,23 +320,23 @@ export default class SheetsWrapper {
     return response.data
   }
 
+  async lastUpdated (date) {
+    console.info(`SheetsWrapper::lastUpdated( ${date} )`)
+    
+    const response = await this.#sheetsClient.spreadsheets.values.update({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: process.env.SPREADSHEET_ID,
+      range: 'Main!A1:A1',
+      valueInputOption: 'USER_ENTERED',
+      resource: {
+        values: [[date]]
+      }
+    })
+    return response.data
+  }
+
   /* --- --- --- --- --- ---
      --- PRIVATE METHODS ---
      --- --- --- --- --- --- */
 
-  // Returns true if score is typed properly, false otherwise
-  // Doesn't check things like if ID exists, if hyperlink is proper, 0<acc<100, etc.
-  #isScore (score) {
-    if (!Array.isArray(score)) return false
-    if (score.length !== 7) return false
-    if (typeof score[0] !== 'string' && !(score[1] instanceof String)) return false
-    if (typeof score[1] !== 'string' && !(score[1] instanceof String)) return false
-    if (typeof score[2] !== 'string' && !(score[2] instanceof String)) return false
-    if (Mods.toSheetId(score[3]) === -1) return false
-    if (typeof score[4] !== 'number') return false
-    if (typeof score[5] !== 'number') return false
-    if (typeof score[6] !== 'string' && !(score[6] instanceof String)) return false
-
-    return true
-  }
 }
