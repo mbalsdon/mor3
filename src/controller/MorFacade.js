@@ -43,11 +43,14 @@ export default class MorFacade {
     console.info(`MorFacade::putUser( ${userId} )`)
     const userIds = await this.#sheets.fetchUserIds()
     // Check if ID already in sheet
-    if (userIds.includes(userId)) {
+    if (userIds.includes(userId.toString())) {
       throw new Error(`User with ID ${userId} has already been added`)
     }
-    const username = await this.#osu.fetchUsername(userId)
-    const response = await this.#sheets.insertUser(userId, username)
+    const user = await this.#osu.fetchUser(userId)
+    const username = user.username
+    const rank = user.statistics.global_rank
+    const pp = user.statistics.pp
+    const response = await this.#sheets.insertUser(userId, username, rank, pp)
     return response
   }
 

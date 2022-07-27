@@ -45,22 +45,58 @@ export default class SheetsWrapper {
     return response.data.values[0].slice(1)
   }
 
-  async insertUser (userId, username) {
-    console.info(`SheetsWrapper::insertUser( ${userId}, ${username} )`)
+  async fetchUserPps () {
+    console.info('SheetsWrapper::fetchUserPps()')
+    const response = await this.#sheetsClient.spreadsheets.values.get({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: process.env.SPREADSHEET_ID,
+      range: 'Users!D:D',
+      majorDimension: 'COLUMNS'
+    })
+    return response.data.values[0].slice(1)
+  }
+
+  async insertUser (userId, username, rank, pp) {
+    console.info(`SheetsWrapper::insertUser( ${userId}, ${username}, ${rank}, ${pp} )`)
     if (isNaN(parseInt(userId)) || parseInt(userId) < 1) {
       throw new Error('User ID must be a positive number')
     } else if (typeof username !== 'string') {
       throw new Error('Username must be a string')
     }
 
-    const response = await this.#sheetsClient.spreadsheets.values.append({
+    // Could do binary search for the index since it's already sorted but I'm not a NERD!! 🤣
+    const userPps = await this.fetchUserPps()
+    userPps.push(pp)
+    userPps.sort((a, b) => {
+      return parseInt(b) - parseInt(a)
+    })
+    const userIndex = userPps.indexOf(pp)
+    const batchUpdateRequest = {
+      requests: [
+        {
+          insertDimension: {
+            range: {
+              sheetId: process.env.USERS,
+              dimension: 'ROWS',
+              startIndex: userIndex + 1,
+              endIndex: userIndex + 2
+            }
+          }
+        }
+      ]
+    }
+    await this.#sheetsClient.spreadsheets.batchUpdate({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: process.env.SPREADSHEET_ID,
-      range: 'Users',
+      resource: batchUpdateRequest
+    })
+    const response = await this.#sheetsClient.spreadsheets.values.update({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: process.env.SPREADSHEET_ID,
+      range: `Users!A${userIndex + 2}:D${userIndex + 2}`,
       valueInputOption: 'USER_ENTERED',
-      insertDataOption: 'INSERT_ROWS',
       resource: {
-        values: [[userId, username]]
+        values: [[userId, username, rank, pp]]
       }
     })
     return response.data
