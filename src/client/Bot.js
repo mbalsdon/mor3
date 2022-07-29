@@ -42,31 +42,39 @@ export default class Bot {
         await interaction.reply(input)
 
       } else if (commandName === 'metadata') {
-        const metadata = await this.#facade.getMetadata()
+        // const metadata = await this.#facade.getMetadata()
         await interaction.reply('Not implemented yet...')
 
       } else if (commandName === 'users') {
+        const perPage = 8
         const users = await this.#facade.getUsers()
         const page = interaction.options.getNumber('page')
-        const numPages = Math.ceil(users.length / 10)
-        if (page > numPages) {
-          await interaction.reply({ content: `There are only ${numPages} pages!`, ephemeral: true})
-        }
-        const embedList = []
-        for (let i = 0; i < 10; i++) {
-          const pageIndex = 10 * page + i
-          const username = users[pageIndex][1]
-          const rank = users[pageIndex][2]
-          const pp = users[pageIndex][3]
-          const url = `https://osu.ppy.sh/users/${users[pageIndex][0]}`
+        const numPages = Math.ceil(users.length / perPage)
+        if (page < 1 || page > numPages) {
+          await interaction.reply({ content: `Page must be between 1 and ${numPages}`, ephemeral: true })
+        } else {
           const embed = new EmbedBuilder()
             .setColor(primaryColor)
-            .setTitle(username)
-            .setURL(url)
-            .setDescription(`${pp}pp (#${rank})`)
-          embedList.push(embed)
+          let lim = 0
+          if (page === numPages) {
+            lim = users.length % perPage
+          } else {
+            lim = perPage
+          }
+          for (let i = 0; i < lim; i++) {
+            const pageIndex = perPage * (page - 1) + i
+            const userId = users[pageIndex][0]
+            const username = users[pageIndex][1]
+            const rank = users[pageIndex][2]
+            const pp = users[pageIndex][3]
+            embed.addFields([
+              { name: `${pageIndex + 1}) ${username}`, value: `${userId}`, inline: true },
+              { name: `Global #${rank}`, value: `${pp}pp`, inline: true },
+              { name: '\u200b', value: '\u200b', inline: true }
+            ])
+          }
+          await interaction.reply({ embeds: [embed] })
         }
-        await interaction.reply({ embeds: embedList })
 
       } else if (commandName === 'track') {
         // const userId = interaction.options.getString('id')
@@ -77,7 +85,7 @@ export default class Bot {
         // const userId = interaction.options.getString('id')
         // const response = await this.#facade.deleteUser(userId)
         await interaction.reply('Not implemented yet...')
-
+        
       }
     })
 
