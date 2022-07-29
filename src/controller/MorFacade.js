@@ -55,20 +55,21 @@ export default class MorFacade {
     const userIds = await this.#sheets.fetchUserIds()
     // Check if ID already in sheet
     if (userIds.includes(userId.toString())) {
-      throw new Error(`User with ID ${userId} has already been added`)
+      throw new Error(`User with ID ${userId} is already being tracked!`)
     }
     const user = await this.#osu.fetchUser(userId)
     const username = user.username
     const rank = user.statistics.global_rank
     const pp = user.statistics.pp
-    const response = await this.#sheets.insertUser(userId, username, rank, pp)
-    return response
+    await this.#sheets.insertUser(userId, username, rank, pp)
+    return user
   }
 
   async deleteUser (userId) {
     console.info(`MorFacade::deleteUser( ${userId} )`)
     const response = await this.#sheets.removeUser(userId)
-    return response
+    const user = await this.#osu.fetchUser(userId)
+    return user
   }
 
   async getModScores (mods) {
@@ -83,7 +84,7 @@ export default class MorFacade {
     const modScores = await this.getModScores(mods)
     const scoreIndex = modScores.map((s) => { return s[0] }).indexOf(id)
     if (scoreIndex === -1) {
-      throw new Error(`Score with ID ${id} could not be found`)
+      throw new Error(`Score with ID ${id} could not be found.`)
     }
     const score = await this.#sheets.fetchScore(mods, scoreIndex)
     return score
@@ -107,7 +108,7 @@ export default class MorFacade {
     const submittedScores = await this.getSubmittedScores()
     const index = submittedScores.indexOf(id)
     if (index !== -1) {
-      throw new Error(`Score with ID ${id} has already been submitted`)
+      throw new Error(`Score with ID ${id} has already been submitted!`)
     }
     const response = await this.#sheets.submitScore(id)
     return response

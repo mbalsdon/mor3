@@ -35,20 +35,24 @@ export default class Bot {
       const { commandName } = interaction
 
       if (commandName === 'ping') {
+        console.info('Bot >> ping{}')
         await interaction.reply('pong!')
 
       } else if (commandName === 'echo') {
         const input = interaction.options.getString('input')
+        console.info(`Bot >> echo{ input=${input} }`)
         await interaction.reply(input)
 
-      } else if (commandName === 'metadata') {
+      } else if (commandName === 'metadata') { // TODO
+        console.info('Bot >> metadata{}')
         // const metadata = await this.#facade.getMetadata()
         await interaction.reply('Not implemented yet...')
 
       } else if (commandName === 'users') {
+        const page = interaction.options.getNumber('page')
+        console.info(`Bot >> users{ page=${page} }`)
         const perPage = 8
         const users = await this.#facade.getUsers()
-        const page = interaction.options.getNumber('page')
         const numPages = Math.ceil(users.length / perPage)
         if (page < 1 || page > numPages) {
           await interaction.reply({ content: `Page must be between 1 and ${numPages}`, ephemeral: true })
@@ -77,14 +81,38 @@ export default class Bot {
         }
 
       } else if (commandName === 'track') {
-        // const userId = interaction.options.getString('id')
-        // const response = await this.#facade.putUser(userId)
-        await interaction.reply('Not implemented yet...')
-
+        const id = interaction.options.getString('id')
+        console.info(`Bot >> track{ id=${id} }`)
+        try {
+          const user = await this.#facade.putUser(id)
+          const embed = new EmbedBuilder()
+          .setColor(primaryColor)
+          .setTitle(`Now tracking: ${user.username}`)
+          .setURL(`https://osu.ppy.sh/users/${user.id}`)
+          .setDescription(`Rank #${user.statistics.global_rank} (${user.statistics.pp}pp)`)
+          .setThumbnail(user.avatar_url)
+          .setFooter({ text: `Remember to >track add "${user.username}" and <track "${user.username}" !` })
+          await interaction.reply({ embeds: [embed] })
+        } catch (error) {
+          await interaction.reply({ content: error.message, ephemeral: true })
+        }
+        
       } else if (commandName === 'untrack') {
-        // const userId = interaction.options.getString('id')
-        // const response = await this.#facade.deleteUser(userId)
-        await interaction.reply('Not implemented yet...')
+        const id = interaction.options.getString('id')
+        console.info(`Bot >> track{ id=${id} }`)
+        try {
+          const user = await this.#facade.deleteUser(id)
+          const embed = new EmbedBuilder()
+            .setColor(primaryColor)
+            .setTitle(`No longer tracking: ${user.username}`)
+            .setURL(`https://osu.ppy.sh/users/${user.id}`)
+            .setDescription(`Rank #${user.statistics.global_rank} (${user.statistics.pp}pp)`)
+            .setThumbnail(user.avatar_url)
+            .setFooter({ text: `Remember to >track remove "${user.username}" and <untrack "${user.username}" !` })
+            await interaction.reply({ embeds: [embed] })
+        } catch (error) {
+          await interaction.reply({ content: error.message, ephemeral: true })
+        }
         
       }
     })
