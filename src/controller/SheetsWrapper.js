@@ -333,7 +333,7 @@ export default class SheetsWrapper {
 
   async lastUpdated (date) {
     console.info(`SheetsWrapper::lastUpdated( ${date} )`)
-    
+
     const response = await this.#sheetsClient.spreadsheets.values.update({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: process.env.SPREADSHEET_ID,
@@ -349,5 +349,4 @@ export default class SheetsWrapper {
   /* --- --- --- --- --- ---
      --- PRIVATE METHODS ---
      --- --- --- --- --- --- */
-
 }

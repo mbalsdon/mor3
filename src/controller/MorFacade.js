@@ -1,7 +1,6 @@
 import OsuWrapper from './OsuWrapper.js'
 import SheetsWrapper from './SheetsWrapper.js'
 import DriveWrapper from './DriveWrapper.js'
-import Mods from './Mods.js'
 
 import 'dotenv/config'
 
@@ -113,5 +112,4 @@ export default class MorFacade {
     const response = await this.#sheets.submitScore(id)
     return response
   }
-
 }

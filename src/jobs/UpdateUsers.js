@@ -31,8 +31,8 @@ console.log(`Update users job completed at ${dateString}`)
    --- HELPER  METHODS ---
    --- --- --- --- --- --- */
 
-   function sleep (ms) {
-    return new Promise((resolve) => {
-      setTimeout(resolve, ms)
-    })
-  }
+function sleep (ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms)
+  })
+}
