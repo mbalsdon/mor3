@@ -80,17 +80,39 @@ export default class Bot {
           await interaction.reply({ embeds: [embed] })
         }
 
-      } else if (commandName === 'track') { // TODO
+      } else if (commandName === 'track') {
         const id = interaction.options.getString('id')
         console.info(`Bot >> track{ id=${id} }`)
-        // const response = await this.#facade.putUser(id)
-        await interaction.reply('Not implemented yet...')
-
-      } else if (commandName === 'untrack') { // TODO
+        try {
+          const user = await this.#facade.putUser(id)
+          const embed = new EmbedBuilder()
+          .setColor(primaryColor)
+          .setTitle(`Now tracking: ${user.username}`)
+          .setURL(`https://osu.ppy.sh/users/${user.id}`)
+          .setDescription(`Rank #${user.statistics.global_rank} (${user.statistics.pp}pp)`)
+          .setThumbnail(user.avatar_url)
+          .setFooter({ text: `Remember to >track add "${user.username}" and <track "${user.username}" !` })
+          await interaction.reply({ embeds: [embed] })
+        } catch (error) {
+          await interaction.reply({ content: error.message, ephemeral: true })
+        }
+        
+      } else if (commandName === 'untrack') {
         const id = interaction.options.getString('id')
         console.info(`Bot >> track{ id=${id} }`)
-        // const response = await this.#facade.deleteUser(id)
-        await interaction.reply('Not implemented yet...')
+        try {
+          const user = await this.#facade.deleteUser(id)
+          const embed = new EmbedBuilder()
+            .setColor(primaryColor)
+            .setTitle(`No longer tracking: ${user.username}`)
+            .setURL(`https://osu.ppy.sh/users/${user.id}`)
+            .setDescription(`Rank #${user.statistics.global_rank} (${user.statistics.pp}pp)`)
+            .setThumbnail(user.avatar_url)
+            .setFooter({ text: `Remember to >track remove "${user.username}" and <untrack "${user.username}" !` })
+            await interaction.reply({ embeds: [embed] })
+        } catch (error) {
+          await interaction.reply({ content: error.message, ephemeral: true })
+        }
         
       }
     })

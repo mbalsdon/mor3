@@ -25,7 +25,7 @@ const commands = [
 
   new SlashCommandBuilder()
     .setName('users')
-    .setDescription('Returns list of tracked users (WIP)')
+    .setDescription('Returns list of tracked users')
     .addNumberOption(option => 
       option.setName('page')
         .setDescription('Page number of tracked user list')
@@ -33,7 +33,7 @@ const commands = [
 
   new SlashCommandBuilder()
     .setName('track')
-    .setDescription('Adds a user for their top plays to be tracked (WIP)')
+    .setDescription('Adds a user to be tracked')
     .addStringOption(option =>
       option.setName('id')
         .setDescription('The ID of the user to be tracked')
@@ -41,7 +41,7 @@ const commands = [
 
   new SlashCommandBuilder()
     .setName('untrack')
-    .setDescription('Removes a user from being tracked (WIP)')
+    .setDescription('Removes a user from being tracked')
     .addStringOption(option =>
       option.setName('id')
         .setDescription('The ID of the user to be tracked')

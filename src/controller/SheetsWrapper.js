@@ -70,9 +70,9 @@ export default class SheetsWrapper {
   async insertUser (userId, username, rank, pp) {
     console.info(`SheetsWrapper::insertUser( ${userId}, ${username}, ${rank}, ${pp} )`)
     if (isNaN(parseInt(userId)) || parseInt(userId) < 1) {
-      throw new Error('User ID must be a positive number')
+      throw new Error('User ID must be a positive number!')
     } else if (typeof username !== 'string') {
-      throw new Error('Username must be a string')
+      throw new Error('Username must be a string!')
     }
 
     // Could do binary search for the index since it's already sorted but I'm not a NERD!! 🤣
@@ -116,13 +116,13 @@ export default class SheetsWrapper {
   async removeUser (userId) {
     console.info(`SheetsWrapper::removeUser( ${userId} )`)
     if (isNaN(parseInt(userId)) || parseInt(userId) < 1) {
-      throw new Error('User ID must be a positive number')
+      throw new Error('User ID must be a positive number!')
     }
 
     const userIds = await this.fetchUserIds()
     const idIndex = userIds.indexOf(userId)
     if (idIndex === -1) {
-      throw new Error(`User with ID ${userId} could not be found`)
+      throw new Error(`User with ID ${userId} could not be found.`)
     }
     const batchUpdateRequest = {
       requests: [
@@ -149,9 +149,9 @@ export default class SheetsWrapper {
   async fetchModScores (mods, valueRenderOption) {
     console.info(`SheetsWrapper::fetchModScores( ${mods}, ${valueRenderOption} )`)
     if (Mods.toSheetId(mods) === -1) {
-      throw new Error(`${mods} is not a valid mod combination`)
+      throw new Error(`${mods} is not a valid mod combination.`)
     } else if (valueRenderOption !== 'FORMATTED_VALUE' && valueRenderOption !== 'UNFORMATTED_VALUE' && valueRenderOption !== 'FORMULA') {
-      throw new Error('valueRenderOption must be one of FORMATTED_VALUE, UNFORMATTED_VALUE, or FORMULA')
+      throw new Error('valueRenderOption must be one of FORMATTED_VALUE, UNFORMATTED_VALUE, or FORMULA.')
     }
 
     const response = await this.#sheetsClient.spreadsheets.values.get({
@@ -167,9 +167,9 @@ export default class SheetsWrapper {
   async fetchScore (mods, rowNum) {
     console.info(`SheetsWrapper::fetchScore( ${mods}, ${rowNum} )`)
     if (Mods.toSheetId(mods) === -1) {
-      throw new Error(`${mods} is not a valid mod combination`)
+      throw new Error(`${mods} is not a valid mod combination!`)
     } else if (isNaN(parseInt(rowNum)) || parseInt(rowNum) < 0) {
-      throw new Error('Row number cannot be negative')
+      throw new Error('Row number cannot be negative!')
     }
     const response = await this.#sheetsClient.spreadsheets.values.get({
       auth: SheetsWrapper.#AUTH,
@@ -184,9 +184,9 @@ export default class SheetsWrapper {
   async removeScore (mods, id) {
     console.info(`SheetsWrapper::removeScore( ${mods}, ${id} )`)
     if (Mods.toSheetId(mods) === -1) {
-      throw new Error(`${mods} is not a valid mod combination`)
+      throw new Error(`${mods} is not a valid mod combination!`)
     } else if (isNaN(parseInt(id)) || parseInt(id) < 1) {
-      throw new Error('Score ID must be a positive number')
+      throw new Error('Score ID must be a positive number!')
     }
 
     const sScores = await this.fetchSubmittedScores()
@@ -257,7 +257,7 @@ export default class SheetsWrapper {
       }
     // Score is in neither sheet
     } else {
-      throw new Error(`Score with ID ${id} could not be found`)
+      throw new Error(`Score with ID ${id} could not be found.`)
     }
     response = await this.#sheetsClient.spreadsheets.batchUpdate({
       auth: SheetsWrapper.#AUTH,
@@ -270,7 +270,7 @@ export default class SheetsWrapper {
   // Doesn't check if scores already in sheet, or if scores are valid
   async replaceScores (mods, scores) {
     console.info(`SheetsWrapper::replaceScores( ${mods}, array of ${scores.length} scores )`)
-    if (Mods.toSheetId(mods) === -1) throw new Error(`${mods} is not a valid mod combination`)
+    if (Mods.toSheetId(mods) === -1) throw new Error(`${mods} is not a valid mod combination!`)
 
     const response = await this.#sheetsClient.spreadsheets.values.update({
       auth: SheetsWrapper.#AUTH,
@@ -315,7 +315,7 @@ export default class SheetsWrapper {
   async submitScore (id) {
     console.info(`SheetsWrapper::submitScore( ${id} )`)
     if (isNaN(parseInt(id)) || parseInt(id) < 1) {
-      throw new Error('Score ID must be a positive number')
+      throw new Error('Score ID must be a positive number!')
     }
 
     const response = await this.#sheetsClient.spreadsheets.values.append({
