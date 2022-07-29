@@ -114,36 +114,13 @@ export default class Bot {
           await interaction.reply({ content: error.message, ephemeral: true })
         }
         
-      } else if (commandName === 'trackcommands') {
-        console.info('Bot >> trackcommands{}')
+      } else if (commandName === 'tracklist') {
+        console.info('Bot >> tracklist{}')
         const users = await this.#facade.getUsers()
-        let ret = 'Commands are split 15 users at a time so as to not overload owo/Bathbot.\n\n'
-        let owoTrack = ''
-        let bbTrack = ''
-        let owoUntrack = ''
-        let bbUntrack = ''
+        let ret = ''
         for (let i = 0; i < users.length; i++) {
-          if (i % 15 === 0) {
-            owoTrack = owoTrack.concat(`\n>track add "${users[i][1]}" `)
-            bbTrack = bbTrack.concat(`\n<track "${users[i][1]}" `)
-            owoUntrack = owoUntrack.concat(`\n>track remove "${users[i][1]}" `)
-            bbUntrack = bbUntrack.concat(`\n<untrack "${users[i][1]}" `)
-          } else {
-            owoTrack = owoTrack.concat(`"${users[i][1]}" `)
-            bbTrack = bbTrack.concat(`"${users[i][1]}" `)
-            owoUntrack = owoUntrack.concat(`"${users[i][1]}" `)
-            bbUntrack = bbUntrack.concat(`"${users[i][1]}" `)
-          }
+          ret = ret.concat(`${users[i][0]}, ${users[i][1]}\n`)
         }
-        ret = ret.concat('>> TRACKING COMMANDS <<')
-        ret = ret.concat(owoTrack)
-        ret = ret.concat('\n')
-        ret = ret.concat(bbTrack)
-        ret = ret.concat('\n\n>> UNTRACKING COMMANDS <<')
-        ret = ret.concat(owoUntrack)
-        ret = ret.concat('\n')
-        ret = ret.concat(bbUntrack)
-        ret = ret.concat('\n\nHave fun copy-pasting!')
         fs.writeFileSync('./trackcommands.txt', ret)
         await interaction.reply({ files: ['./trackcommands.txt']})
         fs.unlinkSync('./trackcommands.txt')

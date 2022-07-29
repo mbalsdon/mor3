@@ -57,8 +57,8 @@ const commands = [
     .setDefaultMemberPermissions(moderatorPermFlags),
 
   new SlashCommandBuilder()
-    .setName('trackcommands')
-    .setDescription('Lists all tracked users, formatted for owobot and Bathbot')
+    .setName('tracklist')
+    .setDescription('Lists all tracked users in a .txt file')
     .setDMPermission(false)
     .setDefaultMemberPermissions(userPermFlags)
 
