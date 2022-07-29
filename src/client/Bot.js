@@ -45,8 +45,14 @@ export default class Bot {
 
       } else if (commandName === 'metadata') { // TODO
         console.info('Bot >> metadata{}')
-        // const metadata = await this.#facade.getMetadata()
-        await interaction.reply('Not implemented yet...')
+        const metadata = await this.#facade.getMetadata()
+        let ret = '```'
+        ret = ret.concat(`Sheet title: ${metadata.properties.title} | Locale: ${metadata.properties.locale} | Time zone: ${metadata.properties.timeZone}\n\n`)
+        for (const sheet of metadata.sheets.slice(1)) {
+          ret = ret.concat(`${sheet.properties.title}: ${sheet.properties.gridProperties.rowCount - 1} ${sheet.properties.gridProperties.rowCount - 1 === 1 ? 'entry' : 'entries'}\n`)
+        }
+        ret = ret.concat('```')
+        await interaction.reply(ret)
 
       } else if (commandName === 'users') {
         const page = interaction.options.getNumber('page')
@@ -121,9 +127,9 @@ export default class Bot {
         for (let i = 0; i < users.length; i++) {
           ret = ret.concat(`${users[i][0]}, ${users[i][1]}\n`)
         }
-        fs.writeFileSync('./trackcommands.txt', ret)
-        await interaction.reply({ files: ['./trackcommands.txt']})
-        fs.unlinkSync('./trackcommands.txt')
+        fs.writeFileSync('./tracklist.txt', ret)
+        await interaction.reply({ files: ['./tracklist.txt']})
+        fs.unlinkSync('./tracklist.txt')
 
       }
     })

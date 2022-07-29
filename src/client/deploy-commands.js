@@ -22,7 +22,7 @@ const commands = [
 
   new SlashCommandBuilder()
     .setName('metadata')
-    .setDescription('Returns mor3 sheet metadata (WIP)')
+    .setDescription('Returns mor3 sheet metadata')
     .setDMPermission(true)
     .setDefaultMemberPermissions(userPermFlags),
 
