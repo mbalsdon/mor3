@@ -34,7 +34,11 @@ export default class Bot {
 
       const { commandName } = interaction
 
-      if (commandName === 'ping') {
+      if (commandName === 'help') {
+        console.info('Bot >> help{}')
+        await interaction.reply('Not implemented yet...')
+
+      } else if (commandName === 'ping') {
         console.info('Bot >> ping{}')
         await interaction.reply('pong!')
 

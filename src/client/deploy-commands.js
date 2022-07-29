@@ -1,15 +1,24 @@
 import 'dotenv/config'
 import { REST } from '@discordjs/rest'
-import { SlashCommandBuilder, Routes } from 'discord.js'
+import { SlashCommandBuilder, Routes, PermissionFlagsBits } from 'discord.js'
 
 const token = process.env.DISCORD_API_BOT_TOKEN
 const clientId = process.env.DISCORD_API_CLIENT_ID
-const guildId = '941208827599151134'
+const moderatorPermFlags = PermissionFlagsBits.ModerateMembers
+const userPermFlags = PermissionFlagsBits.SendMessages
 
 const commands = [
   new SlashCommandBuilder()
+    .setName('help')
+    .setDescription('Documents all of the bot commands (WIP)')
+    .setDMPermission(true)
+    .setDefaultMemberPermissions(userPermFlags),
+  
+  new SlashCommandBuilder()
     .setName('ping')
-    .setDescription('Checks if the bot is alive'),
+    .setDescription('Checks if the bot is alive')
+    .setDMPermission(true)
+    .setDefaultMemberPermissions(userPermFlags),
 
   new SlashCommandBuilder()
     .setName('echo')
@@ -17,11 +26,15 @@ const commands = [
     .addStringOption(option =>
       option.setName('input')
         .setDescription('The message to echo back')
-        .setRequired(true)),
+        .setRequired(true))
+    .setDMPermission(true)
+    .setDefaultMemberPermissions(userPermFlags),
 
   new SlashCommandBuilder()
     .setName('metadata')
-    .setDescription('Returns mor3 sheet metadata (WIP)'),
+    .setDescription('Returns mor3 sheet metadata (WIP)')
+    .setDMPermission(true)
+    .setDefaultMemberPermissions(userPermFlags),
 
   new SlashCommandBuilder()
     .setName('users')
@@ -29,7 +42,9 @@ const commands = [
     .addNumberOption(option => 
       option.setName('page')
         .setDescription('Page number of tracked user list')
-        .setRequired(true)),
+        .setRequired(true))
+    .setDMPermission(true)
+    .setDefaultMemberPermissions(userPermFlags),
 
   new SlashCommandBuilder()
     .setName('track')
@@ -37,7 +52,9 @@ const commands = [
     .addStringOption(option =>
       option.setName('id')
         .setDescription('The ID of the user to be tracked')
-        .setRequired(true)),
+        .setRequired(true))
+    .setDMPermission(false)
+    .setDefaultMemberPermissions(moderatorPermFlags),
 
   new SlashCommandBuilder()
     .setName('untrack')
@@ -46,6 +63,8 @@ const commands = [
       option.setName('id')
         .setDescription('The ID of the user to be tracked')
         .setRequired(true))
+    .setDMPermission(false)
+    .setDefaultMemberPermissions(moderatorPermFlags)
 
   // { ... }
 ]
