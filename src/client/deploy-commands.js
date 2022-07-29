@@ -21,16 +21,6 @@ const commands = [
     .setDefaultMemberPermissions(userPermFlags),
 
   new SlashCommandBuilder()
-    .setName('echo')
-    .setDescription('Stop copying me!')
-    .addStringOption(option =>
-      option.setName('input')
-        .setDescription('The message to echo back')
-        .setRequired(true))
-    .setDMPermission(true)
-    .setDefaultMemberPermissions(userPermFlags),
-
-  new SlashCommandBuilder()
     .setName('metadata')
     .setDescription('Returns mor3 sheet metadata (WIP)')
     .setDMPermission(true)
@@ -67,8 +57,8 @@ const commands = [
     .setDefaultMemberPermissions(moderatorPermFlags),
 
   new SlashCommandBuilder()
-    .setName('trackcommands')
-    .setDescription('Lists all tracked users, formatted for owobot and Bathbot')
+    .setName('tracklist')
+    .setDescription('Lists all tracked users in a .txt file')
     .setDMPermission(false)
     .setDefaultMemberPermissions(userPermFlags)
 
