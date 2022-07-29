@@ -35,18 +35,13 @@ export default class Bot {
 
       const { commandName } = interaction
 
-      if (commandName === 'help') {
+      if (commandName === 'help') { // TODO
         console.info('Bot >> help{}')
         await interaction.reply('Not implemented yet...')
 
       } else if (commandName === 'ping') {
         console.info('Bot >> ping{}')
         await interaction.reply('pong!')
-
-      } else if (commandName === 'echo') {
-        const input = interaction.options.getString('input')
-        console.info(`Bot >> echo{ input=${input} }`)
-        await interaction.reply(input)
 
       } else if (commandName === 'metadata') { // TODO
         console.info('Bot >> metadata{}')
