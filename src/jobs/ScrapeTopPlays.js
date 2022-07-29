@@ -2,6 +2,7 @@ import 'dotenv/config'
 import SheetsWrapper from '../controller/SheetsWrapper.js'
 import OsuWrapper from '../controller/OsuWrapper.js'
 import DriveWrapper from '../controller/DriveWrapper.js'
+import Mods from '../controller/Mods.js'
 
 console.time('ScrapeTopPlays.js time elapsed')
 console.log('Scraping user top 100s...')
@@ -11,9 +12,9 @@ const sheets = await SheetsWrapper.build()
 const drive = await DriveWrapper.build()
 // Key = Mod string; Value = array sorted by pp
 const dict = {}
-const numInserted = 0
+let numInserted = 0
 // Iterate over each user's top 100, putting each score into the dict
-const userIds = await sheets.fetchUserIds
+const userIds = await sheets.fetchUserIds()
 await sleep(1000)
 for (const id of userIds) {
   // Put user's top plays and first place plays in the dict
@@ -50,14 +51,14 @@ for (const k of Object.keys(dict)) {
   }
   await sheets.replaceScores(k, sheetScores)
   await sleep(1000)
-  // Archive the spreadsheet
-  const dateString = new Date(Date.now()).toISOString()
-  await drive.copyFile(process.env.SPREADSHEET_ID, `mor3 ${dateString}`)
-  await sheets.lastUpdated(dateString)
-  
-  console.timeEnd('ScrapeTopPlays.js time elapsed')
-  console.log(`Scrape top plays job completed at ${dateString}, inserted ${numInserted} new plays`)
 }
+// Archive the spreadsheet
+const dateString = new Date(Date.now()).toISOString()
+await drive.copyFile(process.env.SPREADSHEET_ID, `mor3 ${dateString}`)
+await sheets.lastUpdated(dateString)
+
+console.timeEnd('ScrapeTopPlays.js time elapsed')
+console.log(`Scrape top plays job completed at ${dateString}, inserted ${numInserted} new plays`)
 
 /* --- --- --- --- --- ---
    --- HELPER  METHODS ---
