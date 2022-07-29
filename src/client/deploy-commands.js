@@ -38,7 +38,7 @@ const commands = [
 
   new SlashCommandBuilder()
     .setName('users')
-    .setDescription('Returns list of tracked users')
+    .setDescription('Displays list of tracked users sorted by PP')
     .addNumberOption(option => 
       option.setName('page')
         .setDescription('Page number of tracked user list')
@@ -64,7 +64,13 @@ const commands = [
         .setDescription('The ID of the user to be tracked')
         .setRequired(true))
     .setDMPermission(false)
-    .setDefaultMemberPermissions(moderatorPermFlags)
+    .setDefaultMemberPermissions(moderatorPermFlags),
+
+  new SlashCommandBuilder()
+    .setName('trackcommands')
+    .setDescription('Lists all tracked users, formatted for owobot and Bathbot')
+    .setDMPermission(false)
+    .setDefaultMemberPermissions(userPermFlags)
 
   // { ... }
 ]
