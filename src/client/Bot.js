@@ -35,20 +35,24 @@ export default class Bot {
       const { commandName } = interaction
 
       if (commandName === 'ping') {
+        console.info('Bot >> ping{}')
         await interaction.reply('pong!')
 
       } else if (commandName === 'echo') {
         const input = interaction.options.getString('input')
+        console.info(`Bot >> echo{ input=${input} }`)
         await interaction.reply(input)
 
-      } else if (commandName === 'metadata') {
+      } else if (commandName === 'metadata') { // TODO
+        console.info('Bot >> metadata{}')
         // const metadata = await this.#facade.getMetadata()
         await interaction.reply('Not implemented yet...')
 
       } else if (commandName === 'users') {
+        const page = interaction.options.getNumber('page')
+        console.info(`Bot >> users{ page=${page} }`)
         const perPage = 8
         const users = await this.#facade.getUsers()
-        const page = interaction.options.getNumber('page')
         const numPages = Math.ceil(users.length / perPage)
         if (page < 1 || page > numPages) {
           await interaction.reply({ content: `Page must be between 1 and ${numPages}`, ephemeral: true })
@@ -76,14 +80,16 @@ export default class Bot {
           await interaction.reply({ embeds: [embed] })
         }
 
-      } else if (commandName === 'track') {
-        // const userId = interaction.options.getString('id')
-        // const response = await this.#facade.putUser(userId)
+      } else if (commandName === 'track') { // TODO
+        const id = interaction.options.getString('id')
+        console.info(`Bot >> track{ id=${id} }`)
+        // const response = await this.#facade.putUser(id)
         await interaction.reply('Not implemented yet...')
 
-      } else if (commandName === 'untrack') {
-        // const userId = interaction.options.getString('id')
-        // const response = await this.#facade.deleteUser(userId)
+      } else if (commandName === 'untrack') { // TODO
+        const id = interaction.options.getString('id')
+        console.info(`Bot >> track{ id=${id} }`)
+        // const response = await this.#facade.deleteUser(id)
         await interaction.reply('Not implemented yet...')
         
       }
