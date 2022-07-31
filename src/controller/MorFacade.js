@@ -67,7 +67,7 @@ export default class MorFacade {
 
   async deleteUser (userId) {
     console.info(`MorFacade::deleteUser( ${userId} )`)
-    const response = await this.#sheets.removeUser(userId)
+    await this.#sheets.removeUser(userId)
     const user = await this.#osu.fetchUser(userId)
     return user
   }
