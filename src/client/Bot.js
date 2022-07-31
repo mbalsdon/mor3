@@ -124,19 +124,32 @@ export default class Bot {
         fs.writeFileSync('./tracklist.txt', ret)
         await interaction.reply({ files: ['./tracklist.txt'] })
         fs.unlinkSync('./tracklist.txt')
-      } else if (commandName === 'submit') {
+      } else if (commandName === 'submit') { // TODO
         const id = interaction.options.getString('id')
         console.info(`Bot >> submit{ id=${id} }`)
-        await interaction.reply('Not implemented yet...')
-      } else if (commandName === 'unsubmit') {
+        try {
+          const s = await this.#facade.putSubmittedScore(id)
+          const embed = new EmbedBuilder()
+            .setColor(primaryColor)
+            .setTitle(`${s.beatmapset.artist} - ${s.beatmapset.title} [${s.beatmap.version}] +${(s.mods.length === 0) ? 'NM' : s.mods.join().replaceAll(',', '')}`)
+            .setURL(`https://osu.ppy.sh/scores/osu/${s.id}`)
+            .setDescription(`Score set by ${s.user.username}\n${s.pp}pp`)
+            .setThumbnail(s.beatmapset.covers['list@2x'])
+            .setFooter({ text: `${s.created_at}` })
+          await interaction.reply({ embeds: [embed] })
+        } catch (error) {
+          await interaction.reply({ content: error.message, ephemeral: true })
+        }
+
+      } else if (commandName === 'unsubmit') { // TODO
         const id = interaction.options.getString('id')
         console.info(`Bot >> unsubmit{ id=${id} }`)
         await interaction.reply('Not implemented yet...')
-      } else if (commandName === 'scores') {
+      } else if (commandName === 'scores') { // TODO
         const mods = interaction.options.getString('mods')
         console.info(`Bot >> scores{ mods=${mods} }`)
         await interaction.reply('Not implemented yet...')
-      } else if (commandName === 'user') {
+      } else if (commandName === 'user') { // TODO
         const id = interaction.options.getString('id')
         console.info(`Bot >> user{ id=${id} }`)
         await interaction.reply('Not implemented yet...')

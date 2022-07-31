@@ -312,11 +312,8 @@ export default class SheetsWrapper {
   }
 
   // Doesn't check if scores already in sheet
-  async submitScore (id) {
-    console.info(`SheetsWrapper::submitScore( ${id} )`)
-    if (isNaN(parseInt(id)) || parseInt(id) < 1) {
-      throw new Error('Score ID must be a positive number!')
-    }
+  async submitScore (ps) {
+    console.info(`SheetsWrapper::submitScore( ${ps} )`)
 
     const response = await this.#sheetsClient.spreadsheets.values.append({
       auth: SheetsWrapper.#AUTH,
@@ -325,7 +322,7 @@ export default class SheetsWrapper {
       valueInputOption: 'USER_ENTERED',
       insertDataOption: 'INSERT_ROWS',
       resource: {
-        values: [[id]]
+        values: [[ps[0], ps[1], ps[2], ps[3], ps[4], ps[5], ps[6]]]
       }
     })
     return response.data
@@ -346,7 +343,4 @@ export default class SheetsWrapper {
     return response.data
   }
 
-  /* --- --- --- --- --- ---
-     --- PRIVATE METHODS ---
-     --- --- --- --- --- --- */
 }
