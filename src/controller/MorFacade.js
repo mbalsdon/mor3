@@ -67,7 +67,7 @@ export default class MorFacade {
 
   async deleteUser (userId) {
     console.info(`MorFacade::deleteUser( ${userId} )`)
-    const response = await this.#sheets.removeUser(userId)
+    await this.#sheets.removeUser(userId)
     const user = await this.#osu.fetchUser(userId)
     return user
   }
@@ -110,7 +110,17 @@ export default class MorFacade {
     if (index !== -1) {
       throw new Error(`Score with ID ${id} has already been submitted!`)
     }
-    const response = await this.#sheets.submitScore(id)
-    return response
+    const s = await this.#osu.fetchScore(id)
+    const parsedScore = [
+      `=HYPERLINK("https://osu.ppy.sh/scores/osu/${id}", "${id}")`,
+      `=HYPERLINK("https://osu.ppy.sh/users/${s.user.id}", "${s.user.username}")`,
+      `=HYPERLINK("${s.beatmap.url}", "${s.beatmapset.artist} - ${s.beatmapset.title} [${s.beatmap.version}]")`,
+      (s.mods.length === 0) ? 'NM' : s.mods.join().replaceAll(',', ''), // turn the mods into a single string
+      Math.round(s.accuracy * 10000) / 100, // 0.xxxx => xx.xx
+      s.pp,
+      s.created_at
+    ]
+    await this.#sheets.submitScore(parsedScore)
+    return s
   }
 }

@@ -38,16 +38,19 @@ export default class Bot {
       if (commandName === 'help') { // TODO
         console.info('Bot >> help{}')
         await interaction.reply('Not implemented yet...')
-
       } else if (commandName === 'ping') {
         console.info('Bot >> ping{}')
         await interaction.reply('pong!')
-
-      } else if (commandName === 'metadata') { // TODO
+      } else if (commandName === 'metadata') {
         console.info('Bot >> metadata{}')
-        // const metadata = await this.#facade.getMetadata()
-        await interaction.reply('Not implemented yet...')
-
+        const metadata = await this.#facade.getMetadata()
+        let ret = '```'
+        ret = ret.concat(`Sheet title: ${metadata.properties.title} | Locale: ${metadata.properties.locale} | Time zone: ${metadata.properties.timeZone}\n\n`)
+        for (const sheet of metadata.sheets.slice(1)) {
+          ret = ret.concat(`${sheet.properties.title}: ${sheet.properties.gridProperties.rowCount - 1} ${sheet.properties.gridProperties.rowCount - 1 === 1 ? 'entry' : 'entries'}\n`)
+        }
+        ret = ret.concat('```')
+        await interaction.reply(ret)
       } else if (commandName === 'users') {
         const page = interaction.options.getNumber('page')
         console.info(`Bot >> users{ page=${page} }`)
@@ -79,24 +82,22 @@ export default class Bot {
           }
           await interaction.reply({ embeds: [embed] })
         }
-
       } else if (commandName === 'track') {
         const id = interaction.options.getString('id')
         console.info(`Bot >> track{ id=${id} }`)
         try {
           const user = await this.#facade.putUser(id)
           const embed = new EmbedBuilder()
-          .setColor(primaryColor)
-          .setTitle(`Now tracking: ${user.username}`)
-          .setURL(`https://osu.ppy.sh/users/${user.id}`)
-          .setDescription(`Rank #${user.statistics.global_rank} (${user.statistics.pp}pp)`)
-          .setThumbnail(user.avatar_url)
-          .setFooter({ text: `Remember to >track add "${user.username}" and <track "${user.username}" !` })
+            .setColor(primaryColor)
+            .setTitle(`Now tracking: ${user.username}`)
+            .setURL(`https://osu.ppy.sh/users/${user.id}`)
+            .setDescription(`Rank #${user.statistics.global_rank} (${user.statistics.pp}pp)`)
+            .setThumbnail(user.avatar_url)
+            .setFooter({ text: `Remember to >track add "${user.username}" and <track "${user.username}" !` })
           await interaction.reply({ embeds: [embed] })
         } catch (error) {
           await interaction.reply({ content: error.message, ephemeral: true })
         }
-        
       } else if (commandName === 'untrack') {
         const id = interaction.options.getString('id')
         console.info(`Bot >> track{ id=${id} }`)
@@ -109,11 +110,10 @@ export default class Bot {
             .setDescription(`Rank #${user.statistics.global_rank} (${user.statistics.pp}pp)`)
             .setThumbnail(user.avatar_url)
             .setFooter({ text: `Remember to >track remove "${user.username}" and <untrack "${user.username}" !` })
-            await interaction.reply({ embeds: [embed] })
+          await interaction.reply({ embeds: [embed] })
         } catch (error) {
           await interaction.reply({ content: error.message, ephemeral: true })
         }
-        
       } else if (commandName === 'tracklist') {
         console.info('Bot >> tracklist{}')
         const users = await this.#facade.getUsers()
@@ -121,10 +121,39 @@ export default class Bot {
         for (let i = 0; i < users.length; i++) {
           ret = ret.concat(`${users[i][0]}, ${users[i][1]}\n`)
         }
-        fs.writeFileSync('./trackcommands.txt', ret)
-        await interaction.reply({ files: ['./trackcommands.txt']})
-        fs.unlinkSync('./trackcommands.txt')
+        fs.writeFileSync('./tracklist.txt', ret)
+        await interaction.reply({ files: ['./tracklist.txt'] })
+        fs.unlinkSync('./tracklist.txt')
+      } else if (commandName === 'submit') { // TODO
+        const id = interaction.options.getString('id')
+        console.info(`Bot >> submit{ id=${id} }`)
+        try {
+          const s = await this.#facade.putSubmittedScore(id)
+          const embed = new EmbedBuilder()
+            .setColor(primaryColor)
+            .setTitle(`${s.beatmapset.artist} - ${s.beatmapset.title} [${s.beatmap.version}] +${(s.mods.length === 0) ? 'NM' : s.mods.join().replaceAll(',', '')}`)
+            .setURL(`https://osu.ppy.sh/scores/osu/${s.id}`)
+            .setDescription(`Score set by ${s.user.username}\n${s.pp}pp`)
+            .setThumbnail(s.beatmapset.covers['list@2x'])
+            .setFooter({ text: `${s.created_at}` })
+          await interaction.reply({ embeds: [embed] })
+        } catch (error) {
+          await interaction.reply({ content: error.message, ephemeral: true })
+        }
 
+      } else if (commandName === 'unsubmit') { // TODO
+        const id = interaction.options.getString('id')
+        console.info(`Bot >> unsubmit{ id=${id} }`)
+        // has to remove from submitted scores sheet and mod sheet
+        await interaction.reply('Not implemented yet...')
+      } else if (commandName === 'scores') { // TODO
+        const mods = interaction.options.getString('mods')
+        console.info(`Bot >> scores{ mods=${mods} }`)
+        await interaction.reply('Not implemented yet...')
+      } else if (commandName === 'user') { // TODO
+        const id = interaction.options.getString('id')
+        console.info(`Bot >> user{ id=${id} }`)
+        await interaction.reply('Not implemented yet...')
       }
     })
 
