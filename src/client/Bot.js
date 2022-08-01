@@ -144,6 +144,7 @@ export default class Bot {
       } else if (commandName === 'unsubmit') { // TODO
         const id = interaction.options.getString('id')
         console.info(`Bot >> unsubmit{ id=${id} }`)
+        // has to remove from submitted scores sheet and mod sheet
         await interaction.reply('Not implemented yet...')
       } else if (commandName === 'scores') { // TODO
         const mods = interaction.options.getString('mods')
