@@ -154,6 +154,12 @@ export default class Bot {
         const id = interaction.options.getString('id')
         console.info(`Bot >> user{ id=${id} }`)
         await interaction.reply('Not implemented yet...')
+      } else if (commandName === 'zeklewa') {
+        const embed = new EmbedBuilder()
+          .setColor(primaryColor)
+          .setThumbnail('https://static.wikia.nocookie.net/supermarioglitchy4/images/f/f3/Big_chungus.png/')
+          .setFooter({ text: 'bitch u thought 🤣😂'})
+        await interaction.reply({ embeds: [embed] })
       }
     })
 

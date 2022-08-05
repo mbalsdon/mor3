@@ -100,7 +100,13 @@ const commands = [
         .setDescription('The ID of the user whose stats are being viewed')
         .setRequired(true))
     .setDMPermission(true)
-    .setDefaultMemberPermissions(userPermFlags)
+    .setDefaultMemberPermissions(userPermFlags),
+
+  new SlashCommandBuilder()
+      .setName('zeklewa')
+      .setDescription('View Zeklewa\'s mouse-only top 100')
+      .setDMPermission(true)
+      .setDefaultMemberPermissions(userPermFlags)
 
   // TODO: database manip commands only in Mouse City (163444845644349440), viewing commands global
 ]
