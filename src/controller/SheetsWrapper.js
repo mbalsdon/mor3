@@ -75,41 +75,56 @@ export default class SheetsWrapper {
       throw new Error('Username must be a string!')
     }
 
-    // Could do binary search for the index since it's already sorted but I'm not a NERD!! 🤣
-    const userPps = await this.fetchUserPps()
-    userPps.push(pp)
-    userPps.sort((a, b) => {
-      return parseInt(b) - parseInt(a)
-    })
-    const userIndex = userPps.indexOf(pp)
-    const batchUpdateRequest = {
-      requests: [
-        {
-          insertDimension: {
-            range: {
-              sheetId: process.env.USERS,
-              dimension: 'ROWS',
-              startIndex: userIndex + 1,
-              endIndex: userIndex + 2
+    let response
+    // 0pp => append instead of insert
+    if (pp === 0) {
+      response = await this.#sheetsClient.spreadsheets.values.append({
+        auth: SheetsWrapper.#AUTH,
+        spreadsheetId: process.env.SPREADSHEET_ID,
+        range: 'Users',
+        valueInputOption: 'USER_ENTERED',
+        insertDataOption: 'INSERT_ROWS',
+        resource: {
+          values: [[userId, username, rank, pp]]
+        }
+      })
+    } else {
+      // Could do binary search for the index since it's already sorted but I'm not a NERD!! 🤣
+      const userPps = await this.fetchUserPps()
+      userPps.push(pp)
+      userPps.sort((a, b) => {
+        return parseInt(b) - parseInt(a)
+      })
+      const userIndex = userPps.indexOf(pp)
+      const batchUpdateRequest = {
+        requests: [
+          {
+            insertDimension: {
+              range: {
+                sheetId: process.env.USERS,
+                dimension: 'ROWS',
+                startIndex: userIndex + 1,
+                endIndex: userIndex + 2
+              }
             }
           }
-        }
-      ]
-    }
-    await this.#sheetsClient.spreadsheets.batchUpdate({
-      auth: SheetsWrapper.#AUTH,
-      spreadsheetId: process.env.SPREADSHEET_ID,
-      resource: batchUpdateRequest
-    })
-    const response = await this.#sheetsClient.spreadsheets.values.update({
-      auth: SheetsWrapper.#AUTH,
-      spreadsheetId: process.env.SPREADSHEET_ID,
-      range: `Users!A${userIndex + 2}:D${userIndex + 2}`,
-      valueInputOption: 'USER_ENTERED',
-      resource: {
-        values: [[userId, username, rank, pp]]
+        ]
       }
-    })
+      await this.#sheetsClient.spreadsheets.batchUpdate({
+        auth: SheetsWrapper.#AUTH,
+        spreadsheetId: process.env.SPREADSHEET_ID,
+        resource: batchUpdateRequest
+      })
+      response = await this.#sheetsClient.spreadsheets.values.update({
+        auth: SheetsWrapper.#AUTH,
+        spreadsheetId: process.env.SPREADSHEET_ID,
+        range: `Users!A${userIndex + 2}:D${userIndex + 2}`,
+        valueInputOption: 'USER_ENTERED',
+        resource: {
+          values: [[userId, username, rank, pp]]
+        }
+      })
+    }
     return response.data
   }
 
