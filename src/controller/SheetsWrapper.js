@@ -334,7 +334,7 @@ export default class SheetsWrapper {
       range: 'Submitted Scores!A:G',
       majorDimension: 'COLUMNS'
     })
-    return response.data.values.map(e => e.slice(1));
+    return response.data.values.map(e => e.slice(1))
   }
 
   // Doesn't check if scores already in sheet
@@ -368,5 +368,4 @@ export default class SheetsWrapper {
     })
     return response.data
   }
-
 }

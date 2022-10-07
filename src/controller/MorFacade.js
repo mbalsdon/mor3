@@ -126,7 +126,7 @@ export default class MorFacade {
   }
 
   async deleteSubmittedScore (id) {
-    console.info(`MorFacade::deleteSubmittedScore( ${ id} )`)
+    console.info(`MorFacade::deleteSubmittedScore( ${id} )`)
     // Check if score exists (can't check this through osu!API since it's possible for score IDs to get deleted if score is overwritten)
     const submittedScores = await this.#sheets.fetchSubmittedScoresFull()
     const index = submittedScores[0].indexOf(id)
@@ -136,13 +136,13 @@ export default class MorFacade {
     // Get mods
     const mods = submittedScores[3][index]
     await this.#sheets.removeScore(mods, id)
-    const s = [submittedScores[0][index], 
-                submittedScores[1][index],
-                submittedScores[2][index],
-                submittedScores[3][index],
-                submittedScores[4][index],
-                submittedScores[5][index],
-                submittedScores[6][index]]
+    const s = [submittedScores[0][index],
+      submittedScores[1][index],
+      submittedScores[2][index],
+      submittedScores[3][index],
+      submittedScores[4][index],
+      submittedScores[5][index],
+      submittedScores[6][index]]
     return s
   }
 }
