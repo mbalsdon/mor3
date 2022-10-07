@@ -326,6 +326,17 @@ export default class SheetsWrapper {
     return response.data.values[0].slice(1)
   }
 
+  async fetchSubmittedScoresFull () {
+    console.info('SheetsWrapper::fetchSubmittedScoresFull()')
+    const response = await this.#sheetsClient.spreadsheets.values.get({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: process.env.SPREADSHEET_ID,
+      range: 'Submitted Scores!A:G',
+      majorDimension: 'COLUMNS'
+    })
+    return response.data.values.map(e => e.slice(1));
+  }
+
   // Doesn't check if scores already in sheet
   async submitScore (ps) {
     console.info(`SheetsWrapper::submitScore( ${ps} )`)
