@@ -2,6 +2,7 @@ import 'dotenv/config'
 import { Client, EmbedBuilder, GatewayIntentBits } from 'discord.js'
 import MorFacade from '../controller/MorFacade.js'
 import * as fs from 'fs'
+import Mods from '../controller/Mods.js'
 
 const primaryColor = 0xFF05E6
 export default class Bot {
@@ -63,7 +64,7 @@ export default class Bot {
           const embed = new EmbedBuilder()
             .setColor(primaryColor)
           let lim = 0
-          if (page === numPages) {
+          if (page === numPages && users.length % perPage !== 0) {
             lim = users.length % perPage
           } else {
             lim = perPage
@@ -156,9 +157,45 @@ export default class Bot {
           await interaction.reply({ content: error.message, ephemeral: true })
         }
       } else if (commandName === 'scores') { // TODO
-        const mods = interaction.options.getString('mods')
-        console.info(`Bot >> scores{ mods=${mods} }`)
-        await interaction.reply('Not implemented yet...')
+        const mods = interaction.options.getString('mods').toUpperCase()
+        const page = interaction.options.getNumber('page')
+        console.info(`Bot >> scores{ mods=${mods}, page=${page} }`)
+        if (Mods.toSheetId(mods) === -1) {
+          await interaction.reply({ content: `${mods} is not a valid mod combination`, ephemeral: true })
+        } else {
+          const perPage = 8
+          const scores = await this.#facade.getModScores(mods)
+          const numPages = Math.ceil(scores.length / perPage)
+          if (Mods.toSheetId(mods) === -1) {
+            await interaction.reply({ content: `${mods} is not a valid mod combination`, ephemeral: true })
+          } else if (page < 1 || page > numPages) {
+            await interaction.reply({ content: `Page must be between 1 and ${numPages}`, ephemeral: true })
+          } else {
+            const embed = new EmbedBuilder()
+              .setColor(primaryColor)
+            let lim = 0
+            if (page === numPages && scores.length % perPage !== 0) {
+              lim = scores.length % perPage
+            } else {
+              lim = perPage
+            }
+            for (let i = 0; i < lim; i++) {
+              const pageIndex = perPage * (page - 1) + i
+              const scoreId = scores[pageIndex][0]
+              const username = scores[pageIndex][1]
+              const beatmap = scores[pageIndex][2]
+              const accuracy = scores[pageIndex][4]
+              const pp = scores[pageIndex][5]
+              const date = scores[pageIndex][6]
+              embed.addFields([
+                { name: `${pageIndex + 1} ${username}`, value: `${scoreId}`, inline: true },
+                { name: `${beatmap}`, value: `\u200b`, inline: true },
+                { name: `${accuracy}% | ${pp ? pp : '?'}pp`, value: `${date}`, inline: true }
+              ])
+            }
+            await interaction.reply({ embeds: [embed] })
+          }
+        }
       } else if (commandName === 'user') { // TODO
         const id = interaction.options.getString('id')
         console.info(`Bot >> user{ id=${id} }`)
@@ -167,7 +204,7 @@ export default class Bot {
         const embed = new EmbedBuilder()
           .setColor(primaryColor)
           .setThumbnail('https://static.wikia.nocookie.net/supermarioglitchy4/images/f/f3/Big_chungus.png/')
-          .setFooter({ text: 'bitch u thought 🤣😂'})
+          .setFooter({ text: 'bitch u thought 🤣😂' })
         await interaction.reply({ embeds: [embed] })
       }
     })
