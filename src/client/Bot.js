@@ -146,17 +146,18 @@ export default class Bot {
         console.info(`Bot >> unsubmit{ id=${id} }`)
         try {
           const s = await this.#facade.deleteSubmittedScore(id)
-          // TODO: URL & thumbnail
+          // TODO: thumbnail
           const embed = new EmbedBuilder()
             .setColor(primaryColor)
             .setTitle(`${s[2]} +${s[3]}`)
+            .setURL(`https://osu.ppy.sh/scores/osu/${s[0]}`)
             .setDescription(`Score set by ${s[1]}\n${s[5]}pp`)
             .setFooter({ text: `${s[6]}` })
           await interaction.reply({ embeds: [embed] })
         } catch (error) {
           await interaction.reply({ content: error.message, ephemeral: true })
         }
-      } else if (commandName === 'scores') { // TODO
+      } else if (commandName === 'scores') {
         const mods = interaction.options.getString('mods').toUpperCase()
         const page = interaction.options.getNumber('page')
         console.info(`Bot >> scores{ mods=${mods}, page=${page} }`)
