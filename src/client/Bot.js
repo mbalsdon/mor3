@@ -124,7 +124,7 @@ export default class Bot {
         fs.writeFileSync('./tracklist.txt', ret)
         await interaction.reply({ files: ['./tracklist.txt'] })
         fs.unlinkSync('./tracklist.txt')
-      } else if (commandName === 'submit') { // TODO
+      } else if (commandName === 'submit') {
         const id = interaction.options.getString('id')
         console.info(`Bot >> submit{ id=${id} }`)
         try {
@@ -140,12 +140,21 @@ export default class Bot {
         } catch (error) {
           await interaction.reply({ content: error.message, ephemeral: true })
         }
-
-      } else if (commandName === 'unsubmit') { // TODO
+      } else if (commandName === 'unsubmit') {
         const id = interaction.options.getString('id')
         console.info(`Bot >> unsubmit{ id=${id} }`)
-        // has to remove from submitted scores sheet and mod sheet
-        await interaction.reply('Not implemented yet...')
+        try {
+          const s = await this.#facade.deleteSubmittedScore(id)
+          // TODO: URL & thumbnail
+          const embed = new EmbedBuilder()
+            .setColor(primaryColor)
+            .setTitle(`${s[2]} +${s[3]}`)
+            .setDescription(`Score set by ${s[1]}\n${s[5]}pp`)
+            .setFooter({ text: `${s[6]}` })
+          await interaction.reply({ embeds: [embed] })
+        } catch (error) {
+          await interaction.reply({ content: error.message, ephemeral: true })
+        }
       } else if (commandName === 'scores') { // TODO
         const mods = interaction.options.getString('mods')
         console.info(`Bot >> scores{ mods=${mods} }`)

@@ -103,9 +103,10 @@ export default class MorFacade {
   }
 
   async putSubmittedScore (id) {
+    // TODO: should also insert into modsheet; not MVP but pretty cringe w/o
     console.info(`MorFacade::putSubmittedScore( ${id} )`)
     // Check if score already in sheet
-    const submittedScores = await this.getSubmittedScores()
+    const submittedScores = await this.#sheets.fetchSubmittedScores()
     const index = submittedScores.indexOf(id)
     if (index !== -1) {
       throw new Error(`Score with ID ${id} has already been submitted!`)
@@ -121,6 +122,27 @@ export default class MorFacade {
       s.created_at
     ]
     await this.#sheets.submitScore(parsedScore)
+    return s
+  }
+
+  async deleteSubmittedScore (id) {
+    console.info(`MorFacade::deleteSubmittedScore( ${ id} )`)
+    // Check if score exists (can't check this through osu!API since it's possible for score IDs to get deleted if score is overwritten)
+    const submittedScores = await this.#sheets.fetchSubmittedScoresFull()
+    const index = submittedScores[0].indexOf(id)
+    if (index === -1) {
+      throw new Error(`Score with ID ${id} could not be found.`)
+    }
+    // Get mods
+    const mods = submittedScores[3][index]
+    await this.#sheets.removeScore(mods, id)
+    const s = [submittedScores[0][index], 
+                submittedScores[1][index],
+                submittedScores[2][index],
+                submittedScores[3][index],
+                submittedScores[4][index],
+                submittedScores[5][index],
+                submittedScores[6][index]]
     return s
   }
 }
