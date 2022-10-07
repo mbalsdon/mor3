@@ -31,7 +31,7 @@ const commands = [
     .setDescription('Displays list of tracked users sorted by PP')
     .addNumberOption(option =>
       option.setName('page')
-        .setDescription('Page number of tracked user list')
+        .setDescription('Page number of the tracked user list')
         .setRequired(true))
     .setDMPermission(true)
     .setDefaultMemberPermissions(userPermFlags),
@@ -41,7 +41,7 @@ const commands = [
     .setDescription('Adds a user to be tracked')
     .addStringOption(option =>
       option.setName('id')
-        .setDescription('The ID of the user to be tracked')
+        .setDescription('User ID of the person you want to track')
         .setRequired(true))
     .setDMPermission(false)
     .setDefaultMemberPermissions(moderatorPermFlags),
@@ -51,7 +51,7 @@ const commands = [
     .setDescription('Removes a user from being tracked')
     .addStringOption(option =>
       option.setName('id')
-        .setDescription('The ID of the user to be tracked')
+        .setDescription('User ID of the person you no longer want to track')
         .setRequired(true))
     .setDMPermission(false)
     .setDefaultMemberPermissions(moderatorPermFlags),
@@ -67,7 +67,7 @@ const commands = [
     .setDescription('Manually submit a score to the database')
     .addStringOption(option =>
       option.setName('id')
-        .setDescription('The ID of the score to be submitted')
+        .setDescription('Score ID of the score you want to submit')
         .setRequired(true))
     .setDMPermission(false)
     .setDefaultMemberPermissions(moderatorPermFlags),
@@ -77,7 +77,7 @@ const commands = [
     .setDescription('Remove a submitted score from the database')
     .addStringOption(option =>
       option.setName('id')
-        .setDescription('The ID of the score to be unsubmitted')
+        .setDescription('Score ID of the score you want to remove')
         .setRequired(true))
     .setDMPermission(false)
     .setDefaultMemberPermissions(moderatorPermFlags),
@@ -87,7 +87,11 @@ const commands = [
     .setDescription('View the pp leaderboard for a given mod combo')
     .addStringOption(option =>
       option.setName('mods')
-        .setDescription('The mod combo (e.g. HDDT)')
+        .setDescription('Mod combo of the leaderboard you want to look at')
+        .setRequired(true))
+    .addNumberOption(option =>
+      option.setName('page')
+        .setDescription('Page number of the score leaderboard')
         .setRequired(true))
     .setDMPermission(true)
     .setDefaultMemberPermissions(userPermFlags),
@@ -97,16 +101,16 @@ const commands = [
     .setDescription('View a user\'s stats relating to pp records')
     .addStringOption(option =>
       option.setName('id')
-        .setDescription('The ID of the user whose stats are being viewed')
+        .setDescription('User ID of the person you want to view')
         .setRequired(true))
     .setDMPermission(true)
     .setDefaultMemberPermissions(userPermFlags),
 
   new SlashCommandBuilder()
-      .setName('zeklewa')
-      .setDescription('View Zeklewa\'s mouse-only top 100')
-      .setDMPermission(true)
-      .setDefaultMemberPermissions(userPermFlags)
+    .setName('zeklewa')
+    .setDescription('View Zeklewa\'s mouse-only top 100')
+    .setDMPermission(true)
+    .setDefaultMemberPermissions(userPermFlags)
 
   // TODO: database manip commands only in Mouse City (163444845644349440), viewing commands global
 ]
