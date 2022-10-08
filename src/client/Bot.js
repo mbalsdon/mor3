@@ -38,7 +38,22 @@ export default class Bot {
 
       if (commandName === 'help') { // TODO
         console.info('Bot >> help{}')
-        await interaction.reply('Not implemented yet...')
+        const embed = new EmbedBuilder()
+          .setColor(primaryColor)
+          .setAuthor({ name: 'mor3 commands', iconURL: 'https://spreadnuts.s-ul.eu/MdfvA3q5', url: 'https://github.com/mbalsdon/mor3'})
+          .setDescription('`help` - Documentation on the bot\'s commands\n' +
+            '`ping` - Checks if the bot is alive\n' +
+            '`metadata` - Displays mor3 sheet metadata\n' + 
+            '`users` - Displays list of tracked users, sorted by PP\n' +
+            '`track` - Adds a user to be tracked\n' +
+            '`untrack` - Removes a user from being tracked\n' +
+            '`tracklist` - Lists all tracked users\n' +
+            '`submit` - Manually submits a score to the database\n' +
+            '`unsubmit` - Removes a submitted score from the database\n' +
+            '`scores` - Displays list of scores for a given mod combo, sorted by PP\n' +
+            '`user` - Displays a user\'s stats (WIP)')
+          .setFooter({ text: 'https://github.com/mbalsdon/mor3'})
+        await interaction.reply({ embeds: [embed] })
       } else if (commandName === 'ping') {
         console.info('Bot >> ping{}')
         await interaction.reply('pong!')
@@ -201,12 +216,12 @@ export default class Bot {
         const id = interaction.options.getString('id')
         console.info(`Bot >> user{ id=${id} }`)
         await interaction.reply('Not implemented yet...')
-      } else if (commandName === 'zeklewa') {
-        const embed = new EmbedBuilder()
-          .setColor(primaryColor)
-          .setThumbnail('https://static.wikia.nocookie.net/supermarioglitchy4/images/f/f3/Big_chungus.png/')
-          .setFooter({ text: 'bitch u thought 🤣😂' })
-        await interaction.reply({ embeds: [embed] })
+      // } else if (commandName === 'zeklewa') {
+      //   const embed = new EmbedBuilder()
+      //     .setColor(primaryColor)
+      //     .setThumbnail('https://static.wikia.nocookie.net/supermarioglitchy4/images/f/f3/Big_chungus.png/')
+      //     .setFooter({ text: 'bitch u thought 🤣😂' })
+      //   await interaction.reply({ embeds: [embed] })
       }
     })
 
