@@ -31,8 +31,8 @@ const commands = [
     .setDescription('Displays list of tracked users, sorted by PP')
     .addNumberOption(option =>
       option.setName('page')
-        .setDescription('Page number of the tracked user list')
-        .setRequired(true))
+        .setDescription('Page number of the tracked user list (optional). Defaults to the top if not specified.')
+        .setRequired(false))
     .setDMPermission(true)
     .setDefaultMemberPermissions(userPermFlags),
 
