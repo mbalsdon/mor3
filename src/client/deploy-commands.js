@@ -10,7 +10,7 @@ const userPermFlags = PermissionFlagsBits.SendMessages
 const commands = [
   new SlashCommandBuilder()
     .setName('help')
-    .setDescription('Documents all of the bot commands')
+    .setDescription('Documentation on the bot\'s commands')
     .setDMPermission(true)
     .setDefaultMemberPermissions(userPermFlags),
 
@@ -22,13 +22,13 @@ const commands = [
 
   new SlashCommandBuilder()
     .setName('metadata')
-    .setDescription('Returns mor3 sheet metadata')
+    .setDescription('Displays mor3 sheet metadata')
     .setDMPermission(true)
     .setDefaultMemberPermissions(userPermFlags),
 
   new SlashCommandBuilder()
     .setName('users')
-    .setDescription('Displays list of tracked users sorted by PP')
+    .setDescription('Displays list of tracked users, sorted by PP')
     .addNumberOption(option =>
       option.setName('page')
         .setDescription('Page number of the tracked user list')
@@ -58,13 +58,13 @@ const commands = [
 
   new SlashCommandBuilder()
     .setName('tracklist')
-    .setDescription('Lists all tracked users in a .txt file')
+    .setDescription('Lists all tracked users')
     .setDMPermission(false)
     .setDefaultMemberPermissions(userPermFlags),
 
   new SlashCommandBuilder()
     .setName('submit')
-    .setDescription('Manually submit a score to the database')
+    .setDescription('Manually submits a score to the database')
     .addStringOption(option =>
       option.setName('id')
         .setDescription('Score ID of the score you want to submit')
@@ -74,7 +74,7 @@ const commands = [
 
   new SlashCommandBuilder()
     .setName('unsubmit')
-    .setDescription('Remove a submitted score from the database')
+    .setDescription('Removes a submitted score from the database')
     .addStringOption(option =>
       option.setName('id')
         .setDescription('Score ID of the score you want to remove')
@@ -84,7 +84,7 @@ const commands = [
 
   new SlashCommandBuilder()
     .setName('scores')
-    .setDescription('View the pp leaderboard for a given mod combo')
+    .setDescription('Displays list of scores for a given mod combo, sorted by PP')
     .addStringOption(option =>
       option.setName('mods')
         .setDescription('Mod combo of the leaderboard you want to look at')
@@ -98,7 +98,7 @@ const commands = [
 
   new SlashCommandBuilder()
     .setName('user')
-    .setDescription('View a user\'s stats relating to pp records')
+    .setDescription('Displays a user\'s stats (WIP)')
     .addStringOption(option =>
       option.setName('id')
         .setDescription('User ID of the person you want to view')
@@ -106,11 +106,11 @@ const commands = [
     .setDMPermission(true)
     .setDefaultMemberPermissions(userPermFlags),
 
-  new SlashCommandBuilder()
-    .setName('zeklewa')
-    .setDescription('View Zeklewa\'s mouse-only top 100')
-    .setDMPermission(true)
-    .setDefaultMemberPermissions(userPermFlags)
+  // new SlashCommandBuilder()
+  //   .setName('zeklewa')
+  //   .setDescription('View Zeklewa\'s mouse-only top 100')
+  //   .setDMPermission(true)
+  //   .setDefaultMemberPermissions(userPermFlags)
 
   // TODO: database manip commands only in Mouse City (163444845644349440), viewing commands global
 ]
