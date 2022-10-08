@@ -58,7 +58,7 @@ const commands = [
 
   new SlashCommandBuilder()
     .setName('tracklist')
-    .setDescription('Lists all tracked users')
+    .setDescription('Lists all tracked users in a .txt file')
     .setDMPermission(false)
     .setDefaultMemberPermissions(userPermFlags),
 
