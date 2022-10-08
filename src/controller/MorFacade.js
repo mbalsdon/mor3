@@ -61,7 +61,10 @@ export default class MorFacade {
     const username = user.username
     const rank = user.statistics.global_rank
     const pp = user.statistics.pp
-    await this.#sheets.insertUser(userId, username, rank, pp)
+    const acc = user.statistics.hit_accuracy
+    const playtime = user.statistics.play_time / 3600
+
+    await this.#sheets.insertUser(userId, username, rank, pp, acc, playtime)
     return user
   }
 
