@@ -152,4 +152,10 @@ export default class MorFacade {
       submittedScores[6][index]]
     return s
   }
+
+  async getLastUpdated () {
+    console.info('MorFacade::getLastUpdated()')
+    const s = await this.#sheets.fetchLastUpdated()
+    return s
+  }
 }

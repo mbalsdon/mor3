@@ -368,4 +368,14 @@ export default class SheetsWrapper {
     })
     return response.data
   }
+
+  async fetchLastUpdated () {
+    console.info('SheetsWrapper::fetchLastUpdated()')
+    const response = await this.#sheetsClient.spreadsheets.values.get({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: process.env.SPREADSHEET_ID,
+      range: 'Main!A1:A1'
+    })
+    return response.data.values[0]
+  }
 }
