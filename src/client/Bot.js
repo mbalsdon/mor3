@@ -68,34 +68,47 @@ export default class Bot {
         ret = ret.concat('```')
         await interaction.reply(ret)
       } else if (commandName === 'users') {
-        const page = interaction.options.getNumber('page')
+        let page = interaction.options.getNumber('page')
         console.info(`Bot >> users{ page=${page} }`)
-        const perPage = 8
+        if (page === null) {
+          page = 1
+        }
+        const perPage = 5
         const users = await this.#facade.getUsers()
         const numPages = Math.ceil(users.length / perPage)
         if (page < 1 || page > numPages) {
           await interaction.reply({ content: `Page must be between 1 and ${numPages}`, ephemeral: true })
         } else {
-          const embed = new EmbedBuilder()
-            .setColor(primaryColor)
           let lim = 0
           if (page === numPages && users.length % perPage !== 0) {
             lim = users.length % perPage
           } else {
             lim = perPage
           }
+          let desc = ''
           for (let i = 0; i < lim; i++) {
             const pageIndex = perPage * (page - 1) + i
             const userId = users[pageIndex][0]
             const username = users[pageIndex][1]
-            const rank = users[pageIndex][2]
+            const rank = users[pageIndex][2] === '' ? '?' : users[pageIndex][2]
             const pp = users[pageIndex][3]
-            embed.addFields([
-              { name: `${pageIndex + 1}) ${username}`, value: `${userId}`, inline: true },
-              { name: `Global #${rank}`, value: `${pp}pp`, inline: true },
-              { name: '\u200b', value: '\u200b', inline: true }
-            ])
+            const acc = parseFloat(users[pageIndex][4]).toFixed(2)
+            const playtime = Math.round(users[pageIndex][5])
+            const top1s = users[pageIndex][6]
+            const top2s = users[pageIndex][7]
+            const top3s = users[pageIndex][8]
+            const user_str = `**${pageIndex + 1}. [${username}](https://osu.ppy.sh/users/${userId}) (Global #${rank} | ${pp}pp | ${acc}% | ${playtime} hours)**\n` +
+            `▸ :first_place: Mod leaderboard #1s: ${top1s}\n` +
+            `▸ :second_place: Mod leaderboard #2s: ${top2s}\n` +
+            `▸ :third_place: Mod leaderboard #3s: ${top3s}\n`
+            desc = desc + user_str
           }
+          const pfpLink = users[perPage * (page - 1)][9]
+          const embed = new EmbedBuilder()
+            .setColor(primaryColor)
+            .setThumbnail(`${pfpLink}`)
+            .setDescription(desc)
+            .setFooter({ text: `Last update: ${'TODO'}`})
           await interaction.reply({ embeds: [embed] })
         }
       } else if (commandName === 'track') {
