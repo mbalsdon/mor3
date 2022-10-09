@@ -63,8 +63,12 @@ export default class MorFacade {
     const pp = user.statistics.pp
     const acc = user.statistics.hit_accuracy
     const playtime = user.statistics.play_time / 3600
+    const top1s = 0 // TODO
+    const top2s = 0 // TODO
+    const top3s = 0 // TODO
+    const pfpLink = user.avatar_url
 
-    await this.#sheets.insertUser(userId, username, rank, pp, acc, playtime)
+    await this.#sheets.insertUser(userId, username, rank, pp, acc, playtime, top1s, top2s, top3s, pfpLink)
     return user
   }
 
