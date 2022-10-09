@@ -104,11 +104,12 @@ export default class Bot {
             desc = desc + user_str
           }
           const pfpLink = users[perPage * (page - 1)][9]
+          const lastUpdated = await this.#facade.getLastUpdated()
           const embed = new EmbedBuilder()
             .setColor(primaryColor)
             .setThumbnail(`${pfpLink}`)
             .setDescription(desc)
-            .setFooter({ text: `Last update: ${'TODO'}`})
+            .setFooter({ text: `Last update: ${lastUpdated}`})
           await interaction.reply({ embeds: [embed] })
         }
       } else if (commandName === 'track') {
