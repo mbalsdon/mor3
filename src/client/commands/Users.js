@@ -5,23 +5,26 @@ const configRaw = fs.readFileSync('./src/config.json')
 const config = JSON.parse(configRaw)
 
 export default async function usersCmd (facade, client, interaction) {
-  let page = interaction.options.getNumber('page')
-  console.info(`::usersCmd( page=${page} }`)
-  if (page === null) {
-    page = 1
-  }
+  console.info(`::usersCmd()`)
+
+  let currentPage = 1
   const perPage = 5
   const users = await facade.getUsers()
   const numPages = Math.ceil(users.length / perPage)
-  if (page < 1 || page > numPages) {
-    await interaction.reply({ content: `Page must be between 1 and ${numPages}`, ephemeral: true })
-  } else {
-    let lim = 0
-    if (page === numPages && users.length % perPage !== 0) {
-      lim = users.length % perPage
-    } else {
-      lim = perPage
+  const lastUpdated = await facade.getLastUpdated()
+
+  // Modularized due to the fact that using buttons requires the interaction to be updated with new data
+  var buildEmbed = function(page) {
+    console.info(`::userCmd >> buildEmbed(${page})`)
+
+    if (page < 1 || page > numPages) {
+      throw new Error(`Page must be between 1 and ${numPages} - this should never happen!`)
     }
+
+    // Avoid OOB errors (may have to display less than 'perpage' users if you're on the last page)
+    const lim = (page === numPages && users.length % perPage !== 0) ? users.length % perPage : perPage
+    
+    // Build and concatenate player strings
     let desc = ''
     for (let i = 0; i < lim; i++) {
       const pageIndex = perPage * (page - 1) + i
@@ -35,55 +38,92 @@ export default async function usersCmd (facade, client, interaction) {
       const top2s = users[pageIndex][7]
       const top3s = users[pageIndex][8]
       const userStr = `**${pageIndex + 1}. [${username}](https://osu.ppy.sh/users/${userId}) (Global #${rank} | ${pp}pp | ${acc}% | ${playtime} hours)**\n` +
-            `▸ :first_place: Mod leaderboard #1s: ${top1s}\n` +
-            `▸ :second_place: Mod leaderboard #2s: ${top2s}\n` +
-            `▸ :third_place: Mod leaderboard #3s: ${top3s}\n`
+              `▸ :first_place: Mod leaderboard #1s: ${top1s}\n` +
+              `▸ :second_place: Mod leaderboard #2s: ${top2s}\n` +
+              `▸ :third_place: Mod leaderboard #3s: ${top3s}\n`
       desc = desc + userStr
     }
+
     const pfpLink = users[perPage * (page - 1)][9]
-    const lastUpdated = await facade.getLastUpdated()
+
+    // Create the embed object
     const embed = new EmbedBuilder()
       .setColor(config.primaryColor)
       .setThumbnail(`${pfpLink}`)
       .setDescription(desc)
       .setFooter({ text: `Last update: ${lastUpdated}` })
 
-    const row = new ActionRowBuilder()
+    return embed
+  }
+
+  let embed = await buildEmbed(currentPage)
+  let buttons = new ActionRowBuilder()
       .addComponents([
         new ButtonBuilder()
           .setCustomId('start')
           .setLabel('◀◀')
-          .setStyle(ButtonStyle.Secondary),
+          .setStyle(ButtonStyle.Secondary)
+          .setDisabled(true),
         new ButtonBuilder()
           .setCustomId('prev')
           .setLabel('◀')
-          .setStyle(ButtonStyle.Secondary),
+          .setStyle(ButtonStyle.Secondary)
+          .setDisabled(true),
         new ButtonBuilder()
           .setCustomId('next')
           .setLabel('▶')
-          .setStyle(ButtonStyle.Secondary),
+          .setStyle(ButtonStyle.Secondary)
+          .setDisabled(false),
         new ButtonBuilder()
           .setCustomId('last')
           .setLabel('▶▶')
           .setStyle(ButtonStyle.Secondary)
+          .setDisabled(false)
       ])
-    client.on('interactionCreate', interaction => {
-      if (!interaction.isButton()) return
-      const buttonId = interaction.customId
-      if (buttonId === 'start') {
-        console.info('Bot >> users >> start')
-        // Set page to 1; grey out start/prev
-      } else if (buttonId === 'prev') {
-        console.info('Bot >> users >> prev')
-        // Set page to previous; grey out start/prev if page===1
-      } else if (buttonId === 'next') {
-        console.info('Bot >> users >> next')
-        // Set page to next; grey out next/last if page===numPages
-      } else {
-        console.info('Bot >> users >> last')
-        // Set page to last; grey out next/last if page===numPages
-      }
-    })
-    await interaction.reply({ embeds: [embed], components: [row] })
-  }
+
+  client.on('interactionCreate', interaction => {
+    if (!interaction.isButton()) return
+
+    const buttonId = interaction.customId
+    if (buttonId === 'start') {
+      console.info('Bot >> users >> start')
+      currentPage = 1
+      embed = buildEmbed(currentPage)
+      buttons.components[0].setDisabled(true)
+      buttons.components[1].setDisabled(true)
+      buttons.components[2].setDisabled(false)
+      buttons.components[3].setDisabled(false)
+
+    } else if (buttonId === 'prev') {
+      console.info('Bot >> users >> prev')
+      currentPage = currentPage - 1
+      embed = buildEmbed(currentPage)
+      buttons.components[0].setDisabled(currentPage === 1)
+      buttons.components[1].setDisabled(currentPage === 1)
+      buttons.components[2].setDisabled(false)
+      buttons.components[3].setDisabled(false)
+
+    } else if (buttonId === 'next') {
+      console.info('Bot >> users >> next')
+      currentPage = currentPage + 1
+      embed = buildEmbed(currentPage)
+      buttons.components[0].setDisabled(false)
+      buttons.components[1].setDisabled(false)
+      buttons.components[2].setDisabled(currentPage === numPages)
+      buttons.components[3].setDisabled(currentPage === numPages)
+
+    } else {
+      console.info('Bot >> users >> last')
+      currentPage = numPages
+      embed = buildEmbed(currentPage)
+      buttons.components[0].setDisabled(false)
+      buttons.components[1].setDisabled(false)
+      buttons.components[2].setDisabled(true)
+      buttons.components[3].setDisabled(true)
+    }
+    
+    interaction.update({ embeds: [embed], components: [buttons] })
+  })
+
+  await interaction.reply({ embeds: [embed], components: [buttons] })
 }
