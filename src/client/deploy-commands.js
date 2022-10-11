@@ -95,10 +95,6 @@ const commands = [
       option.setName('mods')
         .setDescription('Mod combo of the leaderboard you want to look at')
         .setRequired(true))
-    .addNumberOption(option =>
-      option.setName('page')
-        .setDescription('Page number of the score leaderboard')
-        .setRequired(true))
     .setDMPermission(true)
     .setDefaultMemberPermissions(userPermFlags)
 ]
