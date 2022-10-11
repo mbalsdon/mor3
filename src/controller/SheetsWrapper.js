@@ -172,7 +172,7 @@ export default class SheetsWrapper {
     const response = await this.#sheetsClient.spreadsheets.values.get({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: process.env.SPREADSHEET_ID,
-      range: `${mods}!A:I`,
+      range: `${mods}!A:J`,
       majorDimension: 'ROWS',
       valueRenderOption
     })
@@ -189,7 +189,7 @@ export default class SheetsWrapper {
     const response = await this.#sheetsClient.spreadsheets.values.get({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: process.env.SPREADSHEET_ID,
-      range: `${mods}!A${rowNum + 2}:I${rowNum + 2}`,
+      range: `${mods}!A${rowNum + 2}:J${rowNum + 2}`,
       majorDimension: 'ROWS',
       valueRenderOption: 'FORMATTED_VALUE'
     })
@@ -290,7 +290,7 @@ export default class SheetsWrapper {
     const response = await this.#sheetsClient.spreadsheets.values.update({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: process.env.SPREADSHEET_ID,
-      range: `${mods}!A2:I${scores.length + 1}`,
+      range: `${mods}!A2:J${scores.length + 1}`,
       valueInputOption: 'USER_ENTERED',
       resource: {
         values: scores
@@ -331,7 +331,7 @@ export default class SheetsWrapper {
     const response = await this.#sheetsClient.spreadsheets.values.get({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: process.env.SPREADSHEET_ID,
-      range: 'Submitted Scores!A:I',
+      range: 'Submitted Scores!A:J',
       majorDimension: 'COLUMNS'
     })
     return response.data.values.map(e => e.slice(1))
@@ -348,7 +348,7 @@ export default class SheetsWrapper {
       valueInputOption: 'USER_ENTERED',
       insertDataOption: 'INSERT_ROWS',
       resource: {
-        values: [[ps[0], ps[1], ps[2], ps[3], ps[4], ps[5], ps[6]]]
+        values: [[ps[0], ps[1], ps[2], ps[3], ps[4], ps[5], ps[6], ps[7], ps[8], ps[9]]]
       }
     })
     return response.data

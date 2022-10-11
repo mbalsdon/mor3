@@ -66,9 +66,12 @@ export default class MorFacade {
     const top1s = 0 // TODO
     const top2s = 0 // TODO
     const top3s = 0 // TODO
+    const top5s = 0 // TODO
+    const top10s = 0 // TODO
+    const top25s = 0 // TODO
     const pfpLink = user.avatar_url
 
-    await this.#sheets.insertUser(userId, username, rank, pp, acc, playtime, top1s, top2s, top3s, pfpLink)
+    await this.#sheets.insertUser(userId, username, rank, pp, acc, playtime, top1s, top2s, top3s, top5s, top10s, top25s, pfpLink)
     return user
   }
 
@@ -120,13 +123,16 @@ export default class MorFacade {
     }
     const s = await this.#osu.fetchScore(id)
     const parsedScore = [
-      `=HYPERLINK("https://osu.ppy.sh/scores/osu/${id}", "${id}")`,
-      `=HYPERLINK("https://osu.ppy.sh/users/${s.user.id}", "${s.user.username}")`,
+      `${id}`,
+      `${s.user.id}`,
+      `${s.user.username}`
       `=HYPERLINK("${s.beatmap.url}", "${s.beatmapset.artist} - ${s.beatmapset.title} [${s.beatmap.version}]")`,
       (s.mods.length === 0) ? 'NM' : s.mods.join().replaceAll(',', ''), // turn the mods into a single string
       Math.round(s.accuracy * 10000) / 100, // 0.xxxx => xx.xx
       s.pp,
-      s.created_at
+      s.beatmap.difficulty_rating,
+      s.created_at,
+      s.beatmapset.covers['list@2x']
     ]
     await this.#sheets.submitScore(parsedScore)
     return s
@@ -149,7 +155,10 @@ export default class MorFacade {
       submittedScores[3][index],
       submittedScores[4][index],
       submittedScores[5][index],
-      submittedScores[6][index]]
+      submittedScores[6][index],
+      submittedScores[7][index],
+      submittedScores[8][index],
+      submittedScores[9][index]]
     return s
   }
 
