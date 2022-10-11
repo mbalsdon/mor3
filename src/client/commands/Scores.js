@@ -8,12 +8,12 @@ const configRaw = fs.readFileSync('./src/config.json')
 const config = JSON.parse(configRaw)
 
 export default async function scoresCmd (facade, client, interaction) {
-  const mods = interaction.options.getString('mods').toUpperCase()
-  console.info(`::scoresCmd( ${mods} )`)
+  const inputMods = interaction.options.getString('mods').toUpperCase()
+  console.info(`::scoresCmd( ${inputMods} )`)
 
-  if (Mods.toSheetId(mods) === -1) {
+  if (Mods.toSheetId(inputMods) === -1) {
     await interaction.reply({
-      content: `\`${mods}\` is not a valid mod combination!\n\n` +
+      content: `\`${inputMods}\` is not a valid mod combination!\n\n` +
   '**Valid mods:** `NM, DT, HR, HD, EZ, HT, FL`\n' +
   '`HDDT, HRDT, EZDT, DTFL, EZHT, HDHR, HDHT, EZHD, HRHT, EZFL, HRFL, HTFL, HDFL`\n' +
   '`HDHRDT, HDDTFL, EZHDDT, HRDTFL, EZDTFL, HDHTFL, HDHRHT, HRHTFL, EZHDHT, EZHTFL, EZHDFL, HDHRFL`\n' +
@@ -24,7 +24,7 @@ export default async function scoresCmd (facade, client, interaction) {
 
   let currentPage = 1
   const perPage = 5
-  const scores = await facade.getModScores(mods)
+  const scores = await facade.getModScores(inputMods)
   const numPages = Math.ceil(scores.length / perPage)
   const lastUpdated = await facade.getLastUpdated()
 
@@ -44,13 +44,14 @@ export default async function scoresCmd (facade, client, interaction) {
     for (let i = 0; i < lim; i++) {
       const pageIndex = perPage * (page - 1) + i
       const scoreId = scores[pageIndex][0]
-      const userId = 2 // TODO
-      const username = scores[pageIndex][1]
-      const beatmap = scores[pageIndex][2]
-      const accuracy = scores[pageIndex][4]
-      const pp = scores[pageIndex][5]
-      const stars = '0.00' // TODO
-      const date = scores[pageIndex][6]
+      const userId = scores[pageIndex][1]
+      const username = scores[pageIndex][2]
+      const beatmap = scores[pageIndex][3]
+      const mods = scores[pageIndex][4]
+      const accuracy = scores[pageIndex][5]
+      const pp = scores[pageIndex][6]
+      const stars = scores[pageIndex][7]
+      const date = scores[pageIndex][8]
       let medalEmoji = ''
       if (pageIndex === 0) { medalEmoji = ':first_place:'}
       else if (pageIndex === 1) { medalEmoji = ':second_place:'}
@@ -59,17 +60,17 @@ export default async function scoresCmd (facade, client, interaction) {
       else if (pageIndex <= 24) {medalEmoji = ':military_medal:'}
       else { medalEmoji = ':skull:'} 
 
-      const scoreStr = `**${pageIndex + 1}. [${beatmap}](https://osu.ppy.sh/scores/${scoreId}) +${mods}** [${stars}★]\n` +
+      const scoreStr = `**${pageIndex + 1}. [${beatmap}](https://osu.ppy.sh/scores/osu/${scoreId}) +${mods}** [${stars}★]\n` +
               `▸ ${medalEmoji} ▸ **${pp}pp** ▸ ${accuracy}%\n` +
               `▸ Set by [${username}](https://osu.ppy.sh/users/${userId}) on ${date}\n`
       desc = desc + scoreStr
     }
-    const beatmapImgLink = scores[perPage * (page - 1)][7]
+    const beatmapImgLink = scores[perPage * (page - 1)][9]
 
     // Create the embed object
     const embed = new EmbedBuilder()
       .setColor(config.primaryColor)
-      .setAuthor({ name: `+${mods} Score Leaderboard`, iconURL: `${beatmapImgLink}`, url: `https://docs.google.com/spreadsheets/d/${process.env.SPREADSHEET_ID}/edit#gid=${Mods.toSheetId(mods)}` })
+      .setAuthor({ name: `+${inputMods} Score Leaderboard`, iconURL: `${beatmapImgLink}`, url: `https://docs.google.com/spreadsheets/d/${process.env.SPREADSHEET_ID}/edit#gid=${Mods.toSheetId(inputMods)}` })
       .setThumbnail(`${beatmapImgLink}`)
       .setDescription(desc)
       .setFooter({ text: `Last update: ${lastUpdated}` })
