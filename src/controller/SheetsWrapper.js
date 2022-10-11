@@ -61,14 +61,14 @@ export default class SheetsWrapper {
     const response = await this.#sheetsClient.spreadsheets.values.get({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: process.env.SPREADSHEET_ID,
-      range: 'Users!A:D',
+      range: 'Users!A:J',
       majorDimension: 'ROWS'
     })
     return response.data.values.slice(1)
   }
 
-  async insertUser (userId, username, rank, pp) {
-    console.info(`SheetsWrapper::insertUser( ${userId}, ${username}, ${rank}, ${pp} )`)
+  async insertUser (userId, username, rank, pp, acc, playtime, top1s, top2s, top3s, pfpLink) {
+    console.info(`SheetsWrapper::insertUser( ${userId}, ${username}, ${rank}, ${pp}, ${acc}, ${playtime}, ${top1s}, ${top2s}, ${top3s}, ${pfpLink} )`)
     if (isNaN(parseInt(userId)) || parseInt(userId) < 1) {
       throw new Error('User ID must be a positive number!')
     } else if (typeof username !== 'string') {
@@ -85,7 +85,7 @@ export default class SheetsWrapper {
         valueInputOption: 'USER_ENTERED',
         insertDataOption: 'INSERT_ROWS',
         resource: {
-          values: [[userId, username, rank, pp]]
+          values: [[userId, username, rank, pp, acc, playtime, top1s, top2s, top3s, pfpLink]]
         }
       })
     } else {
@@ -118,10 +118,10 @@ export default class SheetsWrapper {
       response = await this.#sheetsClient.spreadsheets.values.update({
         auth: SheetsWrapper.#AUTH,
         spreadsheetId: process.env.SPREADSHEET_ID,
-        range: `Users!A${userIndex + 2}:D${userIndex + 2}`,
+        range: `Users!A${userIndex + 2}:J${userIndex + 2}`,
         valueInputOption: 'USER_ENTERED',
         resource: {
-          values: [[userId, username, rank, pp]]
+          values: [[userId, username, rank, pp, acc, playtime, top1s, top2s, top3s, pfpLink]]
         }
       })
     }
@@ -367,5 +367,15 @@ export default class SheetsWrapper {
       }
     })
     return response.data
+  }
+
+  async fetchLastUpdated () {
+    console.info('SheetsWrapper::fetchLastUpdated()')
+    const response = await this.#sheetsClient.spreadsheets.values.get({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: process.env.SPREADSHEET_ID,
+      range: 'Main!A1:A1'
+    })
+    return response.data.values[0]
   }
 }

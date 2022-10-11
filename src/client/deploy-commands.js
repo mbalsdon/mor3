@@ -29,9 +29,15 @@ const commands = [
   new SlashCommandBuilder()
     .setName('users')
     .setDescription('Displays list of tracked users, sorted by PP')
-    .addNumberOption(option =>
-      option.setName('page')
-        .setDescription('Page number of the tracked user list')
+    .setDMPermission(true)
+    .setDefaultMemberPermissions(userPermFlags),
+
+  new SlashCommandBuilder()
+    .setName('user')
+    .setDescription('Displays a user\'s stats (WIP)')
+    .addStringOption(option =>
+      option.setName('id')
+        .setDescription('User ID of the person you want to view')
         .setRequired(true))
     .setDMPermission(true)
     .setDefaultMemberPermissions(userPermFlags),
@@ -94,25 +100,7 @@ const commands = [
         .setDescription('Page number of the score leaderboard')
         .setRequired(true))
     .setDMPermission(true)
-    .setDefaultMemberPermissions(userPermFlags),
-
-  new SlashCommandBuilder()
-    .setName('user')
-    .setDescription('Displays a user\'s stats (WIP)')
-    .addStringOption(option =>
-      option.setName('id')
-        .setDescription('User ID of the person you want to view')
-        .setRequired(true))
-    .setDMPermission(true)
-    .setDefaultMemberPermissions(userPermFlags),
-
-  // new SlashCommandBuilder()
-  //   .setName('zeklewa')
-  //   .setDescription('View Zeklewa\'s mouse-only top 100')
-  //   .setDMPermission(true)
-  //   .setDefaultMemberPermissions(userPermFlags)
-
-  // TODO: database manip commands only in Mouse City (163444845644349440), viewing commands global
+    .setDefaultMemberPermissions(userPermFlags)
 ]
   .map(command => command.toJSON())
 

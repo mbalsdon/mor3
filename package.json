@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node ./src/client/deploy-commands.js && node index.js",
     "watch": "node ./src/client/deploy-commands.js && nodemon index.js",
-    "lint": "./node_modules/.bin/eslint src --ext .js"
+    "lint": "./node_modules/.bin/eslint src --ext .js",
+    "jobs": "node /src/jobs/UpdateUsers.js && node src/jobs/ScrapeTopPlays.js"
   },
   "author": "spreadnuts",
   "license": "ISC",
