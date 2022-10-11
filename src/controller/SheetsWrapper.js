@@ -172,7 +172,7 @@ export default class SheetsWrapper {
     const response = await this.#sheetsClient.spreadsheets.values.get({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: process.env.SPREADSHEET_ID,
-      range: `${mods}!A:G`,
+      range: `${mods}!A:H`,
       majorDimension: 'ROWS',
       valueRenderOption
     })
