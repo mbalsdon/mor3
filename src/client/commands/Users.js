@@ -5,7 +5,7 @@ const configRaw = fs.readFileSync('./src/config.json')
 const config = JSON.parse(configRaw)
 
 export default async function usersCmd (facade, client, interaction) {
-  console.info(`::usersCmd()`)
+  console.info('::usersCmd()')
 
   let currentPage = 1
   const perPage = 5
@@ -14,7 +14,7 @@ export default async function usersCmd (facade, client, interaction) {
   const lastUpdated = await facade.getLastUpdated()
 
   // Modularized due to the fact that using buttons requires the interaction to be updated with new data
-  var buildEmbed = function(page) {
+  const buildEmbed = function (page) {
     console.info(`::userCmd >> buildEmbed(${page})`)
 
     if (page < 1 || page > numPages) {
@@ -23,7 +23,7 @@ export default async function usersCmd (facade, client, interaction) {
 
     // Avoid OOB errors (may have to display less than 'perpage' users if you're on the last page)
     const lim = (page === numPages && users.length % perPage !== 0) ? users.length % perPage : perPage
-    
+
     // Build and concatenate player strings
     let desc = ''
     for (let i = 0; i < lim; i++) {
@@ -57,29 +57,29 @@ export default async function usersCmd (facade, client, interaction) {
   }
 
   let embed = await buildEmbed(currentPage)
-  let buttons = new ActionRowBuilder()
-      .addComponents([
-        new ButtonBuilder()
-          .setCustomId('start')
-          .setLabel('◀◀')
-          .setStyle(ButtonStyle.Secondary)
-          .setDisabled(true),
-        new ButtonBuilder()
-          .setCustomId('prev')
-          .setLabel('◀')
-          .setStyle(ButtonStyle.Secondary)
-          .setDisabled(true),
-        new ButtonBuilder()
-          .setCustomId('next')
-          .setLabel('▶')
-          .setStyle(ButtonStyle.Secondary)
-          .setDisabled(false),
-        new ButtonBuilder()
-          .setCustomId('last')
-          .setLabel('▶▶')
-          .setStyle(ButtonStyle.Secondary)
-          .setDisabled(false)
-      ])
+  const buttons = new ActionRowBuilder()
+    .addComponents([
+      new ButtonBuilder()
+        .setCustomId('start')
+        .setLabel('◀◀')
+        .setStyle(ButtonStyle.Secondary)
+        .setDisabled(true),
+      new ButtonBuilder()
+        .setCustomId('prev')
+        .setLabel('◀')
+        .setStyle(ButtonStyle.Secondary)
+        .setDisabled(true),
+      new ButtonBuilder()
+        .setCustomId('next')
+        .setLabel('▶')
+        .setStyle(ButtonStyle.Secondary)
+        .setDisabled(false),
+      new ButtonBuilder()
+        .setCustomId('last')
+        .setLabel('▶▶')
+        .setStyle(ButtonStyle.Secondary)
+        .setDisabled(false)
+    ])
 
   client.on('interactionCreate', interaction => {
     if (!interaction.isButton()) return
@@ -93,7 +93,6 @@ export default async function usersCmd (facade, client, interaction) {
       buttons.components[1].setDisabled(true)
       buttons.components[2].setDisabled(false)
       buttons.components[3].setDisabled(false)
-
     } else if (buttonId === 'prev') {
       console.info('Bot >> users >> prev')
       currentPage = currentPage - 1
@@ -102,7 +101,6 @@ export default async function usersCmd (facade, client, interaction) {
       buttons.components[1].setDisabled(currentPage === 1)
       buttons.components[2].setDisabled(false)
       buttons.components[3].setDisabled(false)
-
     } else if (buttonId === 'next') {
       console.info('Bot >> users >> next')
       currentPage = currentPage + 1
@@ -111,7 +109,6 @@ export default async function usersCmd (facade, client, interaction) {
       buttons.components[1].setDisabled(false)
       buttons.components[2].setDisabled(currentPage === numPages)
       buttons.components[3].setDisabled(currentPage === numPages)
-
     } else {
       console.info('Bot >> users >> last')
       currentPage = numPages
@@ -121,7 +118,7 @@ export default async function usersCmd (facade, client, interaction) {
       buttons.components[2].setDisabled(true)
       buttons.components[3].setDisabled(true)
     }
-    
+
     interaction.update({ embeds: [embed], components: [buttons] })
   })
 
