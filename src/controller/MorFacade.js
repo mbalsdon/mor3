@@ -125,8 +125,8 @@ export default class MorFacade {
     const parsedScore = [
       `${id}`,
       `${s.user.id}`,
-      `${s.user.username}`
-      `=HYPERLINK("${s.beatmap.url}", "${s.beatmapset.artist} - ${s.beatmapset.title} [${s.beatmap.version}]")`,
+      `${s.user.username}`,
+      `${s.beatmapset.artist} - ${s.beatmapset.title} [${s.beatmap.version}]`,
       (s.mods.length === 0) ? 'NM' : s.mods.join().replaceAll(',', ''), // turn the mods into a single string
       Math.round(s.accuracy * 10000) / 100, // 0.xxxx => xx.xx
       s.pp,
@@ -135,7 +135,7 @@ export default class MorFacade {
       s.beatmapset.covers['list@2x']
     ]
     await this.#sheets.submitScore(parsedScore)
-    return s
+    return parsedScore
   }
 
   async deleteSubmittedScore (id) {
@@ -147,7 +147,7 @@ export default class MorFacade {
       throw new Error(`Score with ID ${id} could not be found.`)
     }
     // Get mods
-    const mods = submittedScores[3][index]
+    const mods = submittedScores[4][index]
     await this.#sheets.removeScore(mods, id)
     const s = [submittedScores[0][index],
       submittedScores[1][index],
