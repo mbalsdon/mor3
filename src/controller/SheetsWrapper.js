@@ -331,7 +331,7 @@ export default class SheetsWrapper {
     const response = await this.#sheetsClient.spreadsheets.values.get({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: process.env.SPREADSHEET_ID,
-      range: 'Submitted Scores!A:G',
+      range: 'Submitted Scores!A:H',
       majorDimension: 'COLUMNS'
     })
     return response.data.values.map(e => e.slice(1))
