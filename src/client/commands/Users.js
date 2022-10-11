@@ -5,7 +5,7 @@ const configRaw = fs.readFileSync('./src/config.json')
 const config = JSON.parse(configRaw)
 
 export default async function usersCmd (facade, client, interaction) {
-  console.info(`::usersCmd()`)
+  console.info('::usersCmd()')
 
   let currentPage = 1
   const perPage = 5
@@ -14,16 +14,16 @@ export default async function usersCmd (facade, client, interaction) {
   const lastUpdated = await facade.getLastUpdated()
 
   // Modularized due to the fact that using buttons requires the interaction to be updated with new data
-  var buildEmbed = function(page) {
-    console.info(`::userCmd >> buildEmbed(${page})`)
+  const buildEmbed = function (page) {
+    console.info(`::userCmd >> buildEmbed( ${page} )`)
 
     if (page < 1 || page > numPages) {
       throw new Error(`Page must be between 1 and ${numPages} - this should never happen!`)
     }
 
-    // Avoid OOB errors (may have to display less than 'perpage' users if you're on the last page)
+    // Avoid OOB errors (may have to display less than 'perPage' users if you're on the last page)
     const lim = (page === numPages && users.length % perPage !== 0) ? users.length % perPage : perPage
-    
+
     // Build and concatenate player strings
     let desc = ''
     for (let i = 0; i < lim; i++) {
@@ -43,7 +43,6 @@ export default async function usersCmd (facade, client, interaction) {
               `▸ :third_place: Mod leaderboard #3s: ${top3s}\n`
       desc = desc + userStr
     }
-
     const pfpLink = users[perPage * (page - 1)][9]
 
     // Create the embed object
@@ -57,63 +56,60 @@ export default async function usersCmd (facade, client, interaction) {
   }
 
   let embed = await buildEmbed(currentPage)
-  let buttons = new ActionRowBuilder()
-      .addComponents([
-        new ButtonBuilder()
-          .setCustomId('start')
-          .setLabel('◀◀')
-          .setStyle(ButtonStyle.Secondary)
-          .setDisabled(true),
-        new ButtonBuilder()
-          .setCustomId('prev')
-          .setLabel('◀')
-          .setStyle(ButtonStyle.Secondary)
-          .setDisabled(true),
-        new ButtonBuilder()
-          .setCustomId('next')
-          .setLabel('▶')
-          .setStyle(ButtonStyle.Secondary)
-          .setDisabled(false),
-        new ButtonBuilder()
-          .setCustomId('last')
-          .setLabel('▶▶')
-          .setStyle(ButtonStyle.Secondary)
-          .setDisabled(false)
-      ])
+  const buttons = new ActionRowBuilder()
+    .addComponents([
+      new ButtonBuilder()
+        .setCustomId('start')
+        .setLabel('◀◀')
+        .setStyle(ButtonStyle.Secondary)
+        .setDisabled(true),
+      new ButtonBuilder()
+        .setCustomId('prev')
+        .setLabel('◀')
+        .setStyle(ButtonStyle.Secondary)
+        .setDisabled(true),
+      new ButtonBuilder()
+        .setCustomId('next')
+        .setLabel('▶')
+        .setStyle(ButtonStyle.Secondary)
+        .setDisabled(false),
+      new ButtonBuilder()
+        .setCustomId('last')
+        .setLabel('▶▶')
+        .setStyle(ButtonStyle.Secondary)
+        .setDisabled(false)
+    ])
 
   client.on('interactionCreate', interaction => {
     if (!interaction.isButton()) return
 
     const buttonId = interaction.customId
     if (buttonId === 'start') {
-      console.info('Bot >> users >> start')
+      console.info('::usersCmd >> start')
       currentPage = 1
       embed = buildEmbed(currentPage)
       buttons.components[0].setDisabled(true)
       buttons.components[1].setDisabled(true)
       buttons.components[2].setDisabled(false)
       buttons.components[3].setDisabled(false)
-
     } else if (buttonId === 'prev') {
-      console.info('Bot >> users >> prev')
+      console.info('::usersCmd >> prev')
       currentPage = currentPage - 1
       embed = buildEmbed(currentPage)
       buttons.components[0].setDisabled(currentPage === 1)
       buttons.components[1].setDisabled(currentPage === 1)
       buttons.components[2].setDisabled(false)
       buttons.components[3].setDisabled(false)
-
     } else if (buttonId === 'next') {
-      console.info('Bot >> users >> next')
+      console.info('::usersCmd >> next')
       currentPage = currentPage + 1
       embed = buildEmbed(currentPage)
       buttons.components[0].setDisabled(false)
       buttons.components[1].setDisabled(false)
       buttons.components[2].setDisabled(currentPage === numPages)
       buttons.components[3].setDisabled(currentPage === numPages)
-
     } else {
-      console.info('Bot >> users >> last')
+      console.info('::usersCmd >> last')
       currentPage = numPages
       embed = buildEmbed(currentPage)
       buttons.components[0].setDisabled(false)
@@ -121,7 +117,7 @@ export default async function usersCmd (facade, client, interaction) {
       buttons.components[2].setDisabled(true)
       buttons.components[3].setDisabled(true)
     }
-    
+
     interaction.update({ embeds: [embed], components: [buttons] })
   })
 
