@@ -61,8 +61,8 @@ export default class MorFacade {
     const username = user.username
     const rank = user.statistics.global_rank
     const pp = user.statistics.pp
-    const acc = user.statistics.hit_accuracy
-    const playtime = user.statistics.play_time / 3600
+    const acc = user.statistics.hit_accuracy.toFixed(2)
+    const playtime = Math.round(user.statistics.play_time / 3600)
     const top1s = 0 // TODO
     const top2s = 0 // TODO
     const top3s = 0 // TODO
