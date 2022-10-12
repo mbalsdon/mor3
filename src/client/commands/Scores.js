@@ -26,6 +26,12 @@ export default async function scoresCmd (facade, client, interaction) {
   const perPage = 5
   const scores = await facade.getModScores(inputMods)
   const numPages = Math.ceil(scores.length / perPage)
+
+  if (numPages === 0) {
+    await interaction.reply({ content: `No scores to display - The ${inputMods} sheet is empty!`, ephemeral: true })
+    return
+  }
+
   const lastUpdated = await facade.getLastUpdated()
 
   // Modularized due to the fact that using buttons requires the interaction to be updated with new data

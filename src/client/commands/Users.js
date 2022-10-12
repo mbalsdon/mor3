@@ -11,6 +11,11 @@ export default async function usersCmd (facade, client, interaction) {
   const perPage = 5
   const users = await facade.getUsers()
   const numPages = Math.ceil(users.length / perPage)
+
+  if (numPages === 0) {
+    await interaction.reply({ content: 'No users to display - The sheet is empty!', ephemeral: true })
+  }
+
   const lastUpdated = await facade.getLastUpdated()
 
   // Modularized due to the fact that using buttons requires the interaction to be updated with new data
