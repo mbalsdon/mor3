@@ -30,5 +30,5 @@ if (args[0] === 'updateUsers') {
 } else {
   // TODO: enumerate commands
   console.log(`${args[0]} is not a valid input!`)
-  console.log('Valid jobs: updateUsers, scrapeTopPlays, calcTopModLBPlays, washSheets, runScheduledJobs')
+  console.log('Valid jobs: updateUsers, scrapeTopPlays, calcTopModLBPlays, updateModSheets, runScheduledJobs')
 }
