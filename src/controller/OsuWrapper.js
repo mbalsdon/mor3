@@ -162,7 +162,7 @@ export default class OsuWrapper {
         throw new Error('Score IDs must be positive numbers')
       }
       ret.push(await this.fetchScore(id))
-      sleep(1000)
+      await sleep(1000)
     }
     return ret
   }
