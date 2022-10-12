@@ -8,11 +8,7 @@
     "start": "node ./src/client/deploy-commands.js && node index.js",
     "watch": "node ./src/client/deploy-commands.js && nodemon index.js",
     "lint": "./node_modules/.bin/eslint src --ext .js",
-    "usersjob": "node src/jobs/UpdateUsers.js",
-    "scrapejob": "node src/jobs/ScrapeTopPlays.js",
-    "COMMENT": "echo 'The ordering for cronjobs matters; UpdateUsers/CalcTopModLBPlays both do a search over modsheets so they should come after ScrapeTopPlays.'",
-    "cronjobs": "node src/jobs/ScrapeTopPlays.js && node src/jobs/UpdateUsers.js",
-    "refreshjob": "node src/jobs/RefreshSheets.js"
+    "job": "node src/jobs/cli/JobHandler.js"
   },
   "author": "spreadnuts",
   "license": "ISC",
