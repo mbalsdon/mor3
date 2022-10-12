@@ -8,7 +8,13 @@ console.info('Updating user rank and PP data...')
 
 const sheets = await SheetsWrapper.build()
 const osu = await OsuWrapper.build()
-// Re-grab all the user data
+// Key = Mod string; Stores top25 for each modsheet
+const dict = {}
+// Grab mod sheet data
+for (const mods of Mods.modStrings) {
+  dict[mods] = await sheets.fetchModScores(mods, 'FORMATTED_VALUE')
+  await sleep(1000)
+}
 const users = []
 const userIds = await sheets.fetchUserIds()
 await sleep(1000)
@@ -20,9 +26,8 @@ for (const userId of userIds) {
   let top10s = 0
   let top25s = 0
   // Counts user's scores that are in the top25 of each modsheet
-  for (const mods of Mods.modStrings) {
-    const modScores = await sheets.fetchModScores(mods, 'FORMATTED_VALUE')
-    await sleep(1000)
+  for (const k of Object.keys(dict)) {
+    const modScores = dict[k]
     const length = (modScores.length < 25) ? modScores.length : 25
     for (let i = 0; i < length; i++) {
       if (userId === modScores[i][1]) { // TODO: 2 === magic numba
