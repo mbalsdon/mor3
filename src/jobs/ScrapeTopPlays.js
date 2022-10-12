@@ -5,7 +5,7 @@ import DriveWrapper from '../controller/DriveWrapper.js'
 import Mods from '../controller/Mods.js'
 
 console.time('ScrapeTopPlays.js time elapsed')
-console.log('Scraping user top 100s...')
+console.info('Scraping user top 100s...')
 
 const osu = await OsuWrapper.build()
 const sheets = await SheetsWrapper.build()
@@ -58,7 +58,7 @@ await drive.copyFile(process.env.SPREADSHEET_ID, `mor3 ${dateString}`)
 await sheets.lastUpdated(dateString)
 
 console.timeEnd('ScrapeTopPlays.js time elapsed')
-console.log(`Scrape top plays job completed at ${dateString}, inserted ${numInserted} new plays`)
+console.info(`Scrape top plays job completed at ${dateString}, inserted ${numInserted} new plays`)
 
 /* --- --- --- --- --- ---
    --- HELPER  METHODS ---
