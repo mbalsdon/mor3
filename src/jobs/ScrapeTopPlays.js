@@ -95,27 +95,32 @@ function populateDict (dict, scores) {
   }
 }
 
+// TODO: duplicated code (MorFacade.js::putSubmittedScore)
 // Takes a Score object (https://osu.ppy.sh/docs/index.html#score)
 function parseScore (s) {
   return [
     Mods.parseModKey([...s.mods]), // key for dict
-        `=HYPERLINK("https://osu.ppy.sh/scores/osu/${s.id}", "${s.id}")`,
-        `=HYPERLINK("https://osu.ppy.sh/users/${s.user.id}", "${s.user.username}")`,
-        `=HYPERLINK("${s.beatmap.url}", "${s.beatmapset.artist} - ${s.beatmapset.title} [${s.beatmap.version}]")`,
-        (s.mods.length === 0) ? 'NM' : s.mods.join().replaceAll(',', ''), // turn the mods into a single string
-        Math.round(s.accuracy * 10000) / 100, // 0.xxxx => xx.xx
-        s.pp,
-        s.created_at
+    s.id,
+    s.user.id,
+    s.user.username,
+    `${s.beatmapset.artist} - ${s.beatmapset.title} [${s.beatmap.version}]`,
+    (s.mods.length === 0) ? 'NM' : s.mods.join().replaceAll(',', ''), // turn the mods into a single string
+    Math.round(s.accuracy * 10000) / 100, // 0.xxxx => xx.xx
+    s.pp,
+    s.beatmap.difficulty_rating,
+    s.created_at,
+    s.beatmapset.covers['list@2x']
   ]
 }
 
+// Takes a list of scores (arr) and a score (val), returns the index of arr to put val in (sorted by PP)
 function sortedScoreIndex (arr, val) {
   let low = 0
   let high = arr.length
 
   while (low < high) {
     const mid = (low + high) >>> 1
-    if (arr[mid][5] > val[5]) { // <
+    if (arr[mid][6] > val[6]) { // 6 is a magic number, refers to the PP column
       low = mid + 1
     } else {
       high = mid
