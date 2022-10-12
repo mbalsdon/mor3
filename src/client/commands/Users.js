@@ -43,7 +43,7 @@ export default async function usersCmd (facade, client, interaction) {
               `▸ :third_place: Mod leaderboard #3s: ${top3s}\n`
       desc = desc + userStr
     }
-    const pfpLink = users[perPage * (page - 1)][9]
+    const pfpLink = users[perPage * (page - 1)][12]
 
     // Create the embed object
     const embed = new EmbedBuilder()
