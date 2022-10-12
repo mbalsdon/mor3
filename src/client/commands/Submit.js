@@ -9,7 +9,7 @@ export default async function submitCmd (facade, interaction) {
   console.info(`::submitCmd( ${id} )`)
 
   const lastUpdated = await facade.getLastUpdated()
-  
+
   try {
     const s = await facade.putSubmittedScore(id)
     console.log(s)
@@ -18,7 +18,7 @@ export default async function submitCmd (facade, interaction) {
       .setAuthor({ name: 'Successfully added score:' })
       .setThumbnail(`${s[9]}`)
       .setDescription(`**[${s[3]}](https://osu.ppy.sh/scores/osu/${s[0]}) +${s[4]}** [${s[7]}★]\n` +
-              `▸ **${s[6]}pp** ▸ ${s[5]}%\n` + 
+              `▸ **${s[6]}pp** ▸ ${s[5]}%\n` +
               `▸ Set by [${s[2]}](https://osu.ppy.sh/users/${s[1]}) on ${s[8]}\n`)
       .setFooter({ text: `Last update: ${lastUpdated}` })
     await interaction.reply({ embeds: [embed] })

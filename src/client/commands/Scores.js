@@ -59,12 +59,19 @@ export default async function scoresCmd (facade, client, interaction) {
       const stars = scores[pageIndex][7]
       const date = scores[pageIndex][8]
       let medalEmoji = ''
-      if (pageIndex === 0) { medalEmoji = ':first_place:'}
-      else if (pageIndex === 1) { medalEmoji = ':second_place:'}
-      else if (pageIndex === 2) { medalEmoji = ':third_place:'}
-      else if (pageIndex <= 9) { medalEmoji = ':medal:'}
-      else if (pageIndex <= 24) {medalEmoji = ':military_medal:'}
-      else { medalEmoji = ':skull:'} 
+      if (pageIndex === 0) { 
+        medalEmoji = ':first_place:' 
+      } else if (pageIndex === 1) { 
+        medalEmoji = ':second_place:' 
+      } else if (pageIndex === 2) { 
+        medalEmoji = ':third_place:' 
+      } else if (pageIndex <= 9) { 
+        medalEmoji = ':medal:' 
+      } else if (pageIndex <= 24) { 
+        medalEmoji = ':military_medal:' 
+      } else { 
+        medalEmoji = ':skull:' 
+      }
 
       const scoreStr = `**${pageIndex + 1}. [${beatmap}](https://osu.ppy.sh/scores/osu/${scoreId}) +${mods}** [${stars}★]\n` +
               `▸ ${medalEmoji} ▸ **${pp}pp** ▸ ${accuracy}%\n` +
