@@ -5,6 +5,14 @@
 import 'dotenv/config'
 
 export default class Mods {
+  // TODO: enumerate mod combos
+
+  // Array containing every possible mod string
+  static modStrings = ['NM', 'DT', 'HR', 'HD', 'EZ', 'HT', 'FL',
+    'HDDT', 'HRDT', 'EZDT', 'DTFL', 'EZHT', 'HDHR', 'HDHT', 'EZHD', 'HRHT', 'EZFL', 'HRFL', 'HTFL', 'HDFL',
+    'HDHRDT', 'HDDTFL', 'EZHDDT', 'HRDTFL', 'EZDTFL', 'HDHTFL', 'HDHRHT', 'HRHTFL', 'EZHDHT', 'EZHTFL', 'EZHDFL', 'HDHRFL',
+    'HDHRDTFL', 'EZHDDTFL', 'EZHDHTFL', 'HDHRHTFL']
+
   // Takes mods (array of str), returns "normalized form" as str (e.g. [HD,NC] => 'HDDT'; [NF] => 'NM')
   static parseModKey (mods) {
     // NC => DT
