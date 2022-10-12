@@ -1,6 +1,6 @@
 import scrapeTopPlays from '../ScrapeTopPlays.js'
 import updateUsers from '../UpdateUsers.js'
-import washSheets from '../WashSheets.js'
+import updateModSheets from '../UpdatedModSheets.js'
 import calcModTopLBPlays from '../CalcModTopLBPlays.js'
 import runScheduledJobs from '../RunScheduledJobs.js'
 
@@ -20,8 +20,9 @@ if (args[0] === 'updateUsers') {
   await calcModTopLBPlays()
 
 // Used mainly for PP reworks; takes a very long time
-} else if (args[0] === 'washSheets') {
-  await washSheets()
+// Suggested that you turn off the bot and any scheduled tasks before running this
+} else if (args[0] === 'updateModSheets') {
+  await updateModSheets() // TODO: save/load input?
 
 // This is what you should run if you want to update the sheets
 } else if (args[0] === 'runScheduledJobs') {
