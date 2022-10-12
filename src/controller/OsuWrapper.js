@@ -162,7 +162,15 @@ export default class OsuWrapper {
         throw new Error('Score IDs must be positive numbers')
       }
       ret.push(await this.fetchScore(id))
+      sleep(1000)
     }
     return ret
   }
+}
+
+// TODO: duplicate code
+function sleep (ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms)
+  })
 }
