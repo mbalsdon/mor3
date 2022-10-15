@@ -13,24 +13,23 @@ export default async function updateModSheets () {
 
   // Make save directory
   if (!fs.existsSync('./src/jobs/save')) {
-    fs.mkdirSync('./sr/jobs/save/')
+    fs.mkdirSync('./src/jobs/save/')
   }
 
   // If savefile doesn't exist, make it
-  let currentModSheet
   if (!fs.existsSync('./src/jobs/save/updateModSheets.json')) {
-    fs.writeFileSync('./src/jobs/save/updateModSheets.json', 
-      JSON.stringify({"currentModSheet": "Submitted Scores", "scores": []}))
+    fs.writeFileSync('./src/jobs/save/updateModSheets.json',
+      JSON.stringify({ currentModSheet: 'Submitted Scores', scores: [] }))
   }
 
   // Read savefile
-  let saveDataRaw = fs.readFileSync('./src/jobs/save/updateModSheets.json')
-  let saveData = JSON.parse(saveDataRaw)
-  currentModSheet = saveData.currentModSheet
+  const saveDataRaw = fs.readFileSync('./src/jobs/save/updateModSheets.json')
+  const saveData = JSON.parse(saveDataRaw)
+  const currentModSheet = saveData.currentModSheet
 
   // "Set" which sheet the loop will start at using savefile
-  let modStrings = ['Submitted Scores'].concat(Mods.modStrings)
-  let remainingModStrings = [...modStrings]
+  const modStrings = ['Submitted Scores'].concat(Mods.modStrings)
+  const remainingModStrings = [...modStrings]
   for (const mods of modStrings) {
     if (mods === currentModSheet) {
       break
@@ -41,11 +40,10 @@ export default async function updateModSheets () {
   // Key: mod combo | Value: score IDs from modsheet
   const dict = {}
   for (const mods of remainingModStrings) {
-
     // Read savefile at start of each iteration
-    let saveDataRaw = fs.readFileSync('./src/jobs/save/updateModSheets.json')
-    let saveData = JSON.parse(saveDataRaw)
-    
+    const saveDataRaw = fs.readFileSync('./src/jobs/save/updateModSheets.json')
+    const saveData = JSON.parse(saveDataRaw)
+
     saveData.currentModSheet = mods
 
     dict[mods] = await sheets.fetchModScoreIds(mods, 'FORMATTED_VALUE')
@@ -82,6 +80,7 @@ export default async function updateModSheets () {
         ])
         fs.writeFileSync('./src/jobs/save/updateModSheets.json', JSON.stringify(saveData))
       } catch (error) {
+        // Skip the score if it doesn't exist  (can happen when scores are overwritten)
         continue
       }
     }
@@ -89,19 +88,20 @@ export default async function updateModSheets () {
     // Grab the updated scores from the savefile
     const updatedSaveDataRaw = fs.readFileSync('./src/jobs/save/updateModSheets.json')
     const updatedSaveData = JSON.parse(updatedSaveDataRaw)
-    const updatedScores = updatedSaveData.scores
+    let updatedScores = updatedSaveData.scores
 
-
-    // Sort the scores by PP
-    let sortedScores = updatedScores.sort((a, b) => {
-      return parseInt(b[6]) - parseInt(a[6]) // TODO: magic numba
-    })
+    // Sort the scores by PP (if modsheet)
+    if (mods !== 'Submitted Scores') {
+      updatedScores = updatedScores.sort((a, b) => {
+        return parseInt(b[6]) - parseInt(a[6]) // TODO: magic numba
+      })
+    }
 
     // Update the sheet and reset the savefile
-    await sheets.replaceScores(mods, sortedScores)
+    await sheets.replaceScores(mods, updatedScores)
     await sleep(1000)
-    fs.writeFileSync('./src/jobs/save/updateModSheets.json', 
-      JSON.stringify({"currentModSheet": "Submitted Scores", "scores": []}))
+    fs.writeFileSync('./src/jobs/save/updateModSheets.json',
+      JSON.stringify({ currentModSheet: 'Submitted Scores', scores: [] }))
   }
 
   const dateString = new Date(Date.now()).toISOString()
