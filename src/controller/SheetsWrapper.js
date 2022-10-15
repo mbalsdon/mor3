@@ -188,12 +188,12 @@ export default class SheetsWrapper {
     }
 
     const response = await this.#sheetsClient.spreadsheets.values.get({
-        auth: SheetsWrapper.#AUTH,
-        spreadsheetId: process.env.SPREADSHEET_ID,
-        range: `${mods}!A:A`,
-        majorDimension: 'COLUMNS',
-        valueRenderOption
-      })
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: process.env.SPREADSHEET_ID,
+      range: `${mods}!A:A`,
+      majorDimension: 'COLUMNS',
+      valueRenderOption
+    })
     return response.data.values[0].slice(1)
   }
 
