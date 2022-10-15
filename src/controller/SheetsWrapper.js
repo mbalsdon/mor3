@@ -163,7 +163,7 @@ export default class SheetsWrapper {
 
   async fetchModScores (mods, valueRenderOption) {
     console.info(`SheetsWrapper::fetchModScores( ${mods}, ${valueRenderOption} )`)
-    if (Mods.toSheetId(mods) === -1) {
+    if (Mods.toSheetId(mods) === -1) { // TODO: duplicate error
       throw new Error(`${mods} is not a valid mod combination.`)
     } else if (valueRenderOption !== 'FORMATTED_VALUE' && valueRenderOption !== 'UNFORMATTED_VALUE' && valueRenderOption !== 'FORMULA') {
       throw new Error('valueRenderOption must be one of FORMATTED_VALUE, UNFORMATTED_VALUE, or FORMULA.')
@@ -179,9 +179,27 @@ export default class SheetsWrapper {
     return response.data.values.slice(1)
   }
 
+  async fetchModScoreIds (mods, valueRenderOption) {
+    console.info(`SheetsWrapper::fetchModScoreIds( ${mods}, ${valueRenderOption} )`)
+    if (Mods.toSheetId(mods) === -1) { // TODO: duplicate error
+      throw new Error(`${mods} is not a valid mod combination.`)
+    } else if (valueRenderOption !== 'FORMATTED_VALUE' && valueRenderOption !== 'UNFORMATTED_VALUE' && valueRenderOption !== 'FORMULA') {
+      throw new Error('valueRenderOption must be one of FORMATTED_VALUE, UNFORMATTED_VALUE, or FORMULA.')
+    }
+
+    const response = await this.#sheetsClient.spreadsheets.values.get({
+        auth: SheetsWrapper.#AUTH,
+        spreadsheetId: process.env.SPREADSHEET_ID,
+        range: `${mods}!A:A`,
+        majorDimension: 'COLUMNS',
+        valueRenderOption
+      })
+    return response.data.values[0].slice(1)
+  }
+
   async fetchScore (mods, rowNum) {
     console.info(`SheetsWrapper::fetchScore( ${mods}, ${rowNum} )`)
-    if (Mods.toSheetId(mods) === -1) {
+    if (Mods.toSheetId(mods) === -1) { // TODO: duplicate error
       throw new Error(`${mods} is not a valid mod combination!`)
     } else if (isNaN(parseInt(rowNum)) || parseInt(rowNum) < 0) {
       throw new Error('Row number cannot be negative!')
@@ -198,7 +216,7 @@ export default class SheetsWrapper {
 
   async removeScore (mods, id) {
     console.info(`SheetsWrapper::removeScore( ${mods}, ${id} )`)
-    if (Mods.toSheetId(mods) === -1) {
+    if (Mods.toSheetId(mods) === -1) { // TODO: duplicate error
       throw new Error(`${mods} is not a valid mod combination!`)
     } else if (isNaN(parseInt(id)) || parseInt(id) < 1) {
       throw new Error('Score ID must be a positive number!')
@@ -285,7 +303,7 @@ export default class SheetsWrapper {
   // Doesn't check if scores already in sheet, or if scores are valid
   async replaceScores (mods, scores) {
     console.info(`SheetsWrapper::replaceScores( ${mods}, array of ${scores.length} scores )`)
-    if (Mods.toSheetId(mods) === -1) throw new Error(`${mods} is not a valid mod combination!`)
+    if (Mods.toSheetId(mods) === -1) throw new Error(`${mods} is not a valid mod combination!`) // TODO: duplicate error
 
     const response = await this.#sheetsClient.spreadsheets.values.update({
       auth: SheetsWrapper.#AUTH,
