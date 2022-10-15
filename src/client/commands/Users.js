@@ -11,6 +11,11 @@ export default async function usersCmd (facade, client, interaction) {
   const perPage = 5
   const users = await facade.getUsers()
   const numPages = Math.ceil(users.length / perPage)
+
+  if (numPages === 0) {
+    await interaction.reply({ content: 'No users to display - The sheet is empty!', ephemeral: true })
+  }
+
   const lastUpdated = await facade.getLastUpdated()
 
   // Modularized due to the fact that using buttons requires the interaction to be updated with new data
@@ -43,7 +48,7 @@ export default async function usersCmd (facade, client, interaction) {
               `▸ :third_place: Mod leaderboard #3s: ${top3s}\n`
       desc = desc + userStr
     }
-    const pfpLink = users[perPage * (page - 1)][9]
+    const pfpLink = users[perPage * (page - 1)][12]
 
     // Create the embed object
     const embed = new EmbedBuilder()

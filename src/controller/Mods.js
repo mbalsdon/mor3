@@ -5,6 +5,14 @@
 import 'dotenv/config'
 
 export default class Mods {
+  // TODO: enumerate mod combos
+
+  // Array containing every possible mod string
+  static modStrings = ['NM', 'DT', 'HR', 'HD', 'EZ', 'HT', 'FL',
+    'HDDT', 'HRDT', 'EZDT', 'DTFL', 'EZHT', 'HDHR', 'HDHT', 'EZHD', 'HRHT', 'EZFL', 'HRFL', 'HTFL', 'HDFL',
+    'HDHRDT', 'HDDTFL', 'EZHDDT', 'HRDTFL', 'EZDTFL', 'HDHTFL', 'HDHRHT', 'HRHTFL', 'EZHDHT', 'EZHTFL', 'EZHDFL', 'HDHRFL',
+    'HDHRDTFL', 'EZHDDTFL', 'EZHDHTFL', 'HDHRHTFL']
+
   // Takes mods (array of str), returns "normalized form" as str (e.g. [HD,NC] => 'HDDT'; [NF] => 'NM')
   static parseModKey (mods) {
     // NC => DT
@@ -24,6 +32,7 @@ export default class Mods {
 
   // Takes mod combination string, returns corresponding sheet ID. If input is invalid, returns -1.
   static toSheetId (mods) {
+    if (mods === 'Submitted Scores') return process.env.SUBMITTED_SCORES
     if (mods === 'NM') return process.env.NM
     if (mods === 'DT') return process.env.DT
     if (mods === 'HR') return process.env.HR

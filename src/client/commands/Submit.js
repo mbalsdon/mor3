@@ -7,15 +7,20 @@ const config = JSON.parse(configRaw)
 export default async function submitCmd (facade, interaction) {
   const id = interaction.options.getString('id')
   console.info(`::submitCmd( ${id} )`)
+
+  const lastUpdated = await facade.getLastUpdated()
+
   try {
     const s = await facade.putSubmittedScore(id)
+    console.log(s)
     const embed = new EmbedBuilder()
       .setColor(config.primaryColor)
-      .setTitle(`${s.beatmapset.artist} - ${s.beatmapset.title} [${s.beatmap.version}] +${(s.mods.length === 0) ? 'NM' : s.mods.join().replaceAll(',', '')}`)
-      .setURL(`https://osu.ppy.sh/scores/osu/${s.id}`)
-      .setDescription(`Score set by ${s.user.username}\n${s.pp}pp`)
-      .setThumbnail(s.beatmapset.covers['list@2x'])
-      .setFooter({ text: `${s.created_at}` })
+      .setAuthor({ name: 'Successfully added score:' })
+      .setThumbnail(`${s[9]}`)
+      .setDescription(`**[${s[3]}](https://osu.ppy.sh/scores/osu/${s[0]}) +${s[4]}** [${s[7]}★]\n` +
+              `▸ **${s[6]}pp** ▸ ${s[5]}%\n` +
+              `▸ Set by [${s[2]}](https://osu.ppy.sh/users/${s[1]}) on ${s[8]}\n`)
+      .setFooter({ text: `Last update: ${lastUpdated}` })
     await interaction.reply({ embeds: [embed] })
   } catch (error) {
     await interaction.reply({ content: error.message, ephemeral: true })

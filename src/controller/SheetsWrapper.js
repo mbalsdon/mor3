@@ -61,14 +61,14 @@ export default class SheetsWrapper {
     const response = await this.#sheetsClient.spreadsheets.values.get({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: process.env.SPREADSHEET_ID,
-      range: 'Users!A:J',
+      range: 'Users!A:M',
       majorDimension: 'ROWS'
     })
     return response.data.values.slice(1)
   }
 
-  async insertUser (userId, username, rank, pp, acc, playtime, top1s, top2s, top3s, pfpLink) {
-    console.info(`SheetsWrapper::insertUser( ${userId}, ${username}, ${rank}, ${pp}, ${acc}, ${playtime}, ${top1s}, ${top2s}, ${top3s}, ${pfpLink} )`)
+  async insertUser (userId, username, rank, pp, acc, playtime, top1s, top2s, top3s, top5s, top10s, top25s, pfpLink) {
+    console.info(`SheetsWrapper::insertUser( ${userId}, ${username}, ${rank}, ${pp}, ${acc}, ${playtime}, ${top1s}, ${top2s}, ${top3s}, ${top5s}, ${top10s}, ${top25s}, ${pfpLink} )`)
     if (isNaN(parseInt(userId)) || parseInt(userId) < 1) {
       throw new Error('User ID must be a positive number!')
     } else if (typeof username !== 'string') {
@@ -85,7 +85,7 @@ export default class SheetsWrapper {
         valueInputOption: 'USER_ENTERED',
         insertDataOption: 'INSERT_ROWS',
         resource: {
-          values: [[userId, username, rank, pp, acc, playtime, top1s, top2s, top3s, pfpLink]]
+          values: [[userId, username, rank, pp, acc, playtime, top1s, top2s, top3s, top5s, top10s, top25s, pfpLink]]
         }
       })
     } else {
@@ -118,10 +118,10 @@ export default class SheetsWrapper {
       response = await this.#sheetsClient.spreadsheets.values.update({
         auth: SheetsWrapper.#AUTH,
         spreadsheetId: process.env.SPREADSHEET_ID,
-        range: `Users!A${userIndex + 2}:J${userIndex + 2}`,
+        range: `Users!A${userIndex + 2}:M${userIndex + 2}`,
         valueInputOption: 'USER_ENTERED',
         resource: {
-          values: [[userId, username, rank, pp, acc, playtime, top1s, top2s, top3s, pfpLink]]
+          values: [[userId, username, rank, pp, acc, playtime, top1s, top2s, top3s, top5s, top10s, top25s, pfpLink]]
         }
       })
     }
@@ -163,7 +163,7 @@ export default class SheetsWrapper {
 
   async fetchModScores (mods, valueRenderOption) {
     console.info(`SheetsWrapper::fetchModScores( ${mods}, ${valueRenderOption} )`)
-    if (Mods.toSheetId(mods) === -1) {
+    if (Mods.toSheetId(mods) === -1) { // TODO: duplicate error
       throw new Error(`${mods} is not a valid mod combination.`)
     } else if (valueRenderOption !== 'FORMATTED_VALUE' && valueRenderOption !== 'UNFORMATTED_VALUE' && valueRenderOption !== 'FORMULA') {
       throw new Error('valueRenderOption must be one of FORMATTED_VALUE, UNFORMATTED_VALUE, or FORMULA.')
@@ -172,16 +172,34 @@ export default class SheetsWrapper {
     const response = await this.#sheetsClient.spreadsheets.values.get({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: process.env.SPREADSHEET_ID,
-      range: `${mods}!A:H`,
+      range: `${mods}!A:J`,
       majorDimension: 'ROWS',
       valueRenderOption
     })
     return response.data.values.slice(1)
   }
 
+  async fetchModScoreIds (mods, valueRenderOption) {
+    console.info(`SheetsWrapper::fetchModScoreIds( ${mods}, ${valueRenderOption} )`)
+    if (Mods.toSheetId(mods) === -1) { // TODO: duplicate error
+      throw new Error(`${mods} is not a valid mod combination.`)
+    } else if (valueRenderOption !== 'FORMATTED_VALUE' && valueRenderOption !== 'UNFORMATTED_VALUE' && valueRenderOption !== 'FORMULA') {
+      throw new Error('valueRenderOption must be one of FORMATTED_VALUE, UNFORMATTED_VALUE, or FORMULA.')
+    }
+
+    const response = await this.#sheetsClient.spreadsheets.values.get({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: process.env.SPREADSHEET_ID,
+      range: `${mods}!A:A`,
+      majorDimension: 'COLUMNS',
+      valueRenderOption
+    })
+    return response.data.values[0].slice(1)
+  }
+
   async fetchScore (mods, rowNum) {
     console.info(`SheetsWrapper::fetchScore( ${mods}, ${rowNum} )`)
-    if (Mods.toSheetId(mods) === -1) {
+    if (Mods.toSheetId(mods) === -1) { // TODO: duplicate error
       throw new Error(`${mods} is not a valid mod combination!`)
     } else if (isNaN(parseInt(rowNum)) || parseInt(rowNum) < 0) {
       throw new Error('Row number cannot be negative!')
@@ -189,7 +207,7 @@ export default class SheetsWrapper {
     const response = await this.#sheetsClient.spreadsheets.values.get({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: process.env.SPREADSHEET_ID,
-      range: `${mods}!A${rowNum + 2}:G${rowNum + 2}`,
+      range: `${mods}!A${rowNum + 2}:J${rowNum + 2}`,
       majorDimension: 'ROWS',
       valueRenderOption: 'FORMATTED_VALUE'
     })
@@ -198,7 +216,7 @@ export default class SheetsWrapper {
 
   async removeScore (mods, id) {
     console.info(`SheetsWrapper::removeScore( ${mods}, ${id} )`)
-    if (Mods.toSheetId(mods) === -1) {
+    if (Mods.toSheetId(mods) === -1) { // TODO: duplicate error
       throw new Error(`${mods} is not a valid mod combination!`)
     } else if (isNaN(parseInt(id)) || parseInt(id) < 1) {
       throw new Error('Score ID must be a positive number!')
@@ -285,12 +303,12 @@ export default class SheetsWrapper {
   // Doesn't check if scores already in sheet, or if scores are valid
   async replaceScores (mods, scores) {
     console.info(`SheetsWrapper::replaceScores( ${mods}, array of ${scores.length} scores )`)
-    if (Mods.toSheetId(mods) === -1) throw new Error(`${mods} is not a valid mod combination!`)
+    if (Mods.toSheetId(mods) === -1) throw new Error(`${mods} is not a valid mod combination!`) // TODO: duplicate error
 
     const response = await this.#sheetsClient.spreadsheets.values.update({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: process.env.SPREADSHEET_ID,
-      range: `${mods}!A2:G${scores.length + 1}`,
+      range: `${mods}!A2:J${scores.length + 1}`,
       valueInputOption: 'USER_ENTERED',
       resource: {
         values: scores
@@ -306,7 +324,7 @@ export default class SheetsWrapper {
     const response = await this.#sheetsClient.spreadsheets.values.update({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: process.env.SPREADSHEET_ID,
-      range: `Users!A2:D${users.length + 1}`,
+      range: `Users!A2:M${users.length + 1}`,
       valueInputOption: 'USER_ENTERED',
       resource: {
         values: users
@@ -331,7 +349,7 @@ export default class SheetsWrapper {
     const response = await this.#sheetsClient.spreadsheets.values.get({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: process.env.SPREADSHEET_ID,
-      range: 'Submitted Scores!A:H',
+      range: 'Submitted Scores!A:J',
       majorDimension: 'COLUMNS'
     })
     return response.data.values.map(e => e.slice(1))
@@ -348,7 +366,7 @@ export default class SheetsWrapper {
       valueInputOption: 'USER_ENTERED',
       insertDataOption: 'INSERT_ROWS',
       resource: {
-        values: [[ps[0], ps[1], ps[2], ps[3], ps[4], ps[5], ps[6]]]
+        values: [[ps[0], ps[1], ps[2], ps[3], ps[4], ps[5], ps[6], ps[7], ps[8], ps[9]]]
       }
     })
     return response.data

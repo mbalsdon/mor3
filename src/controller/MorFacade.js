@@ -61,14 +61,17 @@ export default class MorFacade {
     const username = user.username
     const rank = user.statistics.global_rank
     const pp = user.statistics.pp
-    const acc = user.statistics.hit_accuracy
-    const playtime = user.statistics.play_time / 3600
-    const top1s = 0 // TODO
-    const top2s = 0 // TODO
-    const top3s = 0 // TODO
+    const acc = user.statistics.hit_accuracy.toFixed(2)
+    const playtime = Math.round(user.statistics.play_time / 3600)
+    const top1s = 0
+    const top2s = 0
+    const top3s = 0
+    const top5s = 0
+    const top10s = 0
+    const top25s = 0
     const pfpLink = user.avatar_url
 
-    await this.#sheets.insertUser(userId, username, rank, pp, acc, playtime, top1s, top2s, top3s, pfpLink)
+    await this.#sheets.insertUser(userId, username, rank, pp, acc, playtime, top1s, top2s, top3s, top5s, top10s, top25s, pfpLink)
     return user
   }
 
@@ -120,16 +123,19 @@ export default class MorFacade {
     }
     const s = await this.#osu.fetchScore(id)
     const parsedScore = [
-      `=HYPERLINK("https://osu.ppy.sh/scores/osu/${id}", "${id}")`,
-      `=HYPERLINK("https://osu.ppy.sh/users/${s.user.id}", "${s.user.username}")`,
-      `=HYPERLINK("${s.beatmap.url}", "${s.beatmapset.artist} - ${s.beatmapset.title} [${s.beatmap.version}]")`,
+      `${id}`,
+      `${s.user.id}`,
+      `${s.user.username}`,
+      `${s.beatmapset.artist} - ${s.beatmapset.title} [${s.beatmap.version}]`,
       (s.mods.length === 0) ? 'NM' : s.mods.join().replaceAll(',', ''), // turn the mods into a single string
       Math.round(s.accuracy * 10000) / 100, // 0.xxxx => xx.xx
       s.pp,
-      s.created_at
+      s.beatmap.difficulty_rating,
+      s.created_at,
+      s.beatmapset.covers['list@2x']
     ]
     await this.#sheets.submitScore(parsedScore)
-    return s
+    return parsedScore
   }
 
   async deleteSubmittedScore (id) {
@@ -141,7 +147,7 @@ export default class MorFacade {
       throw new Error(`Score with ID ${id} could not be found.`)
     }
     // Get mods
-    const mods = submittedScores[3][index]
+    const mods = submittedScores[4][index]
     await this.#sheets.removeScore(mods, id)
     const s = [submittedScores[0][index],
       submittedScores[1][index],
@@ -149,7 +155,10 @@ export default class MorFacade {
       submittedScores[3][index],
       submittedScores[4][index],
       submittedScores[5][index],
-      submittedScores[6][index]]
+      submittedScores[6][index],
+      submittedScores[7][index],
+      submittedScores[8][index],
+      submittedScores[9][index]]
     return s
   }
 
