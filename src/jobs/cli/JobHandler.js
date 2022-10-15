@@ -1,6 +1,6 @@
 import scrapeTopPlays from '../ScrapeTopPlays.js'
 import updateUsers from '../UpdateUsers.js'
-import updateModSheets from '../UpdatedModSheets.js'
+import updateModSheets from '../UpdateModSheets.js'
 import calcModTopLBPlays from '../CalcModTopLBPlays.js'
 import runScheduledJobs from '../RunScheduledJobs.js'
 
