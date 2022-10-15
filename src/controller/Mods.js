@@ -32,6 +32,7 @@ export default class Mods {
 
   // Takes mod combination string, returns corresponding sheet ID. If input is invalid, returns -1.
   static toSheetId (mods) {
+    if (mods === 'Submitted Scores') return process.env.SUBMITTED_SCORES
     if (mods === 'NM') return process.env.NM
     if (mods === 'DT') return process.env.DT
     if (mods === 'HR') return process.env.HR
