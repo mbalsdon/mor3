@@ -33,7 +33,7 @@ export default async function scrapeTopPlays () {
   // Sort each array in the dict by pp
   for (const k of Object.keys(dict)) {
     dict[k].sort((a, b) => {
-      return parseInt(b[5]) - parseInt(a[5])
+      return parseInt(b[6]) - parseInt(a[6]) // TODO: magic number
     })
   }
   // Grab sheet scores, insert any new scores into it, then put them back in the sheet
