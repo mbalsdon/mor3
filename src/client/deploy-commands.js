@@ -46,8 +46,8 @@ const commands = [
     .setName('track')
     .setDescription('Adds a user to be tracked')
     .addStringOption(option =>
-      option.setName('id')
-        .setDescription('User ID of the person you want to track')
+      option.setName('username')
+        .setDescription('Username of the player you want to track')
         .setRequired(true))
     .setDMPermission(false)
     .setDefaultMemberPermissions(moderatorPermFlags),
@@ -56,8 +56,8 @@ const commands = [
     .setName('untrack')
     .setDescription('Removes a user from being tracked')
     .addStringOption(option =>
-      option.setName('id')
-        .setDescription('User ID of the person you no longer want to track')
+      option.setName('username')
+        .setDescription('Username of the player you no longer want to track')
         .setRequired(true))
     .setDMPermission(false)
     .setDefaultMemberPermissions(moderatorPermFlags),
