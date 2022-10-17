@@ -34,12 +34,43 @@ export default class SheetsWrapper {
     return response.data
   }
 
+  async fetchUser (username) {
+    console.info(`SheetsWrapper::fetchUser( ${username} )`)
+    const usernames = await this.fetchUsernames()
+    const usernameIndex = usernames.indexOf(username)
+    if (usernameIndex !== -1) {
+      const response = await this.#sheetsClient.spreadsheets.values.get({
+        auth: SheetsWrapper.#AUTH,
+        spreadsheetId: process.env.SPREADSHEET_ID,
+        range: `Users!A${usernameIndex + 2}:M${usernameIndex + 2}`, // magic numbr
+        majorDimension: 'ROWS',
+        valueRenderOption: 'FORMATTED_VALUE'
+      })
+      return response.data.values[0]
+    } else {
+      throw new Error(`User ${username} could not be found.`)
+    }
+  }
+
+  // TODO: dupecode galore
   async fetchUserIds () {
     console.info('SheetsWrapper::fetchUserIds()')
     const response = await this.#sheetsClient.spreadsheets.values.get({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: process.env.SPREADSHEET_ID,
-      range: 'Users!A:A',
+      range: 'Users!A:A', // TODO: magic numbers weee
+      majorDimension: 'COLUMNS'
+    })
+    return response.data.values[0].slice(1)
+  }
+
+  // TODO: dupecode galore
+  async fetchUsernames () {
+    console.info('SheetsWrapper::fetchUsernames()')
+    const response = await this.#sheetsClient.spreadsheets.values.get({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: process.env.SPREADSHEET_ID,
+      range: 'Users!B:B', // TODO: magic numbers weee
       majorDimension: 'COLUMNS'
     })
     return response.data.values[0].slice(1)

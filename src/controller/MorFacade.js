@@ -50,6 +50,18 @@ export default class MorFacade {
     return userIds
   }
 
+  async getUsernames () {
+    console.info('MorFacade::getUsernames()')
+    const usernames = await this.#sheets.fetchUsernames()
+    return usernames
+  }
+
+  async getSheetUser (username) {
+    console.info(`MorFacade::getSheetUser( ${username} )`)
+    const user = await this.#sheets.fetchUser(username)
+    return user
+  }
+
   async putUser (userId) {
     console.info(`MorFacade::putUser( ${userId} )`)
     const userIds = await this.#sheets.fetchUserIds()

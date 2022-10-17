@@ -52,8 +52,8 @@ export default class Bot {
         await metadataCmd(this.#facade, interaction)
       } else if (commandName === 'users') {
         await usersCmd(this.#facade, this.#client, interaction)
-      } else if (commandName === 'user') { // TODO
-        await userCmd(interaction)
+      } else if (commandName === 'user') {
+        await userCmd(this.#facade, interaction)
       } else if (commandName === 'track') {
         await trackCmd(this.#facade, interaction)
       } else if (commandName === 'untrack') {
