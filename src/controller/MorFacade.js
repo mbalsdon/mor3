@@ -62,15 +62,14 @@ export default class MorFacade {
     return user
   }
 
-  async putUser (userId) {
-    console.info(`MorFacade::putUser( ${userId} )`)
+  async putUser (username) {
+    console.info(`MorFacade::putUser( ${username} )`)
+    const user = await this.#osu.fetchUser(username)
     const userIds = await this.#sheets.fetchUserIds()
     // Check if ID already in sheet
-    if (userIds.includes(userId.toString())) {
-      throw new Error(`User with ID ${userId} is already being tracked!`)
+    if (userIds.includes(user.id.toString())) {
+      throw new Error(`User ${user.username} is already being tracked!`)
     }
-    const user = await this.#osu.fetchUser(userId)
-    const username = user.username
     const rank = user.statistics.global_rank
     const pp = user.statistics.pp
     const acc = user.statistics.hit_accuracy.toFixed(2)
@@ -83,14 +82,13 @@ export default class MorFacade {
     const top25s = 0
     const pfpLink = user.avatar_url
 
-    await this.#sheets.insertUser(userId, username, rank, pp, acc, playtime, top1s, top2s, top3s, top5s, top10s, top25s, pfpLink)
+    await this.#sheets.insertUser(user.id, user.username, rank, pp, acc, playtime, top1s, top2s, top3s, top5s, top10s, top25s, pfpLink)
     return user
   }
 
-  async deleteUser (userId) {
-    console.info(`MorFacade::deleteUser( ${userId} )`)
-    await this.#sheets.removeUser(userId)
-    const user = await this.#osu.fetchUser(userId)
+  async deleteUser (username) {
+    console.info(`MorFacade::deleteUser( ${username} )`)
+    const user = await this.#sheets.removeUser(username)
     return user
   }
 

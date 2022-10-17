@@ -37,17 +37,14 @@ export default class OsuWrapper {
     return new OsuWrapper(token.access_token)
   }
 
-  async fetchUser (userId) {
-    console.info(`OsuWrapper::fetchUser( ${userId} )`)
-    if (isNaN(parseInt(userId)) || parseInt(userId) < 1) {
-      throw new Error('User ID must be a positive number')
-    }
+  async fetchUser (user) {
+    console.info(`OsuWrapper::fetchUser( ${user} )`)
 
-    const url = new URL(`${OsuWrapper.#API_URL}/users/${userId}/osu`)
-    const params = {
-      key: 'id'
-    }
-    Object.keys(params).forEach((key) => url.searchParams.append(key, params[key]))
+    const url = new URL(`${OsuWrapper.#API_URL}/users/${user}/osu`)
+    // const params = { // TODO: generalize later (can be 'id' or 'username')
+    //   key: 'id'
+    // }
+    // Object.keys(params).forEach((key) => url.searchParams.append(key, params[key]))
     const headers = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
@@ -58,7 +55,7 @@ export default class OsuWrapper {
       headers
     })
     if (response.status === 404) {
-      throw new Error(`User ID ${userId} not found`)
+      throw new Error(`User ${user} not found`)
     }
     const data = await response.json()
     return data

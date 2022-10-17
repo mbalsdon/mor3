@@ -159,16 +159,14 @@ export default class SheetsWrapper {
     return response.data
   }
 
-  async removeUser (userId) {
-    console.info(`SheetsWrapper::removeUser( ${userId} )`)
-    if (isNaN(parseInt(userId)) || parseInt(userId) < 1) {
-      throw new Error('User ID must be a positive number!')
-    }
+  async removeUser (username) {
+    console.info(`SheetsWrapper::removeUser( ${username} )`)
 
-    const userIds = await this.fetchUserIds()
-    const idIndex = userIds.indexOf(userId)
-    if (idIndex === -1) {
-      throw new Error(`User with ID ${userId} could not be found.`)
+    const users = await this.fetchUsers()
+    const usernames = users.map(u => { return u[1] }).flat(1)
+    const userIndex = usernames.map(u => { return u.toLowerCase() }).indexOf(username.toLowerCase())
+    if (userIndex === -1) {
+      throw new Error(`User ${username} could not be found.`)
     }
     const batchUpdateRequest = {
       requests: [
@@ -177,19 +175,19 @@ export default class SheetsWrapper {
             range: {
               sheetId: process.env.USERS,
               dimension: 'ROWS',
-              startIndex: idIndex + 1,
-              endIndex: idIndex + 2
+              startIndex: userIndex + 1,
+              endIndex: userIndex + 2
             }
           }
         }
       ]
     }
-    const response = await this.#sheetsClient.spreadsheets.batchUpdate({
+    await this.#sheetsClient.spreadsheets.batchUpdate({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: process.env.SPREADSHEET_ID,
       resource: batchUpdateRequest
     })
-    return response.data
+    return users[userIndex]
   }
 
   async fetchModScores (mods, valueRenderOption) {
