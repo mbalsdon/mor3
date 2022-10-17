@@ -65,10 +65,12 @@ export default async function scoresCmd (facade, client, interaction) {
         medalEmoji = ':second_place:'
       } else if (pageIndex === 2) {
         medalEmoji = ':third_place:'
-      } else if (pageIndex <= 9) {
+      } else if (pageIndex <= 4) {
         medalEmoji = ':medal:'
-      } else if (pageIndex <= 24) {
+      } else if (pageIndex <= 9) {
         medalEmoji = ':military_medal:'
+      } else if (pageIndex <= 24) {
+        medalEmoji = ':small_orange_diamond:'
       } else {
         medalEmoji = ':skull:'
       }

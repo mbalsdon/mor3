@@ -34,10 +34,10 @@ const commands = [
 
   new SlashCommandBuilder()
     .setName('user')
-    .setDescription('Displays a user\'s stats (WIP)')
+    .setDescription('Displays a user\'s stats')
     .addStringOption(option =>
-      option.setName('id')
-        .setDescription('User ID of the person you want to view')
+      option.setName('username')
+        .setDescription('Username of the player you want to view')
         .setRequired(true))
     .setDMPermission(true)
     .setDefaultMemberPermissions(userPermFlags),
