@@ -22,7 +22,7 @@ export default async function usersCmd (facade, client, interaction) {
 
     // Modularized due to the fact that using buttons requires the interaction to be updated with new data
     const buildEmbed = function (page) {
-      console.info(`::userCmd >> buildEmbed( ${page} )`)
+      console.info(`::usersCmd >> buildEmbed( ${page} )`)
 
       if (page < 1 || page > numPages) {
         throw new Error(`Page must be between 1 and ${numPages} - this should never happen!`)
@@ -87,12 +87,11 @@ export default async function usersCmd (facade, client, interaction) {
           .setDisabled(numPages === 1)
       ])
 
-    client.on('interactionCreate', interaction => {
+    const pageButtons = function (interaction) {
       if (!interaction.isButton()) return
-
       const buttonId = interaction.customId
+      console.log(`::usersCmd >> button "${buttonId}" was pressed!`)
       if (buttonId === 'Users start') {
-        console.info('::usersCmd >> start')
         currentPage = 1
         embed = buildEmbed(currentPage)
         buttons.components[0].setDisabled(true)
@@ -100,7 +99,6 @@ export default async function usersCmd (facade, client, interaction) {
         buttons.components[2].setDisabled(false)
         buttons.components[3].setDisabled(false)
       } else if (buttonId === 'Users prev') {
-        console.info('::usersCmd >> prev')
         currentPage = currentPage - 1
         embed = buildEmbed(currentPage)
         buttons.components[0].setDisabled(currentPage === 1)
@@ -108,7 +106,6 @@ export default async function usersCmd (facade, client, interaction) {
         buttons.components[2].setDisabled(false)
         buttons.components[3].setDisabled(false)
       } else if (buttonId === 'Users next') {
-        console.info('::usersCmd >> next')
         currentPage = currentPage + 1
         embed = buildEmbed(currentPage)
         buttons.components[0].setDisabled(false)
@@ -116,7 +113,6 @@ export default async function usersCmd (facade, client, interaction) {
         buttons.components[2].setDisabled(currentPage === numPages)
         buttons.components[3].setDisabled(currentPage === numPages)
       } else if (buttonId === 'Users last') {
-        console.info('::usersCmd >> last')
         currentPage = numPages
         embed = buildEmbed(currentPage)
         buttons.components[0].setDisabled(false)
@@ -126,9 +122,16 @@ export default async function usersCmd (facade, client, interaction) {
       } else {
         return
       }
-
       interaction.update({ embeds: [embed], components: [buttons] })
-    })
+    }
+
+    // Listen for buttonpresses for 20 seconds
+    console.info('::usersCmd >> listening for button presses...')
+    client.on('interactionCreate', pageButtons)
+    setTimeout(function () {
+      console.info('::usersCmd >> no longer listening for button presses')
+      client.off('interactionCreate', pageButtons)
+    }, 20000)
 
     await interaction.reply({ embeds: [embed], components: [buttons] })
   } catch (error) {

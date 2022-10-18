@@ -97,60 +97,59 @@ export default async function scoresCmd (facade, client, interaction) {
     }
 
     let embed = await buildEmbed(currentPage)
+    // Using date as a hash to give every button a unique ID
+    // If /users is called twice without a hash, the two button listeners would both respond to either buttonpress due to non-unique IDs
+    const hash = new Date(Date.now()).toISOString()
     const buttons = new ActionRowBuilder()
       .addComponents([
         new ButtonBuilder()
-          .setCustomId(`${inputMods} start`)
+          .setCustomId(`${inputMods}_start_${hash}`)
           .setLabel('◀◀')
           .setStyle(ButtonStyle.Secondary)
           .setDisabled(true),
         new ButtonBuilder()
-          .setCustomId(`${inputMods} prev`)
+          .setCustomId(`${inputMods}_prev_${hash}`)
           .setLabel('◀')
           .setStyle(ButtonStyle.Secondary)
           .setDisabled(true),
         new ButtonBuilder()
-          .setCustomId(`${inputMods} next`)
+          .setCustomId(`${inputMods}_next_${hash}`)
           .setLabel('▶')
           .setStyle(ButtonStyle.Secondary)
           .setDisabled(numPages === 1),
         new ButtonBuilder()
-          .setCustomId(`${inputMods} last`)
+          .setCustomId(`${inputMods}_last_${hash}`)
           .setLabel('▶▶')
           .setStyle(ButtonStyle.Secondary)
           .setDisabled(numPages === 1)
       ])
 
-    client.on('interactionCreate', interaction => {
+    const pageButtons = function (interaction) {
       if (!interaction.isButton()) return
-
       const buttonId = interaction.customId
-      if (buttonId === `${inputMods} start`) {
-        console.info('::usersCmd >> start')
+      console.log(`::scoresCmd >> button "${buttonId}" was pressed!`)
+      if (buttonId === `${inputMods}_start_${hash}`) {
         currentPage = 1
         embed = buildEmbed(currentPage)
         buttons.components[0].setDisabled(true)
         buttons.components[1].setDisabled(true)
         buttons.components[2].setDisabled(false)
         buttons.components[3].setDisabled(false)
-      } else if (buttonId === `${inputMods} prev`) {
-        console.info('::usersCmd >> prev')
+      } else if (buttonId === `${inputMods}_prev_${hash}`) {
         currentPage = currentPage - 1
         embed = buildEmbed(currentPage)
         buttons.components[0].setDisabled(currentPage === 1)
         buttons.components[1].setDisabled(currentPage === 1)
         buttons.components[2].setDisabled(false)
         buttons.components[3].setDisabled(false)
-      } else if (buttonId === `${inputMods} next`) {
-        console.info('::usersCmd >> next')
+      } else if (buttonId === `${inputMods}_next_${hash}`) {
         currentPage = currentPage + 1
         embed = buildEmbed(currentPage)
         buttons.components[0].setDisabled(false)
         buttons.components[1].setDisabled(false)
         buttons.components[2].setDisabled(currentPage === numPages)
         buttons.components[3].setDisabled(currentPage === numPages)
-      } else if (buttonId === `${inputMods} last`) {
-        console.info('::usersCmd >> last')
+      } else if (buttonId === `${inputMods}_last_${hash}`) {
         currentPage = numPages
         embed = buildEmbed(currentPage)
         buttons.components[0].setDisabled(false)
@@ -160,9 +159,16 @@ export default async function scoresCmd (facade, client, interaction) {
       } else {
         return
       }
-
       interaction.update({ embeds: [embed], components: [buttons] })
-    })
+    }
+
+    // Listen for buttonpresses for 20 seconds
+    console.info('::scoresCmd >> listening for button presses...')
+    client.on('interactionCreate', pageButtons)
+    setTimeout(function () {
+      console.info('::scoresCmd >> no longer listening for button presses')
+      client.off('interactionCreate', pageButtons)
+    }, 20000)
 
     await interaction.reply({ embeds: [embed], components: [buttons] })
   } catch (error) {
