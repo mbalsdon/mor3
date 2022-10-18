@@ -20,6 +20,16 @@ export default async function updateUsers () {
   const userIds = await sheets.fetchUserIds()
   await sleep(1000)
   for (const userId of userIds) {
+    // Get osu!API-side data
+    let user
+    try {
+      user = await osu.fetchUser(userId)
+      await sleep(1000)
+    } catch (error) {
+      // Skip the user if they don't exist anymore
+      continue
+    }
+
     let top1s = 0
     let top2s = 0
     let top3s = 0
@@ -50,10 +60,6 @@ export default async function updateUsers () {
         }
       }
     }
-
-    // Get osu!API-side data
-    const user = await osu.fetchUser(userId)
-    await sleep(1000)
 
     // Unify and push data
     users.push([

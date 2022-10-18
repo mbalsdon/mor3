@@ -329,16 +329,54 @@ export default class SheetsWrapper {
     return response.data
   }
 
+  // // Doesn't check if scores already in sheet, or if scores are valid
+  // async replaceScores (mods, scores) {
+  //   console.info(`SheetsWrapper::replaceScores( ${mods}, array of ${scores.length} scores )`)
+  //   if (Mods.toSheetId(mods) === -1) throw new Error(`${mods} is not a valid mod combination!`) // TODO: duplicate error
+
+  //   const response = await this.#sheetsClient.spreadsheets.values.update({
+  //     auth: SheetsWrapper.#AUTH,
+  //     spreadsheetId: process.env.SPREADSHEET_ID,
+  //     range: `${mods}!A2:J${scores.length + 1}`,
+  //     valueInputOption: 'USER_ENTERED',
+  //     resource: {
+  //       values: scores
+  //     }
+  //   })
+  //   return response.data
+  // }
+
   // Doesn't check if scores already in sheet, or if scores are valid
   async replaceScores (mods, scores) {
     console.info(`SheetsWrapper::replaceScores( ${mods}, array of ${scores.length} scores )`)
     if (Mods.toSheetId(mods) === -1) throw new Error(`${mods} is not a valid mod combination!`) // TODO: duplicate error
 
-    const response = await this.#sheetsClient.spreadsheets.values.update({
+    // Wipe sheet
+    const batchUpdateRequest = {
+      requests: [
+        {
+          deleteDimension: {
+            range: {
+              sheetId: Mods.toSheetId(mods),
+              dimension: 'ROWS',
+              startIndex: 1
+            }
+          }
+        }
+      ]
+    }
+    await this.#sheetsClient.spreadsheets.batchUpdate({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: process.env.SPREADSHEET_ID,
-      range: `${mods}!A2:J${scores.length + 1}`,
+      resource: batchUpdateRequest
+    })
+    // Append scores
+    const response = await this.#sheetsClient.spreadsheets.values.append({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: process.env.SPREADSHEET_ID,
+      range: `${mods}`,
       valueInputOption: 'USER_ENTERED',
+      insertDataOption: 'INSERT_ROWS',
       resource: {
         values: scores
       }
@@ -350,11 +388,32 @@ export default class SheetsWrapper {
   async replaceUsers (users) {
     console.info(`SheetsWrapper::replaceUsers( array of ${users.length} users )`)
 
-    const response = await this.#sheetsClient.spreadsheets.values.update({
+    // Wipe sheet
+    const batchUpdateRequest = {
+      requests: [
+        {
+          deleteDimension: {
+            range: {
+              sheetId: process.env.USERS,
+              dimension: 'ROWS',
+              startIndex: 1
+            }
+          }
+        }
+      ]
+    }
+    await this.#sheetsClient.spreadsheets.batchUpdate({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: process.env.SPREADSHEET_ID,
-      range: `Users!A2:M${users.length + 1}`,
+      resource: batchUpdateRequest
+    })
+    // Append users
+    const response = await this.#sheetsClient.spreadsheets.values.append({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: process.env.SPREADSHEET_ID,
+      range: 'Users',
       valueInputOption: 'USER_ENTERED',
+      insertDataOption: 'INSERT_ROWS',
       resource: {
         values: users
       }
