@@ -12,7 +12,7 @@ export default async function scoresCmd (facade, client, interaction) {
   console.info(`::scoresCmd( ${inputMods} )`)
 
   try {
-    if (Mods.toSheetId(inputMods) === -1) {
+    if (!Mods.modStrings.includes(inputMods)) {
       await interaction.reply({
         content: `\`${inputMods}\` is not a valid mod combination!\n\n` +
   '**Valid mods:** `NM, DT, HR, HD, EZ, HT, FL`\n' +
@@ -29,7 +29,7 @@ export default async function scoresCmd (facade, client, interaction) {
     const numPages = Math.ceil(scores.length / perPage)
 
     if (numPages === 0) {
-      await interaction.reply({ content: `No scores to display - The ${inputMods} sheet is empty!`, ephemeral: true })
+      await interaction.reply({ content: `\`\`\`No scores to display - The ${inputMods} sheet is empty!\nDM spreadnuts#1566 on Discord if you believe that this is a bug.\`\`\``, ephemeral: true })
       return
     }
 
