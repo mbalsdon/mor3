@@ -13,7 +13,7 @@ export default async function helpCmd (interaction) {
             '`ping` - Checks if the bot is alive\n' +
             '`metadata` - Displays mor3 sheet metadata\n' +
             '`users` - Displays list of tracked users, sorted by PP\n' +
-            '`user` - Displays a user\'s stats (WIP)\n' +
+            '`user` - Displays a user\'s stats\n' +
             '`track` - Adds a user to be tracked\n' +
             '`untrack` - Removes a user from being tracked\n' +
             '`tracklist` - Lists all tracked users in a .txt file\n' +
