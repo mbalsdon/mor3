@@ -7,124 +7,128 @@ const config = JSON.parse(configRaw)
 export default async function usersCmd (facade, client, interaction) {
   console.info('::usersCmd()')
 
-  let currentPage = 1
-  const perPage = 5
-  const users = await facade.getUsers()
-  const numPages = Math.ceil(users.length / perPage)
+  try {
+    let currentPage = 1
+    const perPage = 5
+    const users = await facade.getUsers()
+    const numPages = Math.ceil(users.length / perPage)
 
-  if (numPages === 0) {
-    await interaction.reply({ content: 'No users to display - The sheet is empty!', ephemeral: true })
-  }
-
-  const lastUpdated = await facade.getLastUpdated()
-
-  // Modularized due to the fact that using buttons requires the interaction to be updated with new data
-  const buildEmbed = function (page) {
-    console.info(`::userCmd >> buildEmbed( ${page} )`)
-
-    if (page < 1 || page > numPages) {
-      throw new Error(`Page must be between 1 and ${numPages} - this should never happen!`)
+    if (numPages === 0) {
+      await interaction.reply({ content: 'No users to display - The sheet is empty!', ephemeral: true })
     }
 
-    // Avoid OOB errors (may have to display less than 'perPage' users if you're on the last page)
-    const lim = (page === numPages && users.length % perPage !== 0) ? users.length % perPage : perPage
+    const lastUpdated = await facade.getLastUpdated()
 
-    // Build and concatenate player strings
-    let desc = ''
-    for (let i = 0; i < lim; i++) {
-      const pageIndex = perPage * (page - 1) + i
-      const userId = users[pageIndex][0]
-      const username = users[pageIndex][1]
-      const rank = users[pageIndex][2] === '' ? '?' : users[pageIndex][2]
-      const pp = users[pageIndex][3]
-      const acc = parseFloat(users[pageIndex][4]).toFixed(2)
-      const playtime = Math.round(users[pageIndex][5])
-      const top1s = users[pageIndex][6]
-      const top2s = users[pageIndex][7]
-      const top3s = users[pageIndex][8]
-      const userStr = `**${pageIndex + 1}. [${username}](https://osu.ppy.sh/users/${userId}) (Global #${rank} | ${pp}pp | ${acc}% | ${playtime} hours)**\n` +
+    // Modularized due to the fact that using buttons requires the interaction to be updated with new data
+    const buildEmbed = function (page) {
+      console.info(`::userCmd >> buildEmbed( ${page} )`)
+
+      if (page < 1 || page > numPages) {
+        throw new Error(`Page must be between 1 and ${numPages} - this should never happen!`)
+      }
+
+      // Avoid OOB errors (may have to display less than 'perPage' users if you're on the last page)
+      const lim = (page === numPages && users.length % perPage !== 0) ? users.length % perPage : perPage
+
+      // Build and concatenate player strings
+      let desc = ''
+      for (let i = 0; i < lim; i++) {
+        const pageIndex = perPage * (page - 1) + i
+        const userId = users[pageIndex][0]
+        const username = users[pageIndex][1]
+        const rank = users[pageIndex][2] === '' ? '?' : users[pageIndex][2]
+        const pp = users[pageIndex][3]
+        const acc = parseFloat(users[pageIndex][4]).toFixed(2)
+        const playtime = Math.round(users[pageIndex][5])
+        const top1s = users[pageIndex][6]
+        const top2s = users[pageIndex][7]
+        const top3s = users[pageIndex][8]
+        const userStr = `**${pageIndex + 1}. [${username}](https://osu.ppy.sh/users/${userId}) (Global #${rank} | ${pp}pp | ${acc}% | ${playtime} hours)**\n` +
               `▸ :first_place: Mod leaderboard #1s: ${top1s}\n` +
               `▸ :second_place: Mod leaderboard #2s: ${top2s}\n` +
               `▸ :third_place: Mod leaderboard #3s: ${top3s}\n`
-      desc = desc + userStr
+        desc = desc + userStr
+      }
+      const pfpLink = users[perPage * (page - 1)][12]
+
+      // Create the embed object
+      const embed = new EmbedBuilder()
+        .setColor(config.primaryColor)
+        .setThumbnail(`${pfpLink}`)
+        .setDescription(desc)
+        .setFooter({ text: `Last update: ${lastUpdated}` })
+
+      return embed
     }
-    const pfpLink = users[perPage * (page - 1)][12]
 
-    // Create the embed object
-    const embed = new EmbedBuilder()
-      .setColor(config.primaryColor)
-      .setThumbnail(`${pfpLink}`)
-      .setDescription(desc)
-      .setFooter({ text: `Last update: ${lastUpdated}` })
+    let embed = await buildEmbed(currentPage)
+    const buttons = new ActionRowBuilder()
+      .addComponents([
+        new ButtonBuilder()
+          .setCustomId('start')
+          .setLabel('◀◀')
+          .setStyle(ButtonStyle.Secondary)
+          .setDisabled(true),
+        new ButtonBuilder()
+          .setCustomId('prev')
+          .setLabel('◀')
+          .setStyle(ButtonStyle.Secondary)
+          .setDisabled(true),
+        new ButtonBuilder()
+          .setCustomId('next')
+          .setLabel('▶')
+          .setStyle(ButtonStyle.Secondary)
+          .setDisabled(false),
+        new ButtonBuilder()
+          .setCustomId('last')
+          .setLabel('▶▶')
+          .setStyle(ButtonStyle.Secondary)
+          .setDisabled(false)
+      ])
 
-    return embed
+    client.on('interactionCreate', interaction => {
+      if (!interaction.isButton()) return
+
+      const buttonId = interaction.customId
+      if (buttonId === 'start') {
+        console.info('::usersCmd >> start')
+        currentPage = 1
+        embed = buildEmbed(currentPage)
+        buttons.components[0].setDisabled(true)
+        buttons.components[1].setDisabled(true)
+        buttons.components[2].setDisabled(false)
+        buttons.components[3].setDisabled(false)
+      } else if (buttonId === 'prev') {
+        console.info('::usersCmd >> prev')
+        currentPage = currentPage - 1
+        embed = buildEmbed(currentPage)
+        buttons.components[0].setDisabled(currentPage === 1)
+        buttons.components[1].setDisabled(currentPage === 1)
+        buttons.components[2].setDisabled(false)
+        buttons.components[3].setDisabled(false)
+      } else if (buttonId === 'next') {
+        console.info('::usersCmd >> next')
+        currentPage = currentPage + 1
+        embed = buildEmbed(currentPage)
+        buttons.components[0].setDisabled(false)
+        buttons.components[1].setDisabled(false)
+        buttons.components[2].setDisabled(currentPage === numPages)
+        buttons.components[3].setDisabled(currentPage === numPages)
+      } else {
+        console.info('::usersCmd >> last')
+        currentPage = numPages
+        embed = buildEmbed(currentPage)
+        buttons.components[0].setDisabled(false)
+        buttons.components[1].setDisabled(false)
+        buttons.components[2].setDisabled(true)
+        buttons.components[3].setDisabled(true)
+      }
+
+      interaction.update({ embeds: [embed], components: [buttons] })
+    })
+
+    await interaction.reply({ embeds: [embed], components: [buttons] })
+  } catch (error) {
+    await interaction.reply({ content: `\`\`\`${error.message}\nDM spreadnuts#1566 on Discord if you believe that this is a bug.\`\`\``, ephemeral: true })
   }
-
-  let embed = await buildEmbed(currentPage)
-  const buttons = new ActionRowBuilder()
-    .addComponents([
-      new ButtonBuilder()
-        .setCustomId('start')
-        .setLabel('◀◀')
-        .setStyle(ButtonStyle.Secondary)
-        .setDisabled(true),
-      new ButtonBuilder()
-        .setCustomId('prev')
-        .setLabel('◀')
-        .setStyle(ButtonStyle.Secondary)
-        .setDisabled(true),
-      new ButtonBuilder()
-        .setCustomId('next')
-        .setLabel('▶')
-        .setStyle(ButtonStyle.Secondary)
-        .setDisabled(false),
-      new ButtonBuilder()
-        .setCustomId('last')
-        .setLabel('▶▶')
-        .setStyle(ButtonStyle.Secondary)
-        .setDisabled(false)
-    ])
-
-  client.on('interactionCreate', interaction => {
-    if (!interaction.isButton()) return
-
-    const buttonId = interaction.customId
-    if (buttonId === 'start') {
-      console.info('::usersCmd >> start')
-      currentPage = 1
-      embed = buildEmbed(currentPage)
-      buttons.components[0].setDisabled(true)
-      buttons.components[1].setDisabled(true)
-      buttons.components[2].setDisabled(false)
-      buttons.components[3].setDisabled(false)
-    } else if (buttonId === 'prev') {
-      console.info('::usersCmd >> prev')
-      currentPage = currentPage - 1
-      embed = buildEmbed(currentPage)
-      buttons.components[0].setDisabled(currentPage === 1)
-      buttons.components[1].setDisabled(currentPage === 1)
-      buttons.components[2].setDisabled(false)
-      buttons.components[3].setDisabled(false)
-    } else if (buttonId === 'next') {
-      console.info('::usersCmd >> next')
-      currentPage = currentPage + 1
-      embed = buildEmbed(currentPage)
-      buttons.components[0].setDisabled(false)
-      buttons.components[1].setDisabled(false)
-      buttons.components[2].setDisabled(currentPage === numPages)
-      buttons.components[3].setDisabled(currentPage === numPages)
-    } else {
-      console.info('::usersCmd >> last')
-      currentPage = numPages
-      embed = buildEmbed(currentPage)
-      buttons.components[0].setDisabled(false)
-      buttons.components[1].setDisabled(false)
-      buttons.components[2].setDisabled(true)
-      buttons.components[3].setDisabled(true)
-    }
-
-    interaction.update({ embeds: [embed], components: [buttons] })
-  })
-
-  await interaction.reply({ embeds: [embed], components: [buttons] })
 }
