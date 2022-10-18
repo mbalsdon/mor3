@@ -22,7 +22,7 @@ const commands = [
 
   new SlashCommandBuilder()
     .setName('metadata')
-    .setDescription('Displays mor3 sheet metadata')
+    .setDescription('Displays the number of entries in each sheet')
     .setDMPermission(true)
     .setDefaultMemberPermissions(userPermFlags),
 
