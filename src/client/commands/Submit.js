@@ -12,7 +12,6 @@ export default async function submitCmd (facade, interaction) {
 
   try {
     const s = await facade.putSubmittedScore(id)
-    console.log(s)
     const embed = new EmbedBuilder()
       .setColor(config.primaryColor)
       .setAuthor({ name: 'Successfully added score:' })
@@ -23,6 +22,6 @@ export default async function submitCmd (facade, interaction) {
       .setFooter({ text: `Last update: ${lastUpdated}` })
     await interaction.reply({ embeds: [embed] })
   } catch (error) {
-    await interaction.reply({ content: error.message, ephemeral: true })
+    await interaction.reply({ content: `\`\`\`${error.message}\nDM spreadnuts#1566 on Discord if you believe that this is a bug.\`\`\``, ephemeral: true })
   }
 }

@@ -15,15 +15,15 @@ export default async function trackCmd (facade, interaction) {
       .setAuthor({ name: `MOR3 now tracking: ${user.username}`, iconURL: `${user.avatar_url}`, url: `https://osu.ppy.sh/users/${user.id}` })
       .setDescription( // TODO: dupecode, build user object
         `▸ **:globe_with_meridians: Global Rank:** #${user.statistics.global_rank}\n` +
-        `▸ **:farmer: PP:** ${user.statistics.pp}\n` +
-        `▸ **:dart: Profile Accuracy:** ${user.statistics.hit_accuracy.toFixed(2)}\n` +
-        `▸ **:desktop: Total Playtime:** ${Math.round(user.statistics.play_time / 3600)}\n` +
+        `▸ **:farmer: PP:** ${user.statistics.pp}pp\n` +
+        `▸ **:dart: Profile Accuracy:** ${user.statistics.hit_accuracy.toFixed(2)}%\n` +
+        `▸ **:desktop: Total Playtime:** ${Math.round(user.statistics.play_time / 3600)} hours\n` +
         playstyleStr
       )
       .setThumbnail(user.avatar_url)
       .setFooter({ text: `owobot: >track add "${user.username}" | Bathbot: <track "${user.username}"` })
     await interaction.reply({ embeds: [embed] })
   } catch (error) {
-    await interaction.reply({ content: error.message, ephemeral: true })
+    await interaction.reply({ content: `\`\`\`${error.message}\nDM spreadnuts#1566 on Discord if you believe that this is a bug.\`\`\``, ephemeral: true })
   }
 }

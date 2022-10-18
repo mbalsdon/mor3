@@ -3,6 +3,7 @@ import SheetsWrapper from './SheetsWrapper.js'
 import DriveWrapper from './DriveWrapper.js'
 
 import 'dotenv/config'
+import Mods from './Mods.js'
 
 export default class MorFacade {
   #osu
@@ -74,12 +75,12 @@ export default class MorFacade {
     const pp = user.statistics.pp
     const acc = user.statistics.hit_accuracy.toFixed(2)
     const playtime = Math.round(user.statistics.play_time / 3600)
-    const top1s = 0
-    const top2s = 0
-    const top3s = 0
-    const top5s = 0
-    const top10s = 0
-    const top25s = 0
+    const top1s = 'n/a'
+    const top2s = 'n/a'
+    const top3s = 'n/a'
+    const top5s = 'n/a'
+    const top10s = 'n/a'
+    const top25s = 'n/a'
     const pfpLink = user.avatar_url
 
     await this.#sheets.insertUser(user.id, user.username, rank, pp, acc, playtime, top1s, top2s, top3s, top5s, top10s, top25s, pfpLink)
@@ -158,7 +159,8 @@ export default class MorFacade {
     }
     // Get mods
     const mods = submittedScores[4][index]
-    await this.#sheets.removeScore(mods, id)
+    console.log(Mods.parseModKeyStr(mods))
+    await this.#sheets.removeScore(Mods.parseModKeyStr(mods), id)
     const s = [submittedScores[0][index],
       submittedScores[1][index],
       submittedScores[2][index],

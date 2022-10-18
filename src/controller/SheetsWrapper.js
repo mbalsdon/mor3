@@ -127,34 +127,48 @@ export default class SheetsWrapper {
         return parseInt(b) - parseInt(a)
       })
       const userIndex = userPps.indexOf(pp)
-      const batchUpdateRequest = {
-        requests: [
-          {
-            insertDimension: {
-              range: {
-                sheetId: process.env.USERS,
-                dimension: 'ROWS',
-                startIndex: userIndex + 1,
-                endIndex: userIndex + 2
+      // Inserting at end => append instead
+      if (userIndex + 1 === userPps.length || userPps.length === 0) {
+        response = await this.#sheetsClient.spreadsheets.values.append({ // TODO: terrible code (dupe+weird logic) lol
+          auth: SheetsWrapper.#AUTH,
+          spreadsheetId: process.env.SPREADSHEET_ID,
+          range: 'Users',
+          valueInputOption: 'USER_ENTERED',
+          insertDataOption: 'INSERT_ROWS',
+          resource: {
+            values: [[userId, username, rank, pp, acc, playtime, top1s, top2s, top3s, top5s, top10s, top25s, pfpLink]]
+          }
+        })
+      } else {
+        const batchUpdateRequest = {
+          requests: [
+            {
+              insertDimension: {
+                range: {
+                  sheetId: process.env.USERS,
+                  dimension: 'ROWS',
+                  startIndex: userIndex + 1,
+                  endIndex: userIndex + 2
+                }
               }
             }
-          }
-        ]
-      }
-      await this.#sheetsClient.spreadsheets.batchUpdate({
-        auth: SheetsWrapper.#AUTH,
-        spreadsheetId: process.env.SPREADSHEET_ID,
-        resource: batchUpdateRequest
-      })
-      response = await this.#sheetsClient.spreadsheets.values.update({
-        auth: SheetsWrapper.#AUTH,
-        spreadsheetId: process.env.SPREADSHEET_ID,
-        range: `Users!A${userIndex + 2}:M${userIndex + 2}`,
-        valueInputOption: 'USER_ENTERED',
-        resource: {
-          values: [[userId, username, rank, pp, acc, playtime, top1s, top2s, top3s, top5s, top10s, top25s, pfpLink]]
+          ]
         }
-      })
+        await this.#sheetsClient.spreadsheets.batchUpdate({
+          auth: SheetsWrapper.#AUTH,
+          spreadsheetId: process.env.SPREADSHEET_ID,
+          resource: batchUpdateRequest
+        })
+        response = await this.#sheetsClient.spreadsheets.values.update({
+          auth: SheetsWrapper.#AUTH,
+          spreadsheetId: process.env.SPREADSHEET_ID,
+          range: `Users!A${userIndex + 2}:M${userIndex + 2}`,
+          valueInputOption: 'USER_ENTERED',
+          resource: {
+            values: [[userId, username, rank, pp, acc, playtime, top1s, top2s, top3s, top5s, top10s, top25s, pfpLink]]
+          }
+        })
+      }
     }
     return response.data
   }
@@ -192,7 +206,7 @@ export default class SheetsWrapper {
 
   async fetchModScores (mods, valueRenderOption) {
     console.info(`SheetsWrapper::fetchModScores( ${mods}, ${valueRenderOption} )`)
-    if (Mods.toSheetId(mods) === -1) { // TODO: duplicate error
+    if (!Mods.modStrings.includes(mods)) { // TODO: duplicate error
       throw new Error(`${mods} is not a valid mod combination.`)
     } else if (valueRenderOption !== 'FORMATTED_VALUE' && valueRenderOption !== 'UNFORMATTED_VALUE' && valueRenderOption !== 'FORMULA') {
       throw new Error('valueRenderOption must be one of FORMATTED_VALUE, UNFORMATTED_VALUE, or FORMULA.')
@@ -210,7 +224,7 @@ export default class SheetsWrapper {
 
   async fetchModScoreIds (mods, valueRenderOption) {
     console.info(`SheetsWrapper::fetchModScoreIds( ${mods}, ${valueRenderOption} )`)
-    if (Mods.toSheetId(mods) === -1) { // TODO: duplicate error
+    if (!Mods.modStrings.includes(mods)) { // TODO: duplicate error
       throw new Error(`${mods} is not a valid mod combination.`)
     } else if (valueRenderOption !== 'FORMATTED_VALUE' && valueRenderOption !== 'UNFORMATTED_VALUE' && valueRenderOption !== 'FORMULA') {
       throw new Error('valueRenderOption must be one of FORMATTED_VALUE, UNFORMATTED_VALUE, or FORMULA.')
@@ -228,7 +242,7 @@ export default class SheetsWrapper {
 
   async fetchScore (mods, rowNum) {
     console.info(`SheetsWrapper::fetchScore( ${mods}, ${rowNum} )`)
-    if (Mods.toSheetId(mods) === -1) { // TODO: duplicate error
+    if (!Mods.modStrings.includes(mods)) { // TODO: duplicate error
       throw new Error(`${mods} is not a valid mod combination!`)
     } else if (isNaN(parseInt(rowNum)) || parseInt(rowNum) < 0) {
       throw new Error('Row number cannot be negative!')
@@ -245,7 +259,7 @@ export default class SheetsWrapper {
 
   async removeScore (mods, id) {
     console.info(`SheetsWrapper::removeScore( ${mods}, ${id} )`)
-    if (Mods.toSheetId(mods) === -1) { // TODO: duplicate error
+    if (!Mods.modStrings.includes(mods)) { // TODO: duplicate error
       throw new Error(`${mods} is not a valid mod combination!`)
     } else if (isNaN(parseInt(id)) || parseInt(id) < 1) {
       throw new Error('Score ID must be a positive number!')
@@ -332,13 +346,34 @@ export default class SheetsWrapper {
   // Doesn't check if scores already in sheet, or if scores are valid
   async replaceScores (mods, scores) {
     console.info(`SheetsWrapper::replaceScores( ${mods}, array of ${scores.length} scores )`)
-    if (Mods.toSheetId(mods) === -1) throw new Error(`${mods} is not a valid mod combination!`) // TODO: duplicate error
+    if (!Mods.modStrings.includes(mods)) throw new Error(`${mods} is not a valid mod combination!`) // TODO: duplicate error
 
-    const response = await this.#sheetsClient.spreadsheets.values.update({
+    // Wipe sheet
+    const batchUpdateRequest = {
+      requests: [
+        {
+          deleteDimension: {
+            range: {
+              sheetId: Mods.toSheetId(mods),
+              dimension: 'ROWS',
+              startIndex: 1
+            }
+          }
+        }
+      ]
+    }
+    await this.#sheetsClient.spreadsheets.batchUpdate({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: process.env.SPREADSHEET_ID,
-      range: `${mods}!A2:J${scores.length + 1}`,
+      resource: batchUpdateRequest
+    })
+    // Append scores
+    const response = await this.#sheetsClient.spreadsheets.values.append({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: process.env.SPREADSHEET_ID,
+      range: `${mods}`,
       valueInputOption: 'USER_ENTERED',
+      insertDataOption: 'INSERT_ROWS',
       resource: {
         values: scores
       }
@@ -350,11 +385,32 @@ export default class SheetsWrapper {
   async replaceUsers (users) {
     console.info(`SheetsWrapper::replaceUsers( array of ${users.length} users )`)
 
-    const response = await this.#sheetsClient.spreadsheets.values.update({
+    // Wipe sheet
+    const batchUpdateRequest = {
+      requests: [
+        {
+          deleteDimension: {
+            range: {
+              sheetId: process.env.USERS,
+              dimension: 'ROWS',
+              startIndex: 1
+            }
+          }
+        }
+      ]
+    }
+    await this.#sheetsClient.spreadsheets.batchUpdate({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId: process.env.SPREADSHEET_ID,
-      range: `Users!A2:M${users.length + 1}`,
+      resource: batchUpdateRequest
+    })
+    // Append users
+    const response = await this.#sheetsClient.spreadsheets.values.append({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId: process.env.SPREADSHEET_ID,
+      range: 'Users',
       valueInputOption: 'USER_ENTERED',
+      insertDataOption: 'INSERT_ROWS',
       resource: {
         values: users
       }

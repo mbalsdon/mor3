@@ -36,7 +36,7 @@ export default class Bot {
     console.info('Bot::start()')
 
     this.#client.once('ready', () => {
-      console.log('MOR3 is online!')
+      console.info('MOR3 is online!')
     })
 
     this.#client.on('interactionCreate', async interaction => {
