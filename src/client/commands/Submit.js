@@ -12,7 +12,6 @@ export default async function submitCmd (facade, interaction) {
 
   try {
     const s = await facade.putSubmittedScore(id)
-    console.log(s)
     const embed = new EmbedBuilder()
       .setColor(config.primaryColor)
       .setAuthor({ name: 'Successfully added score:' })
