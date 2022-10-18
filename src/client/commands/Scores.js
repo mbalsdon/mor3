@@ -111,12 +111,12 @@ export default async function scoresCmd (facade, client, interaction) {
           .setCustomId('next')
           .setLabel('▶')
           .setStyle(ButtonStyle.Secondary)
-          .setDisabled(false),
+          .setDisabled(numPages === 1),
         new ButtonBuilder()
           .setCustomId('last')
           .setLabel('▶▶')
           .setStyle(ButtonStyle.Secondary)
-          .setDisabled(false)
+          .setDisabled(numPages === 1)
       ])
 
     client.on('interactionCreate', interaction => {
