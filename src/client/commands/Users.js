@@ -65,22 +65,22 @@ export default async function usersCmd (facade, client, interaction) {
     const buttons = new ActionRowBuilder()
       .addComponents([
         new ButtonBuilder()
-          .setCustomId('start')
+          .setCustomId('Users start')
           .setLabel('◀◀')
           .setStyle(ButtonStyle.Secondary)
           .setDisabled(true),
         new ButtonBuilder()
-          .setCustomId('prev')
+          .setCustomId('Users prev')
           .setLabel('◀')
           .setStyle(ButtonStyle.Secondary)
           .setDisabled(true),
         new ButtonBuilder()
-          .setCustomId('next')
+          .setCustomId('Users next')
           .setLabel('▶')
           .setStyle(ButtonStyle.Secondary)
           .setDisabled(numPages === 1),
         new ButtonBuilder()
-          .setCustomId('last')
+          .setCustomId('Users last')
           .setLabel('▶▶')
           .setStyle(ButtonStyle.Secondary)
           .setDisabled(numPages === 1)
@@ -90,7 +90,7 @@ export default async function usersCmd (facade, client, interaction) {
       if (!interaction.isButton()) return
 
       const buttonId = interaction.customId
-      if (buttonId === 'start') {
+      if (buttonId === 'Users start') {
         console.info('::usersCmd >> start')
         currentPage = 1
         embed = buildEmbed(currentPage)
@@ -98,7 +98,7 @@ export default async function usersCmd (facade, client, interaction) {
         buttons.components[1].setDisabled(true)
         buttons.components[2].setDisabled(false)
         buttons.components[3].setDisabled(false)
-      } else if (buttonId === 'prev') {
+      } else if (buttonId === 'Users prev') {
         console.info('::usersCmd >> prev')
         currentPage = currentPage - 1
         embed = buildEmbed(currentPage)
@@ -106,7 +106,7 @@ export default async function usersCmd (facade, client, interaction) {
         buttons.components[1].setDisabled(currentPage === 1)
         buttons.components[2].setDisabled(false)
         buttons.components[3].setDisabled(false)
-      } else if (buttonId === 'next') {
+      } else if (buttonId === 'Users next') {
         console.info('::usersCmd >> next')
         currentPage = currentPage + 1
         embed = buildEmbed(currentPage)
@@ -114,7 +114,7 @@ export default async function usersCmd (facade, client, interaction) {
         buttons.components[1].setDisabled(false)
         buttons.components[2].setDisabled(currentPage === numPages)
         buttons.components[3].setDisabled(currentPage === numPages)
-      } else {
+      } else if (buttonId === 'Users last') {
         console.info('::usersCmd >> last')
         currentPage = numPages
         embed = buildEmbed(currentPage)
@@ -122,6 +122,8 @@ export default async function usersCmd (facade, client, interaction) {
         buttons.components[1].setDisabled(false)
         buttons.components[2].setDisabled(true)
         buttons.components[3].setDisabled(true)
+      } else {
+        return
       }
 
       interaction.update({ embeds: [embed], components: [buttons] })

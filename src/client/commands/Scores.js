@@ -98,22 +98,22 @@ export default async function scoresCmd (facade, client, interaction) {
     const buttons = new ActionRowBuilder()
       .addComponents([
         new ButtonBuilder()
-          .setCustomId('start')
+          .setCustomId(`${inputMods} start`)
           .setLabel('◀◀')
           .setStyle(ButtonStyle.Secondary)
           .setDisabled(true),
         new ButtonBuilder()
-          .setCustomId('prev')
+          .setCustomId(`${inputMods} prev`)
           .setLabel('◀')
           .setStyle(ButtonStyle.Secondary)
           .setDisabled(true),
         new ButtonBuilder()
-          .setCustomId('next')
+          .setCustomId(`${inputMods} next`)
           .setLabel('▶')
           .setStyle(ButtonStyle.Secondary)
           .setDisabled(numPages === 1),
         new ButtonBuilder()
-          .setCustomId('last')
+          .setCustomId(`${inputMods} last`)
           .setLabel('▶▶')
           .setStyle(ButtonStyle.Secondary)
           .setDisabled(numPages === 1)
@@ -123,7 +123,7 @@ export default async function scoresCmd (facade, client, interaction) {
       if (!interaction.isButton()) return
 
       const buttonId = interaction.customId
-      if (buttonId === 'start') {
+      if (buttonId === `${inputMods} start`) {
         console.info('::usersCmd >> start')
         currentPage = 1
         embed = buildEmbed(currentPage)
@@ -131,7 +131,7 @@ export default async function scoresCmd (facade, client, interaction) {
         buttons.components[1].setDisabled(true)
         buttons.components[2].setDisabled(false)
         buttons.components[3].setDisabled(false)
-      } else if (buttonId === 'prev') {
+      } else if (buttonId === `${inputMods} prev`) {
         console.info('::usersCmd >> prev')
         currentPage = currentPage - 1
         embed = buildEmbed(currentPage)
@@ -139,7 +139,7 @@ export default async function scoresCmd (facade, client, interaction) {
         buttons.components[1].setDisabled(currentPage === 1)
         buttons.components[2].setDisabled(false)
         buttons.components[3].setDisabled(false)
-      } else if (buttonId === 'next') {
+      } else if (buttonId === `${inputMods} next`) {
         console.info('::usersCmd >> next')
         currentPage = currentPage + 1
         embed = buildEmbed(currentPage)
@@ -147,7 +147,7 @@ export default async function scoresCmd (facade, client, interaction) {
         buttons.components[1].setDisabled(false)
         buttons.components[2].setDisabled(currentPage === numPages)
         buttons.components[3].setDisabled(currentPage === numPages)
-      } else {
+      } else if (buttonId === `${inputMods} last`) {
         console.info('::usersCmd >> last')
         currentPage = numPages
         embed = buildEmbed(currentPage)
@@ -155,6 +155,8 @@ export default async function scoresCmd (facade, client, interaction) {
         buttons.components[1].setDisabled(false)
         buttons.components[2].setDisabled(true)
         buttons.components[3].setDisabled(true)
+      } else {
+        return
       }
 
       interaction.update({ embeds: [embed], components: [buttons] })
