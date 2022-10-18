@@ -3,6 +3,7 @@ import SheetsWrapper from './SheetsWrapper.js'
 import DriveWrapper from './DriveWrapper.js'
 
 import 'dotenv/config'
+import Mods from './Mods.js'
 
 export default class MorFacade {
   #osu
@@ -158,7 +159,8 @@ export default class MorFacade {
     }
     // Get mods
     const mods = submittedScores[4][index]
-    await this.#sheets.removeScore(mods, id)
+    console.log(Mods.parseModKeyStr(mods))
+    await this.#sheets.removeScore(Mods.parseModKeyStr(mods), id)
     const s = [submittedScores[0][index],
       submittedScores[1][index],
       submittedScores[2][index],
