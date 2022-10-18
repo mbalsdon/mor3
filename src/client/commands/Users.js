@@ -63,25 +63,28 @@ export default async function usersCmd (facade, client, interaction) {
     }
 
     let embed = await buildEmbed(currentPage)
+        // Using date as a hash to give every button a unique ID
+    // If /users is called twice without a hash, the two button listeners would both respond to either buttonpress due to non-unique IDs
+    const hash = new Date(Date.now()).toISOString()
     const buttons = new ActionRowBuilder()
       .addComponents([
         new ButtonBuilder()
-          .setCustomId('Users start')
+          .setCustomId(`Users_start_${hash}`)
           .setLabel('◀◀')
           .setStyle(ButtonStyle.Secondary)
           .setDisabled(true),
         new ButtonBuilder()
-          .setCustomId('Users prev')
+          .setCustomId(`Users_prev_${hash}`)
           .setLabel('◀')
           .setStyle(ButtonStyle.Secondary)
           .setDisabled(true),
         new ButtonBuilder()
-          .setCustomId('Users next')
+          .setCustomId(`Users_next_${hash}`)
           .setLabel('▶')
           .setStyle(ButtonStyle.Secondary)
           .setDisabled(numPages === 1),
         new ButtonBuilder()
-          .setCustomId('Users last')
+          .setCustomId(`Users_last_${hash}`)
           .setLabel('▶▶')
           .setStyle(ButtonStyle.Secondary)
           .setDisabled(numPages === 1)
@@ -91,28 +94,28 @@ export default async function usersCmd (facade, client, interaction) {
       if (!interaction.isButton()) return
       const buttonId = interaction.customId
       console.log(`::usersCmd >> button "${buttonId}" was pressed!`)
-      if (buttonId === 'Users start') {
+      if (buttonId === `Users_start_${hash}`) {
         currentPage = 1
         embed = buildEmbed(currentPage)
         buttons.components[0].setDisabled(true)
         buttons.components[1].setDisabled(true)
         buttons.components[2].setDisabled(false)
         buttons.components[3].setDisabled(false)
-      } else if (buttonId === 'Users prev') {
+      } else if (buttonId === `Users_prev_${hash}`) {
         currentPage = currentPage - 1
         embed = buildEmbed(currentPage)
         buttons.components[0].setDisabled(currentPage === 1)
         buttons.components[1].setDisabled(currentPage === 1)
         buttons.components[2].setDisabled(false)
         buttons.components[3].setDisabled(false)
-      } else if (buttonId === 'Users next') {
+      } else if (buttonId === `Users_next_${hash}`) {
         currentPage = currentPage + 1
         embed = buildEmbed(currentPage)
         buttons.components[0].setDisabled(false)
         buttons.components[1].setDisabled(false)
         buttons.components[2].setDisabled(currentPage === numPages)
         buttons.components[3].setDisabled(currentPage === numPages)
-      } else if (buttonId === 'Users last') {
+      } else if (buttonId === `Users_last_${hash}`) {
         currentPage = numPages
         embed = buildEmbed(currentPage)
         buttons.components[0].setDisabled(false)
