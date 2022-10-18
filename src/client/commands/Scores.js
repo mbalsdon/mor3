@@ -14,11 +14,13 @@ export default async function scoresCmd (facade, client, interaction) {
   try {
     if (!Mods.modStrings.includes(inputMods)) {
       await interaction.reply({
-        content: `\`${inputMods}\` is not a valid mod combination!\n\n` +
-  '**Valid mods:** `NM, DT, HR, HD, EZ, HT, FL`\n' +
-  '`HDDT, HRDT, EZDT, DTFL, EZHT, HDHR, HDHT, EZHD, HRHT, EZFL, HRFL, HTFL, HDFL`\n' +
-  '`HDHRDT, HDDTFL, EZHDDT, HRDTFL, EZDTFL, HDHTFL, HDHRHT, HRHTFL, EZHDHT, EZHTFL, EZHDFL, HDHRFL`\n' +
-  '`HDHRDTFL, EZHDDTFL, EZHDHTFL, HDHRHTFL`'
+        content: `\`\`\`${inputMods} is not a valid mod combination!\n\n` +
+  'Valid mods:\n' +
+  'NM, DT, HR, HD, EZ, HT, FL\n' +
+  'HDDT, HRDT, EZDT, DTFL, EZHT, HDHR, HDHT, EZHD, HRHT, EZFL, HRFL, HTFL, HDFL\n' +
+  'HDHRDT, HDDTFL, EZHDDT, HRDTFL, EZDTFL, HDHTFL, HDHRHT, HRHTFL, EZHDHT, EZHTFL, EZHDFL, HDHRFL\n' +
+  'HDHRDTFL, EZHDDTFL, EZHDHTFL, HDHRHTFL\n\n' +
+  'DM spreadnuts#1566 on Discord if you believe that this is a bug.```'
       })
       return
     }

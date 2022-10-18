@@ -55,7 +55,7 @@ export default class OsuWrapper {
       headers
     })
     if (response.status === 404) {
-      throw new Error(`User ${user} not found`)
+      throw new Error(`User ${user} not found.`)
     }
     const data = await response.json()
     return data
@@ -64,7 +64,7 @@ export default class OsuWrapper {
   async fetchScore (id) {
     console.info(`OsuWrapper::fetchScore( ${id} )`)
     if (isNaN(parseInt(id)) || parseInt(id) < 1) {
-      throw new Error('Score ID must be a positive number')
+      throw new Error('Score ID must be a positive number.')
     }
 
     const url = new URL(`${OsuWrapper.#API_URL}/scores/osu/${id}`)
@@ -82,7 +82,7 @@ export default class OsuWrapper {
       headers
     })
     if (response.status === 404) {
-      throw new Error(`Score ID ${id} not found`)
+      throw new Error(`Score ID ${id} not found.`)
     }
     const data = await response.json()
     return data
@@ -91,7 +91,7 @@ export default class OsuWrapper {
   async fetchUserTopPlays (userId) {
     console.info(`OsuWrapper::fetchUserTopPlays( ${userId} )`)
     if (isNaN(parseInt(userId)) || parseInt(userId) < 1) {
-      throw new Error('User ID must be a positive number')
+      throw new Error('User ID must be a positive number.')
     }
 
     const url = new URL(`${OsuWrapper.#API_URL}/users/${userId}/scores/best`)
@@ -111,7 +111,7 @@ export default class OsuWrapper {
       headers
     })
     if (response.status === 404) {
-      throw new Error(`User ID ${userId} not found`)
+      throw new Error(`User ID ${userId} not found.`)
     }
     const data = await response.json()
     return data
@@ -120,7 +120,7 @@ export default class OsuWrapper {
   async fetchUserFirstPlacePlays (userId) {
     console.info(`OsuWrapper::fetchUserFirstPlacePlays( ${userId} )`)
     if (isNaN(parseInt(userId)) || parseInt(userId) < 1) {
-      throw new Error('User ID must be a positive number')
+      throw new Error('User ID must be a positive number.')
     }
 
     const url = new URL(`${OsuWrapper.#API_URL}/users/${userId}/scores/firsts`)
@@ -140,7 +140,7 @@ export default class OsuWrapper {
       headers
     })
     if (response.status === 404) {
-      throw new Error(`User ID ${userId} not found`)
+      throw new Error(`User ID ${userId} not found.`)
     }
     const data = await response.json()
     return data
@@ -150,13 +150,13 @@ export default class OsuWrapper {
   async fetchScores (scoreIds) {
     console.info(`OsuWrapper::fetchScores( ${scoreIds} )`)
     if (!Array.isArray(scoreIds)) {
-      throw new Error('scoreIds must be an array')
+      throw new Error('scoreIds must be an array.')
     }
 
     const ret = []
     for (const id of scoreIds) {
       if (isNaN(parseInt(id)) || parseInt(id) < 1) {
-        throw new Error('Score IDs must be positive numbers')
+        throw new Error('Score IDs must be positive numbers.')
       }
       ret.push(await this.fetchScore(id))
       await sleep(1000)

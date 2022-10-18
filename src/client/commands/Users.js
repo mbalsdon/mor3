@@ -14,7 +14,8 @@ export default async function usersCmd (facade, client, interaction) {
     const numPages = Math.ceil(users.length / perPage)
 
     if (numPages === 0) {
-      await interaction.reply({ content: 'No users to display - The sheet is empty!', ephemeral: true })
+      await interaction.reply({ content: '```No users to display - The sheet is empty!\nDM spreadnuts#1566 on Discord if you believe that this is a bug.```', ephemeral: true })
+      return
     }
 
     const lastUpdated = await facade.getLastUpdated()
