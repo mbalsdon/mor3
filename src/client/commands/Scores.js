@@ -94,7 +94,7 @@ export default async function scoresCmd (facade, client, interaction) {
       return embed
     }
 
-    let embed = await buildEmbed(currentPage)
+    let embed = buildEmbed(currentPage)
     // Using date as a hash to give every button a unique ID
     // If /users is called twice without a hash, the two button listeners would both respond to either buttonpress due to non-unique IDs
     const hash = new Date(Date.now()).toISOString()
@@ -122,34 +122,30 @@ export default async function scoresCmd (facade, client, interaction) {
           .setDisabled(numPages === 1)
       ])
 
-    const pageButtons = function (interaction) {
+    const pageButtons = async function (interaction) {
       if (!interaction.isButton()) return
       const buttonId = interaction.customId
       console.log(`::scoresCmd >> button "${buttonId}" was pressed!`)
       if (buttonId === `${inputMods}_start_${hash}`) {
         currentPage = 1
-        embed = buildEmbed(currentPage)
         buttons.components[0].setDisabled(true)
         buttons.components[1].setDisabled(true)
         buttons.components[2].setDisabled(false)
         buttons.components[3].setDisabled(false)
       } else if (buttonId === `${inputMods}_prev_${hash}`) {
         currentPage = currentPage - 1
-        embed = buildEmbed(currentPage)
         buttons.components[0].setDisabled(currentPage === 1)
         buttons.components[1].setDisabled(currentPage === 1)
         buttons.components[2].setDisabled(false)
         buttons.components[3].setDisabled(false)
       } else if (buttonId === `${inputMods}_next_${hash}`) {
         currentPage = currentPage + 1
-        embed = buildEmbed(currentPage)
         buttons.components[0].setDisabled(false)
         buttons.components[1].setDisabled(false)
         buttons.components[2].setDisabled(currentPage === numPages)
         buttons.components[3].setDisabled(currentPage === numPages)
       } else if (buttonId === `${inputMods}_last_${hash}`) {
         currentPage = numPages
-        embed = buildEmbed(currentPage)
         buttons.components[0].setDisabled(false)
         buttons.components[1].setDisabled(false)
         buttons.components[2].setDisabled(true)
@@ -157,7 +153,8 @@ export default async function scoresCmd (facade, client, interaction) {
       } else {
         return
       }
-      interaction.update({ embeds: [embed], components: [buttons] })
+      embed = buildEmbed(currentPage)
+      await interaction.update({ embeds: [embed], components: [buttons] })
     }
 
     // Listen for buttonpresses for 20 seconds
