@@ -12,7 +12,7 @@ export default async function userCmd (facade, interaction) {
     const user = await facade.getSheetUser(username)
     // TODO: build user object for compiler typechecking
     const embed = new EmbedBuilder()
-      .setColor(config.primaryColor)
+      .setColor(config.BOT_EMBED_COLOR)
       .setAuthor({ name: `MOR3 profile for ${user[1]}`, iconURL: `${user[12]}`, url: `https://osu.ppy.sh/users/${user[0]}` })
       .setDescription( // TODO: some dupecode here from scores.js (medalemoji)
         `▸ **:globe_with_meridians: Global Rank:** #${user[2]}\n` +

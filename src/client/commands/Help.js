@@ -8,7 +8,7 @@ export default async function helpCmd (interaction) {
   console.info('::helpCmd()')
   try {
     const embed = new EmbedBuilder()
-      .setColor(config.primaryColor)
+      .setColor(config.BOT_EMBED_COLOR)
       .setAuthor({ name: 'mor3 commands', iconURL: 'https://spreadnuts.s-ul.eu/MdfvA3q5', url: 'https://github.com/mbalsdon/mor3' })
       .setDescription('`help` - Documentation on the bot\'s commands\n' +
             '`ping` - Checks if the bot is alive\n' +

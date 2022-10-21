@@ -1,5 +1,9 @@
 import { google } from 'googleapis'
 import 'dotenv/config'
+import * as fs from 'fs'
+
+const configRaw = fs.readFileSync('./src/config.json')
+const config = JSON.parse(configRaw)
 
 export default class DriveWrapper {
   static #AUTH = new google.auth.GoogleAuth({
@@ -30,7 +34,7 @@ export default class DriveWrapper {
       fileId,
       resource: {
         name,
-        parents: [process.env.FOLDER_ID]
+        parents: [config.DRIVE.BACKUP_FOLDER_ID]
       }
     })
     return response.data

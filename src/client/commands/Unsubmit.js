@@ -13,7 +13,7 @@ export default async function unsubmitCmd (facade, interaction) {
   try {
     const s = await facade.deleteSubmittedScore(id)
     const embed = new EmbedBuilder()
-      .setColor(config.primaryColor)
+      .setColor(config.BOT_EMBED_COLOR)
       .setAuthor({ name: 'Successfully removed score:' })
       .setThumbnail(`${s[9]}`)
       .setDescription(`**[${s[3]}](https://osu.ppy.sh/scores/osu/${s[0]}) +${s[4]}** [${s[7]}★]\n` +

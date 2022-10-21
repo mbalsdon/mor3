@@ -11,7 +11,7 @@ export default async function trackCmd (facade, interaction) {
     const user = await facade.putUser(username)
     const playstyleStr = (user.playstyle === null) ? ' ' : `▸ **:video_game: Playstyle:** ${user.playstyle.map(p => { return p[0].toUpperCase() + p.substring(1) }).join(', ')}`
     const embed = new EmbedBuilder()
-      .setColor(config.primaryColor)
+      .setColor(config.BOT_EMBED_COLOR)
       .setAuthor({ name: `MOR3 now tracking: ${user.username}`, iconURL: `${user.avatar_url}`, url: `https://osu.ppy.sh/users/${user.id}` })
       .setDescription( // TODO: dupecode, build user object
         `▸ **:globe_with_meridians: Global Rank:** #${user.statistics.global_rank}\n` +

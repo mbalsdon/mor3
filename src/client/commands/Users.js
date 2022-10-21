@@ -54,7 +54,7 @@ export default async function usersCmd (facade, client, interaction) {
 
       // Create the embed object
       const embed = new EmbedBuilder()
-        .setColor(config.primaryColor)
+        .setColor(config.BOT_EMBED_COLOR)
         .setThumbnail(`${pfpLink}`)
         .setDescription(desc)
         .setFooter({ text: `Last update: ${lastUpdated}` })
@@ -63,7 +63,7 @@ export default async function usersCmd (facade, client, interaction) {
     }
 
     let embed = await buildEmbed(currentPage)
-        // Using date as a hash to give every button a unique ID
+    // Using date as a hash to give every button a unique ID
     // If /users is called twice without a hash, the two button listeners would both respond to either buttonpress due to non-unique IDs
     const hash = new Date(Date.now()).toISOString()
     const buttons = new ActionRowBuilder()

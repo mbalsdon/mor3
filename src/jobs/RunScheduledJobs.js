@@ -1,9 +1,12 @@
-import 'dotenv/config'
 import scrapeTopPlays from './ScrapeTopPlays.js'
 import updateUsers from './UpdateUsers.js'
 import calcModTopLBPlays from './CalcModTopLBPlays.js'
 import DriveWrapper from '../controller/DriveWrapper.js'
 import SheetsWrapper from '../controller/SheetsWrapper.js'
+import * as fs from 'fs'
+
+const configRaw = fs.readFileSync('./src/config.json')
+const config = JSON.parse(configRaw)
 
 export default async function runScheduledJobs () {
   console.time('::runScheduledJobs() >> time elapsed')
@@ -19,7 +22,7 @@ export default async function runScheduledJobs () {
   const drive = await DriveWrapper.build()
   const dateString = new Date(Date.now()).toISOString()
   const metadata = await sheets.fetchMetadata()
-  await drive.copyFile(process.env.SPREADSHEET_ID, `${metadata.properties.title} ${dateString}`)
+  await drive.copyFile(config.SPREADSHEETS.SPREADSHEET_ID, `${metadata.properties.title} ${dateString}`)
   await sheets.lastUpdated(dateString)
 
   console.info(`::runScheduledJobs() >> job completed at ${dateString}`)
