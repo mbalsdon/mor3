@@ -2,8 +2,6 @@ import * as fs from 'fs'
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js'
 import Mods from '../../controller/Mods.js'
 
-import 'dotenv/config'
-
 const configRaw = fs.readFileSync('./src/config.json')
 const config = JSON.parse(configRaw)
 
@@ -87,8 +85,8 @@ export default async function scoresCmd (facade, client, interaction) {
 
       // Create the embed object
       const embed = new EmbedBuilder()
-        .setColor(config.primaryColor)
-        .setAuthor({ name: `+${inputMods} Score Leaderboard`, iconURL: `${beatmapImgLink}`, url: `https://docs.google.com/spreadsheets/d/${process.env.SPREADSHEET_ID}/edit#gid=${Mods.toSheetId(inputMods)}` })
+        .setColor(config.BOT_EMBED_COLOR)
+        .setAuthor({ name: `+${inputMods} Score Leaderboard`, iconURL: `${beatmapImgLink}`, url: `https://docs.google.com/spreadsheets/d/${config.SPREADSHEETS.SPREADSHEET_ID}/edit#gid=${Mods.toSheetId(inputMods)}` })
         .setThumbnail(`${beatmapImgLink}`)
         .setDescription(desc)
         .setFooter({ text: `Last update: ${lastUpdated}` })

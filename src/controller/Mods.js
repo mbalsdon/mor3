@@ -1,8 +1,7 @@
-/* TODO: If other people are to use this code, spreadsheet IDs must be custom populated;
-  Maybe write a script to automatically create sheets, get their IDs, populate .env, etc.
-*/
+import * as fs from 'fs'
 
-import 'dotenv/config'
+const configRaw = fs.readFileSync('./src/config.json')
+const config = JSON.parse(configRaw)
 
 export default class Mods {
   // TODO: enumerate mod combos
@@ -45,46 +44,46 @@ export default class Mods {
   // Takes mod combination string, returns corresponding sheet ID. If input is invalid, returns -1.
   static toSheetId (mods) {
     const pMods = this.parseModKeyStr(mods)
-    if (pMods === 'Submitted Scores') return process.env.SUBMITTED_SCORES
-    if (pMods === 'NM') return process.env.NM
-    if (pMods === 'DT') return process.env.DT
-    if (pMods === 'HR') return process.env.HR
-    if (pMods === 'HD') return process.env.HD
-    if (pMods === 'EZ') return process.env.EZ
-    if (pMods === 'HT') return process.env.HT
-    if (pMods === 'FL') return process.env.FL
+    if (pMods === 'Submitted Scores') return config.SPREADSHEETS.SUBMITTED_SCORES_ID
+    if (pMods === 'NM') return config.SPREADSHEETS.NM_ID
+    if (pMods === 'DT') return config.SPREADSHEETS.DT_ID
+    if (pMods === 'HR') return config.SPREADSHEETS.HR_ID
+    if (pMods === 'HD') return config.SPREADSHEETS.HD_ID
+    if (pMods === 'EZ') return config.SPREADSHEETS.EZ_ID
+    if (pMods === 'HT') return config.SPREADSHEETS.HT_ID
+    if (pMods === 'FL') return config.SPREADSHEETS.FL_ID
 
-    if (pMods === 'HDDT') return process.env.HDDT
-    if (pMods === 'HRDT') return process.env.HRDT
-    if (pMods === 'EZDT') return process.env.EZDT
-    if (pMods === 'DTFL') return process.env.DTFL
-    if (pMods === 'EZHT') return process.env.EZHT
-    if (pMods === 'HDHR') return process.env.HDHR
-    if (pMods === 'HDHT') return process.env.HDHT
-    if (pMods === 'EZHD') return process.env.EZHD
-    if (pMods === 'HRHT') return process.env.HRHT
-    if (pMods === 'EZFL') return process.env.EZFL
-    if (pMods === 'HRFL') return process.env.HRFL
-    if (pMods === 'HTFL') return process.env.HTFL
-    if (pMods === 'HDFL') return process.env.HDFL
+    if (pMods === 'HDDT') return config.SPREADSHEETS.HDDT_ID
+    if (pMods === 'HRDT') return config.SPREADSHEETS.HRDT_ID
+    if (pMods === 'EZDT') return config.SPREADSHEETS.EZDT_ID
+    if (pMods === 'DTFL') return config.SPREADSHEETS.DTFL_ID
+    if (pMods === 'EZHT') return config.SPREADSHEETS.EZHT_ID
+    if (pMods === 'HDHR') return config.SPREADSHEETS.HDHR_ID
+    if (pMods === 'HDHT') return config.SPREADSHEETS.HDHT_ID
+    if (pMods === 'EZHD') return config.SPREADSHEETS.EZHD_ID
+    if (pMods === 'HRHT') return config.SPREADSHEETS.HRHT_ID
+    if (pMods === 'EZFL') return config.SPREADSHEETS.EZFL_ID
+    if (pMods === 'HRFL') return config.SPREADSHEETS.HRFL_ID
+    if (pMods === 'HTFL') return config.SPREADSHEETS.HTFL_ID
+    if (pMods === 'HDFL') return config.SPREADSHEETS.HDFL_ID
 
-    if (pMods === 'HDHRDT') return process.env.HDHRDT
-    if (pMods === 'HDDTFL') return process.env.HDDTFL
-    if (pMods === 'EZHDDT') return process.env.EZHDDT
-    if (pMods === 'HRDTFL') return process.env.HRDTFL
-    if (pMods === 'EZDTFL') return process.env.EZDTFL
-    if (pMods === 'HDHTFL') return process.env.HDHTFL
-    if (pMods === 'HDHRHT') return process.env.HDHRHT
-    if (pMods === 'HRHTFL') return process.env.HRHTFL
-    if (pMods === 'EZHDHT') return process.env.EZHDHT
-    if (pMods === 'EZHTFL') return process.env.EZHTFL
-    if (pMods === 'EZHDFL') return process.env.EZHDFL
-    if (pMods === 'HDHRFL') return process.env.HDHRFL
+    if (pMods === 'HDHRDT') return config.SPREADSHEETS.HDHRDT_ID
+    if (pMods === 'HDDTFL') return config.SPREADSHEETS.HDDTFL_ID
+    if (pMods === 'EZHDDT') return config.SPREADSHEETS.EZHDDT_ID
+    if (pMods === 'HRDTFL') return config.SPREADSHEETS.HRDTFL_ID
+    if (pMods === 'EZDTFL') return config.SPREADSHEETS.EZDTFL_ID
+    if (pMods === 'HDHTFL') return config.SPREADSHEETS.HDHTFL_ID
+    if (pMods === 'HDHRHT') return config.SPREADSHEETS.HDHRHT_ID
+    if (pMods === 'HRHTFL') return config.SPREADSHEETS.HRHTFL_ID
+    if (pMods === 'EZHDHT') return config.SPREADSHEETS.EZHDHT_ID
+    if (pMods === 'EZHTFL') return config.SPREADSHEETS.EZHTFL_ID
+    if (pMods === 'EZHDFL') return config.SPREADSHEETS.EZHDFL_ID
+    if (pMods === 'HDHRFL') return config.SPREADSHEETS.HDHRFL_ID
 
-    if (pMods === 'HDHRDTFL') return process.env.HDHRDTFL
-    if (pMods === 'EZHDDTFL') return process.env.EZHDDTFL
-    if (pMods === 'EZHDHTFL') return process.env.EZHDHTFL
-    if (pMods === 'HDHRHTFL') return process.env.HDHRHTFL
+    if (pMods === 'HDHRDTFL') return config.SPREADSHEETS.HDHRDTFL_ID
+    if (pMods === 'EZHDDTFL') return config.SPREADSHEETS.EZHDDTFL_ID
+    if (pMods === 'EZHDHTFL') return config.SPREADSHEETS.EZHDHTFL_ID
+    if (pMods === 'HDHRHTFL') return config.SPREADSHEETS.HDHRHTFL_ID
 
     return -1
   }
