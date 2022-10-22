@@ -23,7 +23,7 @@ export default async function runScheduledJobs () {
   const dateString = new Date(Date.now()).toISOString()
   const metadata = await sheets.fetchMetadata()
   await drive.copyFile(config.SPREADSHEETS.SPREADSHEET_ID, `${metadata.properties.title} ${dateString}`)
-  await sheets.lastUpdated(dateString)
+  await sheets.insertLastUpdated(dateString)
 
   console.info(`::runScheduledJobs() >> job completed at ${dateString}`)
   console.timeEnd('::runScheduledJobs() >> time elapsed')

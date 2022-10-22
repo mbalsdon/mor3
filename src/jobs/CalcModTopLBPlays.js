@@ -9,7 +9,7 @@ export default async function calcModTopLBPlays () {
   console.info('THIS FUNCTION IS NOT IMPLEMENTED YET!')
 
   const dateString = new Date(Date.now()).toISOString()
-  await sheets.lastUpdated(dateString)
+  await sheets.insertLastUpdated(dateString)
 
   console.info(`::scrapeTopPlays() >> job completed at ${dateString}`)
   console.timeEnd('::calcModTopLBPlays() >> time elapsed')

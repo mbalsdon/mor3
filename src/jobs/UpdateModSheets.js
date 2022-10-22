@@ -105,7 +105,7 @@ export default async function updateModSheets () {
   }
 
   const dateString = new Date(Date.now()).toISOString()
-  await sheets.lastUpdated(dateString)
+  await sheets.insertLastUpdated(dateString)
 
   console.info(`::updateModSheets() >> job completed at ${dateString}`)
   console.timeEnd('::updateModSheets() >> time elapsed')

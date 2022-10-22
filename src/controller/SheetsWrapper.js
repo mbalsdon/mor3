@@ -460,7 +460,7 @@ export default class SheetsWrapper {
     return response.data
   }
 
-  async lastUpdated (date) {
+  async insertLastUpdated (date) {
     console.info(`SheetsWrapper::lastUpdated( ${date} )`)
 
     const response = await this.#sheetsClient.spreadsheets.values.update({
