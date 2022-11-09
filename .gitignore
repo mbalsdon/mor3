@@ -137,4 +137,4 @@ dist
 gcp_key.json
 
 # local savedata
-src/jobs/save
+src/jobs/cache
