@@ -136,5 +136,6 @@ dist
 # google apis
 gcp_key.json
 
-# local savedata
+# local data
 src/jobs/cache
+config.json
