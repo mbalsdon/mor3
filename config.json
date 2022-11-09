@@ -1,0 +1,57 @@
+{
+  "BOT_EMBED_COLOR": 0,
+  "LAST_UPDATE_CELL": "",
+
+  "SHEETS": {
+    "SPREADSHEET": { "ID": "", "NAME": "" },
+
+    "MAIN": { "ID": "", "NAME": "" },
+    "USERS": { "ID": "", "NAME": "" },
+
+    "SS": { "ID": "", "NAME": "" },
+    "NM": { "ID": "", "NAME": "" },
+    "DT": { "ID": "", "NAME": "" },
+    "HR": { "ID": "", "NAME": "" },
+    "HD": { "ID": "", "NAME": "" },
+    "EZ": { "ID": "", "NAME": "" },
+    "HT": { "ID": "", "NAME": "" },
+    "FL": { "ID": "", "NAME": "" },
+
+    "HDDT": { "ID": "", "NAME": "" },
+    "HRDT": { "ID": "", "NAME": "" },
+    "EZDT": { "ID": "", "NAME": "" },
+    "DTFL": { "ID": "", "NAME": "" },
+    "EZHT": { "ID": "", "NAME": "" },
+    "HDHR": { "ID": "", "NAME": "" },
+    "HDHT": { "ID": "", "NAME": "" },
+    "EZHD": { "ID": "", "NAME": "" },
+    "HRHT": { "ID": "", "NAME": "" },
+    "EZFL": { "ID": "", "NAME": "" },
+    "HRFL": { "ID": "", "NAME": "" },
+    "HTFL": { "ID": "", "NAME": "" },
+    "HDFL": { "ID": "", "NAME": "" },
+
+    "HDHRDT": { "ID": "", "NAME": "" },
+    "HDDTFL": { "ID": "", "NAME": "" },
+    "EZHDDT": { "ID": "", "NAME": "" },
+    "HRDTFL": { "ID": "", "NAME": "" },
+    "EZDTFL": { "ID": "", "NAME": "" },
+    "HDHTFL": { "ID": "", "NAME": "" },
+    "HDHRHT": { "ID": "", "NAME": "" },
+    "HRHTFL": { "ID": "", "NAME": "" },
+    "EZHDHT": { "ID": "", "NAME": "" },
+    "EZHTFL": { "ID": "", "NAME": "" },
+    "EZHDFL": { "ID": "", "NAME": "" },
+    "HDHRFL": { "ID": "", "NAME": "" },
+
+
+    "HDHRDTFL": { "ID": "", "NAME": "" },
+    "EZHDDTFL": { "ID": "", "NAME": "" },
+    "EZHDHTFL": { "ID": "", "NAME": "" },
+    "HDHRHTFL": { "ID": "", "NAME": "" }
+  },
+
+  "DRIVE": {
+    "BACKUP_FOLDER_ID": ""
+  }
+}
