@@ -1,10 +1,10 @@
-import MorFacade from "../controller/MorFacade.js"
+import MorFacade from '../controller/MorFacade.js'
 import * as fs from 'fs'
-import Config from "../controller/Config.js"
-import Mods from "../controller/Mods.js"
-import Utils from "../controller/Utils.js"
-import { NotFoundError } from "../controller/Errors.js"
-import Score from "../controller/Score.js"
+import Config from '../controller/Config.js'
+import Mods from '../controller/Mods.js'
+import Utils from '../controller/Utils.js'
+import { NotFoundError } from '../controller/Errors.js'
+import Score from '../controller/Score.js'
 
 export default async function updateScores () {
   console.time('::updateScores () >> Time elapsed') // TODO: replace
