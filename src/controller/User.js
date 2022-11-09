@@ -1,6 +1,8 @@
 import Utils from './Utils.js'
 
 export default class User {
+  static START_ROW = 2
+
   userId
   username
   globalRank
@@ -16,19 +18,19 @@ export default class User {
   pfpLink
 
   constructor (userId, username, globalRank, pp, accuracy, playtime, top1s, top2s, top3s, top5s, top10s, top25s, pfpLink) {
-    if (!Utils.isPositiveNumber(userId)) throw new TypeError(`userId must be a positive number! userId = ${userId}`)
-    else if (!Utils.isString(username)) throw new TypeError(`username must be a string! username = ${username}`)
-    else if (!Utils.isPositiveNumber(globalRank)) throw new TypeError(`globalRank must be a positive number! globalRank = ${globalRank}`)
-    else if (!Utils.isPositiveNumber(pp)) throw new TypeError(`pp must be a positive number! pp = ${pp}`)
-    else if (!Utils.isValidAccuracy(accuracy)) throw new TypeError(`accuracy must be a valid accuracy! accuracy = ${accuracy}`)
-    else if (!Utils.isPositiveNumber(playtime)) throw new TypeError(`playtime must be a positive number! playtime = ${playtime}`)
-    else if (!Utils.isPositiveNumber(top1s)) throw new TypeError(`top1s must be a positive number! top1s = ${top1s}`)
-    else if (!Utils.isPositiveNumber(top2s)) throw new TypeError(`top2s must be a positive number! top2s = ${top2s}`)
-    else if (!Utils.isPositiveNumber(top3s)) throw new TypeError(`top3s must be a positive number! top3s = ${top3s}`)
-    else if (!Utils.isPositiveNumber(top5s)) throw new TypeError(`top5s must be a positive number! top5s = ${top5s}`)
-    else if (!Utils.isPositiveNumber(top10s)) throw new TypeError(`top10s must be a positive number! top10s = ${top10s}`)
-    else if (!Utils.isPositiveNumber(top25s)) throw new TypeError(`top25s must be a positive number! top25s = ${top25s}`)
-    else if (!Utils.isValidHttpUrl(pfpLink)) throw new TypeError(`pfpLink must be a valid HTTP URL! pfpLink = ${pfpLink}`)
+    if (!Utils.isPositiveNumericString(userId)) throw new TypeError(`userId must be a positive number string! Val=${userId}`)
+    else if (!Utils.isString(username)) throw new TypeError(`username must be a string! Val=${username}`)
+    else if (!Utils.isValidRank(globalRank)) throw new TypeError(`globalRank must be a valid rank string! Val=${globalRank}`)
+    else if (!Utils.isNonNegativeNumericString(pp)) throw new TypeError(`pp must be a a non-negative number string! Val=${pp}`)
+    else if (!Utils.isValidAccuracyString(accuracy)) throw new TypeError(`accuracy must be a valid accuracy string! Val=${accuracy}`)
+    else if (!Utils.isPositiveNumericString(playtime)) throw new TypeError(`playtime must be a positive number string! Val=${playtime}`)
+    else if (!Utils.isNumericString(top1s)) throw new TypeError(`top1s must be a number string! Val=${top1s}`)
+    else if (!Utils.isNumericString(top2s)) throw new TypeError(`top2s must be a number string! Val=${top2s}`)
+    else if (!Utils.isNumericString(top3s)) throw new TypeError(`top3s must be a number string! Val=${top3s}`)
+    else if (!Utils.isNumericString(top5s)) throw new TypeError(`top5s must be a number string! Val=${top5s}`)
+    else if (!Utils.isNumericString(top10s)) throw new TypeError(`top10s must be a number string! Val=${top10s}`)
+    else if (!Utils.isNumericString(top25s)) throw new TypeError(`top25s must be a number string! Val=${top25s}`)
+    else if (!Utils.isValidHttpUrl(pfpLink)) throw new TypeError(`pfpLink must be a valid HTTP URL string! Val=${pfpLink}`)
     else {
       this.userId = userId
       this.username = username
@@ -46,7 +48,7 @@ export default class User {
     }
   }
 
-  toRow () {
+  toArray () {
     return Object.values(this)
   }
 
@@ -64,6 +66,6 @@ export default class User {
     else if (columnName === 'top10s') return 'K'
     else if (columnName === 'top25s') return 'L'
     else if (columnName === 'pfpLink') return 'M'
-    else throw new TypeError(`columnName is not valid! Val: ${columnName}`)
+    else throw new TypeError(`columnName is not valid! Val=${columnName}`)
   }
 }
