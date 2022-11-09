@@ -1,17 +1,17 @@
 import * as fs from 'fs'
 
 export default async function tracklistCmd (facade, interaction) {
-  console.info('::tracklistCmd()')
+  console.info('Bot::tracklistCmd ()') // TODO: replace
   try {
-    const users = await facade.getUsers()
+    const users = await facade.getSheetUsers()
     let ret = 'userID,username\n'
-    for (let i = 0; i < users.length; i++) {
-      ret = ret.concat(`${users[i][0]},${users[i][1]}\n`) // TODO: magic num
+    for (const user of users) {
+      ret = ret + `${user.userId},${user.username}\n`
     }
     fs.writeFileSync('./tracklist.txt', ret)
     await interaction.reply({ files: ['./tracklist.txt'] })
     fs.unlinkSync('./tracklist.txt')
   } catch (error) {
-    await interaction.reply({ content: `\`\`\`${error.message}\nDM spreadnuts#1566 on Discord if you believe that this is a bug.\`\`\``, ephemeral: true })
+    await interaction.reply({ content: `\`\`\`${error.name}: ${error.message}\n\nDM spreadnuts#1566 on Discord if you believe that this is a bug.\`\`\``, ephemeral: true })
   }
 }

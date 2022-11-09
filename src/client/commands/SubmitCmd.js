@@ -1,27 +1,22 @@
-import * as fs from 'fs'
 import { EmbedBuilder } from 'discord.js'
-
-const configRaw = fs.readFileSync('./src/config.json')
-const config = JSON.parse(configRaw)
+import Config from '../../controller/Config.js'
 
 export default async function submitCmd (facade, interaction) {
-  const id = interaction.options.getString('id')
-  console.info(`::submitCmd( ${id} )`)
-
-  const lastUpdated = await facade.getLastUpdated()
-
+  const scoreId = interaction.options.getString('id')
+  console.info(`Bot::submitCmd (${scoreId})`) // TODO: replace
   try {
-    const s = await facade.putSubmittedScore(id)
+    const lastUpdated = await facade.getSheetLastUpdated()
+    const score = await facade.addSubmittedScore(scoreId)
     const embed = new EmbedBuilder()
-      .setColor(config.BOT_EMBED_COLOR)
+      .setColor(Config.BOT_EMBED_COLOR)
       .setAuthor({ name: 'Successfully added score:' })
-      .setThumbnail(`${s[9]}`)
-      .setDescription(`**[${s[3]}](https://osu.ppy.sh/scores/osu/${s[0]}) +${s[4]}** [${s[7]}★]\n` +
-              `▸ **${s[6]}pp** ▸ ${s[5]}%\n` +
-              `▸ Set by [${s[2]}](https://osu.ppy.sh/users/${s[1]}) on ${s[8]}\n`)
+      .setThumbnail(`${score.beatmapImgLink}`)
+      .setDescription(`**[${score.beatmap}](https://osu.ppy.sh/scores/osu/${score.scoreId}) +${score.mods}** [${score.starRating}★]\n` +
+              `▸ **${score.pp}pp** ▸ ${score.accuracy}%\n` +
+              `▸ Set by [${score.username}](https://osu.ppy.sh/users/${score.userId}) on ${score.date}\n`)
       .setFooter({ text: `Last update: ${lastUpdated}` })
     await interaction.reply({ embeds: [embed] })
   } catch (error) {
-    await interaction.reply({ content: `\`\`\`${error.message}\nDM spreadnuts#1566 on Discord if you believe that this is a bug.\`\`\``, ephemeral: true })
+    await interaction.reply({ content: `\`\`\`${error.name}: ${error.message}\n\nDM spreadnuts#1566 on Discord if you believe that this is a bug.\`\`\``, ephemeral: true })
   }
 }

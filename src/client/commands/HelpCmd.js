@@ -1,14 +1,11 @@
-import * as fs from 'fs'
 import { EmbedBuilder } from 'discord.js'
-
-const configRaw = fs.readFileSync('./src/config.json')
-const config = JSON.parse(configRaw)
+import Config from '../../controller/Config.js'
 
 export default async function helpCmd (interaction) {
-  console.info('::helpCmd()')
+  console.info('Bot::helpCmd ()') // TODO: replace
   try {
     const embed = new EmbedBuilder()
-      .setColor(config.BOT_EMBED_COLOR)
+      .setColor(Config.BOT_EMBED_COLOR)
       .setAuthor({ name: 'mor3 commands', iconURL: 'https://spreadnuts.s-ul.eu/MdfvA3q5', url: 'https://github.com/mbalsdon/mor3' })
       .setDescription('`help` - Documentation on the bot\'s commands\n' +
             '`ping` - Checks if the bot is alive\n' +
@@ -24,6 +21,6 @@ export default async function helpCmd (interaction) {
       .setFooter({ text: 'https://github.com/mbalsdon/mor3' })
     await interaction.reply({ embeds: [embed] })
   } catch (error) {
-    await interaction.reply({ content: `\`\`\`${error.message}\nDM spreadnuts#1566 on Discord if you believe that this is a bug.\`\`\``, ephemeral: true })
+    await interaction.reply({ content: `\`\`\`${error.name}: ${error.message}\n\nDM spreadnuts#1566 on Discord if you believe that this is a bug.\`\`\``, ephemeral: true })
   }
 }

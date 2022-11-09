@@ -1,14 +1,22 @@
+import { EmbedBuilder } from '@discordjs/builders'
+import Config from '../../controller/Config.js'
+
 export default async function metadataCmd (facade, interaction) {
-  console.info('::metadataCmd()')
+  console.info('Bot::metadataCmd ()') // TODO: replace
   try {
-    const metadata = await facade.getMetadata()
-    let ret = '```'
+    const lastUpdated = await facade.getSheetLastUpdated()
+    const metadata = await facade.getSheetMetadata()
+    let ret = ''
     for (const sheet of metadata.sheets.slice(1)) {
-      ret = ret.concat(`${sheet.properties.title}: ${sheet.properties.gridProperties.rowCount - 1} ${sheet.properties.gridProperties.rowCount - 1 === 1 ? 'entry' : 'entries'}\n`)
+      ret = ret + `**${sheet.properties.title}:** ${sheet.properties.gridProperties.rowCount - 1} ${sheet.properties.gridProperties.rowCount - 1 === 1 ? 'entry' : 'entries'}\n`
     }
-    ret = ret.concat('```')
-    await interaction.reply(ret)
+    const embed = new EmbedBuilder()
+      .setColor(Config.BOT_EMBED_COLOR)
+      .setAuthor({ name: `${metadata.properties.title} metadata`, iconURL: 'https://spreadnuts.s-ul.eu/MdfvA3q5', url: 'https://docs.google.com/spreadsheets/d/1hduRLLIFjVwLGjXyt7ph3301xfXS6qjSnYCm18YP4iA/edit#gid=0' })
+      .setDescription(ret)
+      .setFooter({ text: `Last update: ${lastUpdated}` })
+    await interaction.reply({ embeds: [embed] })
   } catch (error) {
-    await interaction.reply({ content: `\`\`\`${error.message}\nDM spreadnuts#1566 on Discord if you believe that this is a bug.\`\`\``, ephemeral: true })
+    await interaction.reply({ content: `\`\`\`${error.name}: ${error.message}\n\nDM spreadnuts#1566 on Discord if you believe that this is a bug.\`\`\``, ephemeral: true })
   }
 }

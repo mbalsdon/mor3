@@ -1,17 +1,17 @@
 import 'dotenv/config'
 import { Client, GatewayIntentBits } from 'discord.js'
-import MorFacade from '../controller/MorFacade.js'
-import usersCmd from './commands/UsersCmd.js'
 import helpCmd from './commands/HelpCmd.js'
-import pingCmd from './commands/PingCmd.js'
 import metadataCmd from './commands/MetadataCmd.js'
+import pingCmd from './commands/PingCmd.js'
+import usersCmd from './commands/UsersCmd.js'
 import userCmd from './commands/UserCmd.js'
+import scoresCmd from './commands/ScoresCmd.js'
+import tracklistCmd from './commands/TracklistCmd.js'
 import trackCmd from './commands/TrackCmd.js'
 import untrackCmd from './commands/UntrackCmd.js'
-import tracklistCmd from './commands/TracklistCmd.js'
 import submitCmd from './commands/SubmitCmd.js'
 import unsubmitCmd from './commands/UnsubmitCmd.js'
-import scoresCmd from './commands/ScoresCmd.js'
+import MorFacade from '../controller/MorFacade.js'
 
 export default class Bot {
   #facade

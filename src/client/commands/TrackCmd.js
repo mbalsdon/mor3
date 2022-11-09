@@ -1,29 +1,24 @@
-import * as fs from 'fs'
 import { EmbedBuilder } from 'discord.js'
-
-const configRaw = fs.readFileSync('./src/config.json')
-const config = JSON.parse(configRaw)
+import Config from '../../controller/Config.js'
 
 export default async function trackCmd (facade, interaction) {
   const username = interaction.options.getString('username')
-  console.info(`::trackCmd( ${username} )`)
+  console.info(`Bot::trackCmd (${username})`) // TODO: replace
   try {
-    const user = await facade.putUser(username)
-    const playstyleStr = (user.playstyle === null) ? ' ' : `▸ **:video_game: Playstyle:** ${user.playstyle.map(p => { return p[0].toUpperCase() + p.substring(1) }).join(', ')}`
+    const user = await facade.addSheetUser(username)
     const embed = new EmbedBuilder()
-      .setColor(config.BOT_EMBED_COLOR)
-      .setAuthor({ name: `MOR3 now tracking: ${user.username}`, iconURL: `${user.avatar_url}`, url: `https://osu.ppy.sh/users/${user.id}` })
-      .setDescription( // TODO: dupecode, build user object
-        `▸ **:globe_with_meridians: Global Rank:** #${user.statistics.global_rank}\n` +
-        `▸ **:farmer: PP:** ${user.statistics.pp}pp\n` +
-        `▸ **:dart: Profile Accuracy:** ${user.statistics.hit_accuracy.toFixed(2)}%\n` +
-        `▸ **:desktop: Total Playtime:** ${Math.round(user.statistics.play_time / 3600)} hours\n` +
-        playstyleStr
+      .setColor(Config.BOT_EMBED_COLOR)
+      .setAuthor({ name: `MOR3 now tracking: ${user.username}`, iconURL: user.pfpLink, url: `https://osu.ppy.sh/users/${user.userId}` })
+      .setDescription(
+        `▸ **:globe_with_meridians: Global Rank:** #${user.globalRank}\n` +
+        `▸ **:farmer: PP:** ${user.pp}pp\n` +
+        `▸ **:dart: Profile Accuracy:** ${user.accuracy}%\n` +
+        `▸ **:desktop: Total Playtime:** ${user.playtime} hours`
       )
-      .setThumbnail(user.avatar_url)
+      .setThumbnail(user.pfpLink)
       .setFooter({ text: `owobot: >track add "${user.username}" | Bathbot: <track "${user.username}"` })
     await interaction.reply({ embeds: [embed] })
   } catch (error) {
-    await interaction.reply({ content: `\`\`\`${error.message}\nDM spreadnuts#1566 on Discord if you believe that this is a bug.\`\`\``, ephemeral: true })
+    await interaction.reply({ content: `\`\`\`${error.name}: ${error.message}\n\nDM spreadnuts#1566 on Discord if you believe that this is a bug.\`\`\``, ephemeral: true })
   }
 }
