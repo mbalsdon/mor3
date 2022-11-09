@@ -1,34 +1,34 @@
 import scrapeTopPlays from '../ScrapeTopPlays.js'
 import updateUsers from '../UpdateUsers.js'
-import updateModSheets from '../UpdateModSheets.js'
 import calcModTopLBPlays from '../CalcModTopLBPlays.js'
 import runScheduledJobs from '../RunScheduledJobs.js'
+import updateScores from '../UpdateScores.js'
+import wipeScores from '../WipeScores.js'
 
-const args = process.argv.slice(2)
-console.info(`::JobHandler.js( ${args} )`)
-
-// Should only be run for testing purposes
-if (args[0] === 'updateUsers') {
-  await updateUsers()
-
-// Should only be run for testing purposes
-} else if (args[0] === 'scrapeTopPlays') {
-  await scrapeTopPlays()
-
-// Should only be run for testing purposes
-} else if (args[0] === 'calcTopModLBPlays') {
-  await calcModTopLBPlays()
-
-// Used mainly for PP reworks; takes a very long time
-// Suggested that you turn off the bot and any scheduled tasks before running this
-} else if (args[0] === 'updateModSheets') {
-  await updateModSheets() // TODO: save/load input?
-
-// This is what you should run if you want to update the sheets
-} else if (args[0] === 'runScheduledJobs') {
-  await runScheduledJobs()
-} else {
-  // TODO: enumerate commands
-  console.log(`${args[0]} is not a valid input!`)
-  console.log('Valid jobs: updateUsers, scrapeTopPlays, calcTopModLBPlays, updateModSheets, runScheduledJobs')
+const commands = {
+  // Should only be run individually for testing purposes
+  updateUsers,
+  // Should only be run individually for testing purposes
+  scrapeTopPlays,
+  // Mainly used after PP reworks; takes a VERY long time
+  // Suggested that you turn off the bot and any scheduled jbos before running this
+  updateScores,
+  // Should only be run individually for testing purposes
+  calcModTopLBPlays,
+  // This is what you should run if you want to update the sheets
+  runScheduledJobs,
+  // Should only be run for testing
+  // WARNING: This script deletes all the scores in the spreadsheets
+  wipeScores
 }
+const args = process.argv.slice(2)
+console.info(`::JobHandler.js (${args})`) // TODO: replace
+if (args.length !== 1) throw new Error(`${args} is not a valid input! Valid jobs: ${Object.keys(commands)}`)
+let success = 0
+for (let i = 0; i < Object.keys(commands).length; i++) {
+  if (args[0] === Object.keys(commands)[i]) {
+    await Object.values(commands)[i]()
+    success = 1
+  }
+}
+if (success === 0) throw new Error(`${args} is not a valid input! Valid jobs: ${Object.keys(commands)}`)

@@ -1,104 +1,73 @@
-import 'dotenv/config'
+import { NotFoundError } from '../controller/Errors.js'
 import Mods from '../controller/Mods.js'
-import OsuWrapper from '../controller/OsuWrapper.js'
-import SheetsWrapper from '../controller/SheetsWrapper.js'
+import MorFacade from '../controller/MorFacade.js'
+import User from '../controller/User.js'
+import Utils from '../controller/Utils.js'
 
 export default async function updateUsers () {
-  console.time('::updateUsers() >> time elapsed')
-  console.info('::updateUsers() >> Updating user rank and PP data... This may take a while')
-
-  const sheets = await SheetsWrapper.build()
-  const osu = await OsuWrapper.build()
-  // Key = Mod string; Stores top25 for each modsheet
+  console.time('::updateUsers () >> Time elapsed') // TODO: replace
+  console.info('::updateUsers () >> Updating user rank and PP data... This may take a while') // TODO: replace
+  const mor = await MorFacade.build()
+  // Key: mods; Value: array of 25 highest pp plays
   const dict = {}
-  // Grab mod sheet data
-  for (const mods of Mods.modStrings) {
-    dict[mods] = await sheets.fetchModScores(mods, 'FORMATTED_VALUE')
-    await sleep(1000)
+  console.info('::updateUsers () >> Grabbing score data from sheets...') // TODO: replace
+  for (const mods of Mods.validModStrings()) {
+    if (mods === Mods.SS) continue
+    dict[mods] = await mor.getSheetScores(mods)
+    await Utils.sleep(1000)
   }
-  const users = []
-  const userIds = await sheets.fetchUserIds()
-  await sleep(1000)
+  console.info('::updateUsers () >> Retrieving user IDs from sheet...') // TODO: replace
+  const userIds = await mor.getSheetUserIds()
+  await Utils.sleep(1000)
+  console.info(`::updateUsers () >> Refreshing data for ${userIds.length} users...`) // TODO: replace
+  const updatedUsers = []
   for (const userId of userIds) {
-    // Get osu!API-side data
     let user
-    try {
-      user = await osu.fetchUser(userId)
-      await sleep(1000)
-    } catch (error) {
-      // Skip the user if they don't exist anymore
-      continue
+    console.info(`::updateUsers () >> Grabbing osu!API data for user ${userId}...`) // TODO: replace
+    try { user = await mor.getOsuUser(userId, 'id') } catch (error) {
+      if (error instanceof NotFoundError) {
+        console.info(`::updateUsers () >> Couldn't find user ${userId}, skipping...`)
+        continue
+      } else throw error
     }
-
-    let top1s = 0
-    let top2s = 0
-    let top3s = 0
-    let top5s = 0
-    let top10s = 0
-    let top25s = 0
-    // Counts user's scores that are in the top25 of each modsheet
-    for (const k of Object.keys(dict)) {
-      const modScores = dict[k]
-      const length = (modScores.length < 25) ? modScores.length : 25
-      for (let i = 0; i < length; i++) {
-        if (userId === modScores[i][1]) { // TODO: 2 === magic numba
-          if (i === 0) {
-            top1s = top1s + 1
-          } else if (i === 1) {
-            top2s = top2s + 1
-          } else if (i === 2) {
-            top3s = top3s + 1
-          } else if (i === 3 || i === 4) {
-            top5s = top5s + 1
-          } else if (i >= 5 && i < 10) {
-            top10s = top10s + 1
-          } else if (i >= 10 && i < 25) {
-            top25s = top25s + 1
-          } else {
-            throw new Error(`i===${i} - This should never happen!`)
-          }
-        }
+    await Utils.sleep(1000)
+    console.info(`::updateUsers () >> Counting top25s for user ${userId}...`) // TODO: replace
+    let [top1s, top2s, top3s, top5s, top10s, top25s] = [0, 0, 0, 0, 0, 0]
+    for (const key of Object.keys(dict)) {
+      const scores = dict[key]
+      const len = (scores.length < 25) ? scores.length : 25
+      for (let i = 0; i < len; i++) {
+        if (userId !== scores[i].userId) continue
+        else if (i === 0) top1s++
+        else if (i === 1) top2s++
+        else if (i === 2) top3s++
+        else if (i === 3 || i === 4) top5s++
+        else if (i >= 5 && i < 10) top10s++
+        else if (i >= 10 && i < 25) top25s++
+        else throw new RangeError(`i = ${i} - This should never happen!`)
       }
     }
-
-    // Unify and push data
-    users.push([
-      userId,
+    updatedUsers.push(new User(
+      user.userId,
       user.username,
-      user.statistics.global_rank,
-      user.statistics.pp,
-      user.statistics.hit_accuracy.toFixed(2),
-      Math.round(user.statistics.play_time / 3600),
-      top1s,
-      top2s,
-      top3s,
-      top5s,
-      top10s,
-      top25s,
-      user.avatar_url])
+      user.globalRank,
+      user.pp,
+      user.accuracy,
+      user.playtime,
+      top1s.toString(),
+      top2s.toString(),
+      top3s.toString(),
+      top5s.toString(),
+      top10s.toString(),
+      top25s.toString(),
+      user.pfpLink
+    ))
   }
-  // Sort by PP
-  users.sort((a, b) => {
-    return parseInt(b[3]) - parseInt(a[3]) // TODO: magic number
-  })
-  // Update the sheet
-  await sheets.replaceUsers(users)
-  await sleep(1000)
+  console.info('::updateUsers () >> Updating the sheet...') // TODO: replace
+  updatedUsers.sort((a, b) => { return parseInt(b.pp) - parseInt(a.pp) })
+  await mor.replaceUsers(updatedUsers)
+  await Utils.sleep(2000)
   const dateString = new Date(Date.now()).toISOString()
-
-  console.info(`::updateUsers() >> job completed at ${dateString}`)
-  console.timeEnd('::updateUsers() >> time elapsed')
-}
-
-/* --- --- --- --- --- ---
-   --- HELPER  METHODS ---
-   --- --- --- --- --- --- */
-
-// TODO: make these private ?
-
-// TODO: duplicate code
-function sleep (ms) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms)
-  })
+  console.info(`::updateUsers () >> Job completed at ${dateString}, updated ${updatedUsers.length} users`) // TODO: replace
+  console.timeEnd('::updateUsers () >> Time elapsed') // TODO: replace
 }
