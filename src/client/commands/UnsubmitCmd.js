@@ -1,6 +1,12 @@
 import { EmbedBuilder } from 'discord.js'
 import Config from '../../controller/Config.js'
 
+/**
+ * Removes a score from the MOR sheet and replies with the removed score
+ * @param {MorFacade} facade
+ * @param {ChatInputCommandInteraction<CacheType>} interaction
+ * @return {Promise<void>}
+ */
 export default async function unsubmitCmd (facade, interaction) {
   const scoreId = interaction.options.getString('id')
   console.info(`Bot::unsubmitCmd (${scoreId})`) // TODO: replace

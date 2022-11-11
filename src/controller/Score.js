@@ -1,6 +1,14 @@
 import Utils from './Utils.js'
 
+/**
+ * MOR Score object - Contains data from an osu! score used in MOR sheets
+ */
 export default class Score {
+  /**
+   * First row of MOR sheet containing score data
+   */
+  static START_ROW = 2
+
   scoreId
   userId
   username
@@ -12,6 +20,32 @@ export default class Score {
   date
   beatmapImgLink
 
+  /**
+   * Constructs a MOR Score object
+   * @param {string} scoreId ID of the score
+   * @param {string} userId ID of the user who set the score
+   * @param {string} username username of the user who set the score
+   * @param {string} beatmap beatmap of the score
+   * @param {string} mods mods of the score
+   * @param {string} accuracy accuracy of the score
+   * @param {string} pp pp of the score
+   * @param {string} starRating star rating of the score's map
+   * @param {string} date date the score was set on
+   * @param {string} beatmapImgLink beatmap image URL of the score
+   * @example
+   *  const myScore = new Score(
+   *    '2283307549',
+   *    '124493',
+   *    'Cookiezi',
+   *    'xi - Blue Zenith [FOUR DIMENSIONS]',
+   *    'HDHR',
+   *    '99.09',
+   *    '727',
+   *    '7.26',
+   *    '2022-07-27T07:27:27+00:00',
+   *    'https://assets.ppy.sh/beatmaps/292301/covers/list@2x.jpg?1650630372'
+   *  )
+   */
   constructor (scoreId, userId, username, beatmap, mods, accuracy, pp, starRating, date, beatmapImgLink) {
     if (!Utils.isPositiveNumericString(scoreId)) throw new TypeError(`scoreId must be a positive number string! Val=${scoreId}`)
     else if (!Utils.isPositiveNumericString(userId)) throw new TypeError(`userId must be a positive number string! Val= ${userId}`)
@@ -37,10 +71,20 @@ export default class Score {
     }
   }
 
+  /**
+   * Converts Score fields to array
+   * @return {string[]}
+   */
   toArray () {
     return Object.values(this)
   }
 
+  /**
+   * Given the field name of a Score object, returns associated MOR sheet column
+   * @param {string} columnName Score object field name
+   * @throws {@link TypeError} if parameters are invalid
+   * @return {string} associated MOR sheet column
+   */
   static columnLetter (columnName) {
     if (columnName === 'scoreId') return 'A'
     else if (columnName === 'userId') return 'B'

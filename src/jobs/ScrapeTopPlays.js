@@ -2,6 +2,14 @@ import Mods from '../controller/Mods.js'
 import MorFacade from '../controller/MorFacade.js'
 import Utils from '../controller/Utils.js'
 
+/**
+ * Takes submitted scores and the top 100s and firsts of every user in the MOR sheet and
+ * inserts them into their respective MOR mod sheets
+ * 
+ * Should only be run individually for testing purposes -
+ * Use runScheduledJobs() instead!
+ * @see {@link RunScheduledJobs}
+ */
 export default async function scrapeTopPlays () {
   // TODO: doc
   const populateDict = function (dict, scores) {

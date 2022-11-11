@@ -1,6 +1,12 @@
 import { EmbedBuilder } from 'discord.js'
 import Config from '../../controller/Config.js'
 
+/**
+ * Adds a user to the MOR sheet and replies with their profile
+ * @param {MorFacade} facade
+ * @param {ChatInputCommandInteraction<CacheType>} interaction
+ * @return {Promise<void>}
+ */
 export default async function trackCmd (facade, interaction) {
   const username = interaction.options.getString('username')
   console.info(`Bot::trackCmd (${username})`) // TODO: replace

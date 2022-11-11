@@ -1,8 +1,13 @@
-import Config from './Config.js'
-import { InvalidModsError } from './Errors.js'
 import Utils from './Utils.js'
 
+/**
+ * Mods - Enumerates valid MOR mod strings and provides some useful functions for them
+ */
 export default class Mods {
+  /**
+   * Submitted Scores -
+   * This is not an osu! mod but the MorFacade client uses it to interface with the Submitted Scores sheet
+   */
   static SS = 'SS'
   static NM = 'NM'
   static DT = 'DT'
@@ -44,14 +49,45 @@ export default class Mods {
   static EZHDHTFL = 'EZHDHTFL'
   static HDHRHTFL = 'HDHRHTFL'
 
-  static isValidModString (ms) {
-    return Object.keys(Mods).includes(ms)
+  /**
+   * Returns true if the input mod string is valid, false if not
+   * @see {@link MorFacade.getSheetScores}
+   * @param {string} modString MOR mod string
+   * @return {boolean} whether the mod string is valid or not
+   */
+  static isValidModString (modString) {
+    return Object.keys(Mods).includes(modString)
   }
 
+  /**
+   * Returns array of all valid MOR mod strings
+   * @see {@link MorFacade.getSheetScores}
+   * @return {string[]} array of valid mod strings
+   */
   static validModStrings () {
     return Object.keys(Mods)
   }
 
+  /**
+   * Takes an array or string of osu! mods and returns the "normalized" form as a string.
+   * That is, given an input of osu! mods, the function will return a valid MOR mod string.
+   * @see {@link Mods.validModStrings}
+   * @param {(string|string[])} mods osu! mods
+   * @throws {@link TypeError} if parameters are invalid
+   * @return {string} MOR mod string
+   * @example
+   *  // Prints 'HDDTNF' to stdout
+   *  console.log(Mods.parseModKey(['HD', 'DT', 'NF']))
+   *
+   *  // Also prints 'HDDTNF' to stdout
+   *  console.log(Mods.parseModKey('HDDTNF'))
+   *
+   *  // Prints 'NM' to stdout
+   *  console.log(Mods.parseModKey('NFSO'))
+   *
+   *  // Prints 'HDDT' to stdout
+   *  console.log(Mods.parseModKey('HDNC'))
+   */
   static parseModKey (mods) {
     let pMods = mods
     if (!Utils.isString(pMods) && !Array.isArray(pMods)) throw new TypeError(`mods must be either a string or an array! Val=${mods}`)
@@ -64,100 +100,5 @@ export default class Mods {
     pMods = (pMods === '') ? Mods.NM : pMods
     pMods = (mods === 'SS') ? Mods.SS : pMods
     return pMods
-  }
-
-  static toSheetId (mods) {
-    const pMods = this.parseModKey(mods)
-    if (pMods === Mods.SS) return Config.SHEETS.SUBMITTED_SCORES.ID
-    if (pMods === Mods.NM) return Config.SHEETS.NM.ID
-    if (pMods === Mods.DT) return Config.SHEETS.DT.ID
-    if (pMods === Mods.HR) return Config.SHEETS.HR.ID
-    if (pMods === Mods.HD) return Config.SHEETS.HD.ID
-    if (pMods === Mods.EZ) return Config.SHEETS.EZ.ID
-    if (pMods === Mods.HT) return Config.SHEETS.HT.ID
-    if (pMods === Mods.FL) return Config.SHEETS.FL.ID
-
-    if (pMods === Mods.HDDT) return Config.SHEETS.HDDT.ID
-    if (pMods === Mods.HRDT) return Config.SHEETS.HRDT.ID
-    if (pMods === Mods.EZDT) return Config.SHEETS.EZDT.ID
-    if (pMods === Mods.DTFL) return Config.SHEETS.DTFL.ID
-    if (pMods === Mods.EZHT) return Config.SHEETS.EZHT.ID
-    if (pMods === Mods.HDHR) return Config.SHEETS.HDHR.ID
-    if (pMods === Mods.HDHT) return Config.SHEETS.HDHT.ID
-    if (pMods === Mods.EZHD) return Config.SHEETS.EZHD.ID
-    if (pMods === Mods.HRHT) return Config.SHEETS.HRHT.ID
-    if (pMods === Mods.EZFL) return Config.SHEETS.EZFL.ID
-    if (pMods === Mods.HRFL) return Config.SHEETS.HRFL.ID
-    if (pMods === Mods.HTFL) return Config.SHEETS.HTFL.ID
-    if (pMods === Mods.HDFL) return Config.SHEETS.HDFL.ID
-
-    if (pMods === Mods.HDHRDT) return Config.SHEETS.HDHRDT.ID
-    if (pMods === Mods.HDDTFL) return Config.SHEETS.HDDTFL.ID
-    if (pMods === Mods.EZHDDT) return Config.SHEETS.EZHDDT.ID
-    if (pMods === Mods.HRDTFL) return Config.SHEETS.HRDTFL.ID
-    if (pMods === Mods.EZDTFL) return Config.SHEETS.EZDTFL.ID
-    if (pMods === Mods.HDHTFL) return Config.SHEETS.HDHTFL.ID
-    if (pMods === Mods.HDHRHT) return Config.SHEETS.HDHRHT.ID
-    if (pMods === Mods.HRHTFL) return Config.SHEETS.HRHTFL.ID
-    if (pMods === Mods.EZHDHT) return Config.SHEETS.EZHDHT.ID
-    if (pMods === Mods.EZHTFL) return Config.SHEETS.EZHTFL.ID
-    if (pMods === Mods.EZHDFL) return Config.SHEETS.EZHDFL.ID
-    if (pMods === Mods.HDHRFL) return Config.SHEETS.HDHRFL.ID
-
-    if (pMods === Mods.HDHRDTFL) return Config.SHEETS.HDHRDTFL.ID
-    if (pMods === Mods.EZHDDTFL) return Config.SHEETS.EZHDDTFL.ID
-    if (pMods === Mods.EZHDHTFL) return Config.SHEETS.EZHDHTFL.ID
-    if (pMods === Mods.HDHRHTFL) return Config.SHEETS.HDHRHTFL.ID
-
-    throw new InvalidModsError(`mods must be a valid mod string! Val=${mods}\n` +
-                                `Valid mod strings: ${Mods.validModStrings().join(' ')}`)
-  }
-
-  //
-  static toSheetName (mods) {
-    const pMods = this.parseModKey(mods)
-    if (pMods === Mods.SS) return Config.SHEETS.SUBMITTED_SCORES.NAME
-    if (pMods === Mods.NM) return Config.SHEETS.NM.NAME
-    if (pMods === Mods.DT) return Config.SHEETS.DT.NAME
-    if (pMods === Mods.HR) return Config.SHEETS.HR.NAME
-    if (pMods === Mods.HD) return Config.SHEETS.HD.NAME
-    if (pMods === Mods.EZ) return Config.SHEETS.EZ.NAME
-    if (pMods === Mods.HT) return Config.SHEETS.HT.NAME
-    if (pMods === Mods.FL) return Config.SHEETS.FL.NAME
-
-    if (pMods === Mods.HDDT) return Config.SHEETS.HDDT.NAME
-    if (pMods === Mods.HRDT) return Config.SHEETS.HRDT.NAME
-    if (pMods === Mods.EZDT) return Config.SHEETS.EZDT.NAME
-    if (pMods === Mods.DTFL) return Config.SHEETS.DTFL.NAME
-    if (pMods === Mods.EZHT) return Config.SHEETS.EZHT.NAME
-    if (pMods === Mods.HDHR) return Config.SHEETS.HDHR.NAME
-    if (pMods === Mods.HDHT) return Config.SHEETS.HDHT.NAME
-    if (pMods === Mods.EZHD) return Config.SHEETS.EZHD.NAME
-    if (pMods === Mods.HRHT) return Config.SHEETS.HRHT.NAME
-    if (pMods === Mods.EZFL) return Config.SHEETS.EZFL.NAME
-    if (pMods === Mods.HRFL) return Config.SHEETS.HRFL.NAME
-    if (pMods === Mods.HTFL) return Config.SHEETS.HTFL.NAME
-    if (pMods === Mods.HDFL) return Config.SHEETS.HDFL.NAME
-
-    if (pMods === Mods.HDHRDT) return Config.SHEETS.HDHRDT.NAME
-    if (pMods === Mods.HDDTFL) return Config.SHEETS.HDDTFL.NAME
-    if (pMods === Mods.EZHDDT) return Config.SHEETS.EZHDDT.NAME
-    if (pMods === Mods.HRDTFL) return Config.SHEETS.HRDTFL.NAME
-    if (pMods === Mods.EZDTFL) return Config.SHEETS.EZDTFL.NAME
-    if (pMods === Mods.HDHTFL) return Config.SHEETS.HDHTFL.NAME
-    if (pMods === Mods.HDHRHT) return Config.SHEETS.HDHRHT.NAME
-    if (pMods === Mods.HRHTFL) return Config.SHEETS.HRHTFL.NAME
-    if (pMods === Mods.EZHDHT) return Config.SHEETS.EZHDHT.NAME
-    if (pMods === Mods.EZHTFL) return Config.SHEETS.EZHTFL.NAME
-    if (pMods === Mods.EZHDFL) return Config.SHEETS.EZHDFL.NAME
-    if (pMods === Mods.HDHRFL) return Config.SHEETS.HDHRFL.NAME
-
-    if (pMods === Mods.HDHRDTFL) return Config.SHEETS.HDHRDTFL.NAME
-    if (pMods === Mods.EZHDDTFL) return Config.SHEETS.EZHDDTFL.NAME
-    if (pMods === Mods.EZHDHTFL) return Config.SHEETS.EZHDHTFL.NAME
-    if (pMods === Mods.HDHRHTFL) return Config.SHEETS.HDHRHTFL.NAME
-
-    throw new InvalidModsError(`mods must be a valid mod string! Val=${mods}\n` +
-                                `Valid mod strings: ${Mods.validModStrings().join(' ')}`)
   }
 }

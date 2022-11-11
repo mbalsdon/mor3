@@ -1,8 +1,14 @@
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js'
 import Config from '../../controller/Config.js'
 import { SheetEmptyError } from '../../controller/Errors.js'
-import Mods from '../../controller/Mods.js'
 
+/**
+ * Replies with a list of MOR scores
+ * @param {MorFacade} facade
+ * @param {Client<boolean>} client
+ * @param {ChatInputCommandInteraction<CacheType>} interaction
+ * @return {Promise<void>}
+ */
 export default async function scoresCmd (facade, client, interaction) {
   const inputMods = interaction.options.getString('mods').toUpperCase()
   console.info(`Bot::scoresCmd (${inputMods})`) // TODO: replace
@@ -14,7 +20,11 @@ export default async function scoresCmd (facade, client, interaction) {
     if (numPages === 0) throw new SheetEmptyError(`The ${Config.SHEETS[inputMods].NAME} sheet is empty!`)
     const lastUpdated = await facade.getSheetLastUpdated()
 
-    // Modularized due to the fact that using buttons requires the interaction to be updated with new data
+    /**
+     * Builds a scores embed for the given page
+     * @param {number} page
+     * @return {EmbedBuilder}
+     */
     const buildEmbed = function (page) {
       console.info(`Bot::scoresCmd >> buildEmbed (${page})`)
       if (page < 1 || page > numPages) throw new RangeError(`Page must be between 1 and ${numPages} - this should never happen!`)
@@ -40,7 +50,7 @@ export default async function scoresCmd (facade, client, interaction) {
       const beatmapImgLink = scores[perPage * (page - 1)].beatmapImgLink
       const embed = new EmbedBuilder()
         .setColor(Config.BOT_EMBED_COLOR)
-        .setAuthor({ name: `+${inputMods} Score Leaderboard`, iconURL: `${beatmapImgLink}`, url: `https://docs.google.com/spreadsheets/d/${Config.SHEETS.SPREADSHEET.ID}/edit#gid=${Mods.toSheetId(inputMods)}` })
+        .setAuthor({ name: `+${inputMods} Score Leaderboard`, iconURL: `${beatmapImgLink}`, url: `https://docs.google.com/spreadsheets/d/${Config.SHEETS.SPREADSHEET.ID}/edit#gid=${Config.SHEETS[inputMods].ID}` })
         .setThumbnail(`${beatmapImgLink}`)
         .setDescription(desc)
         .setFooter({ text: `Last update: ${lastUpdated}` })
@@ -75,6 +85,11 @@ export default async function scoresCmd (facade, client, interaction) {
           .setDisabled(numPages === 1)
       ])
 
+    /**
+     * Updates buttons for the scores embed
+     * @param {ChatInputCommandInteraction<CacheType>} interaction
+     * @return {Promise<void>}
+     */
     const pageButtons = async function (interaction) {
       if (!interaction.isButton()) return
       const buttonId = interaction.customId

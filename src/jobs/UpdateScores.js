@@ -6,6 +6,12 @@ import Utils from '../controller/Utils.js'
 import { NotFoundError } from '../controller/Errors.js'
 import Score from '../controller/Score.js'
 
+/**
+ * Takes every score in the MOR sheet and refreshes their data.
+ * 
+ * Mainly used after PP reworks; takes a VERY long time -
+ * Suggested that you turn off the bot and any scheduled jobs before running this.
+ */
 export default async function updateScores () {
   console.time('::updateScores () >> Time elapsed') // TODO: replace
   console.info('::updateScores () >> Refreshing the entire sheet... This will take a very long time!') // TODO: replace
@@ -58,8 +64,8 @@ export default async function updateScores () {
     })
     if (mods !== Mods.SS) updatedScores.sort((a, b) => { return parseInt(b.pp) - parseInt(a.pp) })
     console.info('::updateScores() >> Updating sheet and resetting cache...') // TODO: replace
-    if (updatedScores.length === 0) mor.wipeSheet(mods)
-    else mor.replaceSheetScores(mods, updatedScores)
+    if (updatedScores.length === 0) await mor.wipeSheet(mods)
+    else await mor.replaceSheetScores(mods, updatedScores)
     await Utils.sleep(2000)
     fs.writeFileSync(Config.UPDATE_SCORES_CACHE, JSON.stringify({ currentModSheet: Mods.SS, scores: [] }))
   }

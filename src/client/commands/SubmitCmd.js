@@ -1,6 +1,12 @@
 import { EmbedBuilder } from 'discord.js'
 import Config from '../../controller/Config.js'
 
+/**
+ * Adds a score to the MOR sheet and replies with the score
+ * @param {MorFacade} facade
+ * @param {ChatInputCommandInteraction<CacheType>} interaction
+ * @return {Promise<void>}
+ */
 export default async function submitCmd (facade, interaction) {
   const scoreId = interaction.options.getString('id')
   console.info(`Bot::submitCmd (${scoreId})`) // TODO: replace

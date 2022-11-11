@@ -4,6 +4,13 @@ import MorFacade from '../controller/MorFacade.js'
 import User from '../controller/User.js'
 import Utils from '../controller/Utils.js'
 
+/**
+ * Takes every user in the MOR sheet and refreshes their stats.
+ * 
+ * Should only be run individually for testing purposes -
+ * Use runScheduledJobs() instead!
+ * @see {@link RunScheduledJobs}
+ */
 export default async function updateUsers () {
   console.time('::updateUsers () >> Time elapsed') // TODO: replace
   console.info('::updateUsers () >> Updating user rank and PP data... This may take a while') // TODO: replace

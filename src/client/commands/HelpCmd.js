@@ -1,6 +1,11 @@
 import { EmbedBuilder } from 'discord.js'
 import Config from '../../controller/Config.js'
 
+/**
+ * Replies with a list of MOR's bot commands
+ * @param {ChatInputCommandInteraction<CacheType>} interaction
+ * @return {Promise<void>}
+ */
 export default async function helpCmd (interaction) {
   console.info('Bot::helpCmd ()') // TODO: replace
   try {

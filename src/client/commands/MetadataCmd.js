@@ -1,6 +1,12 @@
 import { EmbedBuilder } from '@discordjs/builders'
 import Config from '../../controller/Config.js'
 
+/**
+ * Replies with MOR sheet metadata
+ * @param {MorFacade} facade
+ * @param {ChatInputCommandInteraction<CacheType>} interaction
+ * @return {Promise<void>}
+ */
 export default async function metadataCmd (facade, interaction) {
   console.info('Bot::metadataCmd ()') // TODO: replace
   try {

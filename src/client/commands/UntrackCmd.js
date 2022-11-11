@@ -1,6 +1,12 @@
 import { EmbedBuilder } from 'discord.js'
 import Config from '../../controller/Config.js'
 
+/**
+ * Removes a user from the MOR sheet and replies with their profile
+ * @param {MorFacade} facade
+ * @param {ChatInputCommandInteraction<CacheType>} interaction
+ * @return {Promise<void>}
+ */
 export default async function untrackCmd (facade, interaction) {
   const username = interaction.options.getString('username')
   console.info(`Bot::untrackCmd (${username})`) // TODO: replace

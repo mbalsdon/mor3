@@ -5,6 +5,13 @@ import MorFacade from '../controller/MorFacade.js'
 import Config from '../controller/Config.js'
 import Utils from '../controller/Utils.js'
 
+/**
+ * Runs cron/scheduled MOR job scripts,
+ * sets the Last Updated tag on the MOR sheet,
+ * then creates a backup file.
+ * 
+ * This is what you should run if you want to update the MOR spreadsheet.
+ */
 export default async function runScheduledJobs () {
   console.time('::runScheduledJobs () >> Time elapsed') // TODO: replace
   console.info('::runScheduledJobs () >> Running scheduled tasks... This may take a while') // TODO: replace
@@ -21,9 +28,9 @@ export default async function runScheduledJobs () {
   dateString = dateString.slice(0, dateString.length - 5) + '+00:00'
   const metadata = await mor.getSheetMetadata()
   await Utils.sleep(1000)
-  await mor.copyFile(Config.SHEETS.SPREADSHEET.ID, `${metadata.properties.title} ${dateString}`)
-  await Utils.sleep(1000)
   await mor.setSheetLastUpdated(dateString)
+  await Utils.sleep(1000)
+  await mor.backupFile(Config.SHEETS.SPREADSHEET.ID, `${metadata.properties.title} ${dateString}`, Config.DRIVE.BACKUP_FOLDER_ID)
   await Utils.sleep(1000)
   console.info(`::runScheduledJobs () >> Job completed at ${dateString}`) // TODO: replace
   console.timeEnd('::runScheduledJobs () >> Time elapsed') // TODO: replace

@@ -12,64 +12,79 @@ import untrackCmd from './commands/UntrackCmd.js'
 import submitCmd from './commands/SubmitCmd.js'
 import unsubmitCmd from './commands/UnsubmitCmd.js'
 import MorFacade from '../controller/MorFacade.js'
+import { ConstructorError } from '../controller/Errors.js'
 
+/**
+ * MOR Discord Bot client - To run the bot, build it and then call start.
+ * @example
+ *  const bot = await Bot.build()
+ *  await bot.start()
+ */
 export default class Bot {
-  #facade
-  #client
+  #FACADE
+  #DISCORD
 
+  /**
+   * Constructs the bot client.
+   * Not meant to be called directly - use Bot.build() instead!
+   * @see {@link build}
+   * @param {MorFacade} morFacade
+   * @param {Client} botClient
+   * @throws {@link ConstructorError} if clients dont exist
+   */
   constructor (morFacade, botClient) {
-    if (typeof morFacade === 'undefined' || typeof botClient === 'undefined') {
-      throw new Error('Cannot be called directly')
-    }
-    this.#facade = morFacade
-    this.#client = botClient
+    if (morFacade === 'undefined') throw new ConstructorError('morFacade is undefined! NOTE: Constructor cannot be called directly.')
+    if (botClient === 'undefined') throw new ConstructorError('botClient is undefined! NOTE: Constructor cannot be called directly.')
+    this.#FACADE = morFacade
+    this.#DISCORD = botClient
   }
 
+  /**
+   * Initializes MorFacade and Discord Client, then constructs Bot object
+   * @return {Promise<Bot>}
+   * @example
+   *  const bot = await Bot.build()
+   */
   static async build () {
-    console.info('Bot::build()')
+    console.info('Bot::build ()') // TODO: replace
     const morFacade = await MorFacade.build()
     const botClient = new Client({ intents: [GatewayIntentBits.Guilds] })
     return new Bot(morFacade, botClient)
   }
 
+  /**
+   * Causes the bot to begin listening for commands (i.e. starts the bot)
+   * @example
+   *  const bot = await Bot.build()
+   *  await bot.start()
+   */
   async start () {
-    console.info('Bot::start()')
+    console.info('Bot::start ()') // TODO: replace
 
-    this.#client.once('ready', () => {
-      console.info('MOR3 is online!')
+    this.#DISCORD.once('ready', () => {
+      console.info('Bot >> MOR3 is online!') // TODO: replace
     })
 
-    this.#client.on('interactionCreate', async interaction => {
+    this.#DISCORD.on('interactionCreate', async interaction => {
       if (!interaction.isChatInputCommand()) return
-      const { commandName } = interaction
-      console.info(`Bot >> command "${commandName}"`)
 
-      if (commandName === 'help') {
-        await helpCmd(interaction)
-      } else if (commandName === 'ping') {
-        await pingCmd(interaction)
-      } else if (commandName === 'metadata') {
-        await metadataCmd(this.#facade, interaction)
-      } else if (commandName === 'users') {
-        await usersCmd(this.#facade, this.#client, interaction)
-      } else if (commandName === 'user') {
-        await userCmd(this.#facade, interaction)
-      } else if (commandName === 'track') {
-        await trackCmd(this.#facade, interaction)
-      } else if (commandName === 'untrack') {
-        await untrackCmd(this.#facade, interaction)
-      } else if (commandName === 'tracklist') {
-        await tracklistCmd(this.#facade, interaction)
-      } else if (commandName === 'submit') {
-        await submitCmd(this.#facade, interaction)
-      } else if (commandName === 'unsubmit') {
-        await unsubmitCmd(this.#facade, interaction)
-      } else if (commandName === 'scores') {
-        await scoresCmd(this.#facade, this.#client, interaction)
-      }
+      const { commandName } = interaction
+      console.info(`Bot >> received command "${commandName}"`) // TODO: replace
+
+      if (commandName === 'help') await helpCmd(interaction)
+      else if (commandName === 'ping') await pingCmd(interaction)
+      else if (commandName === 'metadata') await metadataCmd(this.#FACADE, interaction)
+      else if (commandName === 'users') await usersCmd(this.#FACADE, this.#DISCORD, interaction)
+      else if (commandName === 'user') await userCmd(this.#FACADE, interaction)
+      else if (commandName === 'track') await trackCmd(this.#FACADE, interaction)
+      else if (commandName === 'untrack') await untrackCmd(this.#FACADE, interaction)
+      else if (commandName === 'tracklist') await tracklistCmd(this.#FACADE, interaction)
+      else if (commandName === 'submit') await submitCmd(this.#FACADE, interaction)
+      else if (commandName === 'unsubmit') await unsubmitCmd(this.#FACADE, interaction)
+      else if (commandName === 'scores') await scoresCmd(this.#FACADE, this.#DISCORD, interaction)
     })
 
     // Must be the last line of code
-    this.#client.login(process.env.DISCORD_API_BOT_TOKEN)
+    await this.#DISCORD.login(process.env.DISCORD_API_BOT_TOKEN)
   }
 }

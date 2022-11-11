@@ -2,6 +2,13 @@ import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'disc
 import Config from '../../controller/Config.js'
 import { SheetEmptyError } from '../../controller/Errors.js'
 
+/**
+ * Replies with a list of MOR users
+ * @param {MorFacade} facade
+ * @param {Client<boolean>} client
+ * @param {ChatInputCommandInteraction<CacheType>} interaction
+ * @return {Promise<void>}
+ */
 export default async function usersCmd (facade, client, interaction) {
   console.info('Bot::usersCmd ()') // TODO: replace
   try {
@@ -12,7 +19,11 @@ export default async function usersCmd (facade, client, interaction) {
     if (numPages === 0) throw new SheetEmptyError(`The ${Config.SHEETS.USERS.NAME} sheet is empty!`)
     const lastUpdated = await facade.getSheetLastUpdated()
 
-    // TODO: doc
+    /**
+     * Builds a users embed for the given page
+     * @param {number} page
+     * @return {EmbedBuilder}
+     */
     const buildEmbed = function (page) {
       console.info(`Bot::usersCmd >> buildEmbed (${page})`)
       if (page < 1 || page > numPages) throw new RangeError(`Page must be between 1 and ${numPages} - this should never happen!`)
@@ -66,6 +77,11 @@ export default async function usersCmd (facade, client, interaction) {
           .setDisabled(numPages === 1)
       ])
 
+    /**
+     * Updates buttons for the users embed
+     * @param {ChatInputCommandInteraction<CacheType>} interaction
+     * @return {Promise<void>}
+     */
     const pageButtons = async function (interaction) {
       if (!interaction.isButton()) return
       const buttonId = interaction.customId

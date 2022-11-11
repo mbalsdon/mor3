@@ -1,3 +1,8 @@
+/**
+ * Pings the bot and replies when ping is received
+ * @param {ChatInputCommandInteraction<CacheType>} interaction
+ * @return {Promise<void>}
+ */
 export default async function pingCmd (interaction) {
   console.info('Bot::pingCmd ()') // TODO: replace
   try {

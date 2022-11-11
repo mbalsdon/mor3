@@ -5,12 +5,13 @@ import Utils from './Utils.js'
 
 /**
  * Wrapper class for osu!API v2
- * @see {@link https://osu.ppy.sh/docs/index.html}
+ * @see {@link https://osu.ppy.sh/docs/}
  */
 export default class OsuWrapper {
+  #TOKEN
+
   static #API_URL = 'https://osu.ppy.sh/api/v2'
   static #TOKEN_URL = 'https://osu.ppy.sh/oauth/token'
-  #TOKEN
 
   /**
    * @return standard osu!API v2 headers object
@@ -28,7 +29,7 @@ export default class OsuWrapper {
    * Not meant to be called directly - use OsuWrapper.build() instead!
    * @see {@link build}
    * @param {*} token OAuth token
-   * @throws {ConstructorError} if token doesn't exist or is structured improperly
+   * @throws {@link ConstructorError} if token doesn't exist or is structured improperly
    */
   constructor (token) {
     if (typeof token === 'undefined') throw new ConstructorError('token is undefined! NOTE: Constructor cannot be called directly.')
@@ -39,8 +40,10 @@ export default class OsuWrapper {
   }
 
   /**
-   * Retrieves osu!API v2 OAuth token then constructs OsuWrapper object.
-   * @return {OsuWrapper}
+   * Retrieves osu!API v2 OAuth token then constructs OsuWrapper object
+   * @return {Promise<OsuWrapper>} OsuWrapper object
+   * @example
+   *  const osu = await OsuWrapper.build()
    */
   static async build () {
     console.info('OsuWrapper::build ()') // TODO: replace
@@ -63,6 +66,19 @@ export default class OsuWrapper {
     return new OsuWrapper(token)
   }
 
+  /**
+   * Retrieves osu! user data from osu!API v2
+   * @see {@link https://osu.ppy.sh/docs/index.html#user} (osu!API v2 User object)
+   * @param {string} user user's name if searchParam is 'username', user's ID if searchParam is 'id'
+   * @param {('username'|'id')} searchParam whether to query the API by username or user ID
+   * @throws {@link TypeError} if parameters are invalid
+   * @throws {@link NotFoundError} if user could not be found
+   * @return {Promise<*>} osu!API v2 User object
+   * @example
+   *  const osu = await OsuWrapper.build()
+   *  const user = await osu.getUser('peppy', 'username')
+   *  console.log(user.statistics.pp)
+   */
   async getUser (user, searchParam = 'username') {
     console.info(`OsuWrapper::getUser (${user}, ${searchParam})`) // TODO: replace
     if (!Utils.isString(user)) throw new TypeError(`user must be a string! Val=${user}`)
@@ -80,6 +96,18 @@ export default class OsuWrapper {
     return data
   }
 
+  /**
+   * Retrieves osu! score data from osu!API v2
+   * @see {@link https://osu.ppy.sh/docs/index.html#score} (osu!API v2 Score object)
+   * @param {number} scoreId
+   * @throws {@link TypeError} if parameters are invalid
+   * @throws {@link NotFoundError} if score could not be found
+   * @return {Promise<*>} osu!API v2 Score object
+   * @example
+   *  const osu = await OsuWrapper.build()
+   *  const score = await osu.getScore('4083979228')
+   *  console.log(score.beatmapset.artist)
+   */
   async getScore (scoreId) {
     console.info(`OsuWrapper::getScore (${scoreId})`) // TODO: replace
     if (!Utils.isPositiveNumericString(scoreId)) throw new TypeError(`scoreId must be a positive number string! Val=${scoreId}`)
@@ -96,6 +124,19 @@ export default class OsuWrapper {
     return data
   }
 
+  /**
+   * Retrieves osu! user's top plays/firsts from osu!API v2
+   * @see {@link https://osu.ppy.sh/docs/index.html#score} (osu!API v2 Score object)
+   * @param {number} userId user's ID
+   * @param {('best'|'firsts')} type whether to fetch the user's top plays or firsts
+   * @throws {@link TypeError} if parameters are invalid
+   * @throws {@link NotFoundError} if user could not be found
+   * @return {Promise<*[]>} Array of osu!API v2 Score objects
+   * @example
+   *  const osu = await OsuWrapper.build()
+   *  const tops = await osu.getUserPlays('6385683', 'best')
+   *  console.log(tops[3].beatmap.version)
+   */
   async getUserPlays (userId, type = 'best') {
     console.info(`OsuWrapper::getUserPlays (${userId}, ${type})`) // TODO: replace
     if (!Utils.isPositiveNumericString(userId)) throw new TypeError(`userId must be a positive number string! Val=${userId}`)

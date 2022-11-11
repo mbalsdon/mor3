@@ -1,6 +1,12 @@
 import { EmbedBuilder } from 'discord.js'
 import Config from '../../controller/Config.js'
 
+/**
+ * Replies with a MOR user's profile
+ * @param {MorFacade} facade
+ * @param {ChatInputCommandInteraction<CacheType>} interaction
+ * @return {Promise<void>}
+ */
 export default async function userCmd (facade, interaction) {
   const username = interaction.options.getString('username')
   console.info(`Bot::userCmd (${username})`) // TODO: replace

@@ -1,5 +1,11 @@
 import * as fs from 'fs'
 
+/**
+ * Replies with a .txt file of MOR users
+ * @param {MorFacade} facade
+ * @param {ChatInputCommandInteraction<CacheType>} interaction
+ * @return {Promise<void>}
+ */
 export default async function tracklistCmd (facade, interaction) {
   console.info('Bot::tracklistCmd ()') // TODO: replace
   try {
