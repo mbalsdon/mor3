@@ -1,4 +1,4 @@
 import Bot from './src/client/Bot.js'
 
-const client = await Bot.build()
-await client.start()
+const bot = await Bot.build()
+await bot.start()
