@@ -1,5 +1,6 @@
-import { EmbedBuilder } from 'discord.js'
 import Config from '../../controller/Config.js'
+
+import { EmbedBuilder } from 'discord.js'
 
 /**
  * Replies with a MOR user's profile

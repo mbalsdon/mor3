@@ -1,5 +1,6 @@
-import { EmbedBuilder } from '@discordjs/builders'
 import Config from '../../controller/Config.js'
+
+import { EmbedBuilder } from '@discordjs/builders'
 
 /**
  * Replies with MOR sheet metadata

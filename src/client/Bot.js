@@ -1,5 +1,3 @@
-import 'dotenv/config'
-import { Client, GatewayIntentBits } from 'discord.js'
 import helpCmd from './commands/HelpCmd.js'
 import metadataCmd from './commands/MetadataCmd.js'
 import pingCmd from './commands/PingCmd.js'
@@ -11,8 +9,12 @@ import trackCmd from './commands/TrackCmd.js'
 import untrackCmd from './commands/UntrackCmd.js'
 import submitCmd from './commands/SubmitCmd.js'
 import unsubmitCmd from './commands/UnsubmitCmd.js'
-import MorFacade from '../controller/MorFacade.js'
+
 import { ConstructorError } from '../controller/Errors.js'
+import MorFacade from '../controller/MorFacade.js'
+
+import 'dotenv/config'
+import { Client, GatewayIntentBits } from 'discord.js'
 
 /**
  * MOR Discord Bot client - To run the bot, build it and then call start.

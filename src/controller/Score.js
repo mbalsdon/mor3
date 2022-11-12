@@ -1,12 +1,8 @@
 import Utils from './Utils.js'
 
-/**
- * MOR Score object - Contains data from an osu! score used in MOR sheets
- */
+/** Contains data from an osu! score used in MOR sheets */
 export default class Score {
-  /**
-   * First row of MOR sheet containing score data
-   */
+  /** First row of MOR sheet containing score data */
   static START_ROW = 2
 
   scoreId
@@ -72,14 +68,6 @@ export default class Score {
   }
 
   /**
-   * Converts Score fields to array
-   * @return {string[]}
-   */
-  toArray () {
-    return Object.values(this)
-  }
-
-  /**
    * Given the field name of a Score object, returns associated MOR sheet column
    * @param {string} columnName Score object field name
    * @throws {@link TypeError} if parameters are invalid
@@ -97,5 +85,13 @@ export default class Score {
     else if (columnName === 'date') return 'I'
     else if (columnName === 'beatmapImgLink') return 'J'
     else throw new TypeError(`columnName is not valid! Val=${columnName}`)
+  }
+
+  /**
+   * Converts Score fields to array
+   * @return {string[]}
+   */
+  toArray () {
+    return Object.values(this)
   }
 }

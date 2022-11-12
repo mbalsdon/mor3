@@ -1,13 +1,14 @@
-import OsuWrapper from './OsuWrapper.js'
-import SheetsWrapper from './SheetsWrapper.js'
-import DriveWrapper from './DriveWrapper.js'
-import 'dotenv/config'
-import { AlreadyExistsError, ConstructorError, InvalidModsError, NotFoundError } from './Errors.js'
-import User from './User.js'
-import Score from './Score.js'
 import Config from './Config.js'
+import DriveWrapper from './DriveWrapper.js'
+import { AlreadyExistsError, ConstructorError, InvalidModsError, NotFoundError } from './Errors.js'
 import Mods from './Mods.js'
+import OsuWrapper from './OsuWrapper.js'
+import Score from './Score.js'
+import SheetsWrapper from './SheetsWrapper.js'
+import User from './User.js'
 import Utils from './Utils.js'
+
+import 'dotenv/config'
 
 /**
  * MOR3 client - Wraps osu!API v2 client, Google Sheets API v4 client, and Google Drive API v3 client
@@ -48,6 +49,86 @@ export default class MorFacade {
     console.info('MorFacade::build ()') // TODO: replace
     const [osuWrapper, sheetsWrapper, driveWrapper] = await Promise.all([OsuWrapper.build(), SheetsWrapper.build(), DriveWrapper.build()])
     return new MorFacade(osuWrapper, sheetsWrapper, driveWrapper)
+  }
+
+  /**
+   * Retrieves osu! user data from osu!API v2; makes up to 1 osu!API request
+   * @param {string} user user's name if searchParam is 'username', user's ID if searchParam is 'id'
+   * @param {('username'|'id')} searchParam whether to query the API by username or user ID
+   * @return {Promise<User>} User object
+   * @example
+   *  const mor = await MorFacade.build()
+   *  const user = await mor.getOsuUser('6385683', 'id')
+   *  console.log(user.pp)
+   */
+  async getOsuUser (username, searchParam = 'username') {
+    console.info(`MorFacade::getOsuUser (${username})`) // TODO: replace
+    const response = await this.#OSU.getUser(username, searchParam)
+    return new User(response.id.toString(),
+      response.username,
+      String(response.statistics.global_rank),
+      response.statistics.pp === null ? '0' : response.statistics.pp.toFixed(3),
+      response.statistics.hit_accuracy.toFixed(2),
+      Math.round(response.statistics.play_time / 3600).toString(),
+      '-1', '-1', '-1', '-1', '-1', '-1',
+      response.avatar_url)
+  }
+
+  /**
+   * Retrieves osu! score; makes up to 1 osu!API request
+   * @param {number} scoreId ID of the score
+   * @return {Promise<Score>} Score object
+   * @example
+   *  const mor = await MorFacade.build()
+   *  const score = await osu.getScore('4083979228')
+   *  console.log(score.mods)
+   */
+  async getOsuScore (scoreId) {
+    console.info(`MorFacade::getOsuScore (${scoreId})`) // TODO: replace
+    const data = await this.#OSU.getScore(scoreId)
+    return new Score(
+      data.id.toString(),
+      data.user.id.toString(),
+      data.user.username,
+          `${data.beatmapset.artist} - ${data.beatmapset.title} [${data.beatmap.version}]`,
+          Mods.parseModKey(data.mods),
+          (data.accuracy * 100).toFixed(2),
+          data.pp === null ? '0' : data.pp.toFixed(3),
+          data.beatmap.difficulty_rating.toFixed(2),
+          data.created_at.replace('Z', '+00:00'),
+          data.beatmapset.covers['list@2x']
+    )
+  }
+
+  /**
+   * Retrieves osu! user's top plays/firsts from osu!API v2; makes up to 1 osu!API request
+   * @param {number} userId user's ID
+   * @param {('best'|'firsts')} type whether to fetch the user's top plays or firsts
+   * @return {Promise<Score[]>} array of Score objects
+   * @example
+   *  const mor = await MorFacade.build()
+   *  const myFirsts = await mor.getOsuUserScores('6385683', 'firsts')
+   *  console.log(myFirsts.map(s => s.scoreId))
+   */
+  async getOsuUserScores (userId, type = 'best') {
+    console.info(`MorFacade::getOsuUserScores (${userId}, ${type})`) // TODO: replace
+    const scores = await this.#OSU.getUserPlays(userId, type)
+    const ret = []
+    for (const score of scores) {
+      ret.push(new Score(
+        score.id.toString(),
+        score.user.id.toString(),
+        score.user.username,
+        `${score.beatmapset.artist} - ${score.beatmapset.title} [${score.beatmap.version}]`,
+        Mods.parseModKey(score.mods),
+        (score.accuracy * 100).toFixed(2),
+        score.pp === null ? '0' : score.pp.toFixed(3),
+        score.beatmap.difficulty_rating.toFixed(2),
+        score.created_at.replace('Z', '+00:00'),
+        score.beatmapset.covers['list@2x']
+      ))
+    }
+    return ret
   }
 
   /**
@@ -110,57 +191,33 @@ export default class MorFacade {
   }
 
   /**
-   * Retrieves osu! user data from osu!API v2; makes up to 1 osu!API request
-   * @param {string} user user's name if searchParam is 'username', user's ID if searchParam is 'id'
-   * @param {('username'|'id')} searchParam whether to query the API by username or user ID
+   * Retrieves a user from the mor3 sheet; makes up to 2 Google API requests
+   * @param {string} username username of the user
+   * @throws {@link NotFoundError} if user could not be found
    * @return {Promise<User>} User object
    * @example
    *  const mor = await MorFacade.build()
-   *  const user = await mor.getOsuUser('6385683', 'id')
-   *  console.log(user.pp)
+   *  const user = await mor.getSheetUser('spreadnuts')
+   *  console.log(user.pfpLink)
    */
-  async getOsuUser (username, searchParam = 'username') {
-    console.info(`MorFacade::getOsuUser (${username})`) // TODO: replace
-    const response = await this.#OSU.getUser(username, searchParam)
-    return new User(response.id.toString(),
-      response.username,
-      String(response.statistics.global_rank),
-      response.statistics.pp === null ? '0' : response.statistics.pp.toFixed(3),
-      response.statistics.hit_accuracy.toFixed(2),
-      Math.round(response.statistics.play_time / 3600).toString(),
-      '-1', '-1', '-1', '-1', '-1', '-1',
-      response.avatar_url)
-  }
-
-  /**
-   * Retrieves osu! user's top plays/firsts from osu!API v2; makes up to 1 osu!API request
-   * @param {number} userId user's ID
-   * @param {('best'|'firsts')} type whether to fetch the user's top plays or firsts
-   * @return {Promise<Score[]>} array of Score objects
-   * @example
-   *  const mor = await MorFacade.build()
-   *  const myFirsts = await mor.getOsuUserScores('6385683', 'firsts')
-   *  console.log(myFirsts.map(s => s.scoreId))
-   */
-  async getOsuUserScores (userId, type = 'best') {
-    console.info(`MorFacade::getOsuUserScores (${userId}, ${type})`) // TODO: replace
-    const scores = await this.#OSU.getUserPlays(userId, type)
-    const ret = []
-    for (const score of scores) {
-      ret.push(new Score(
-        score.id.toString(),
-        score.user.id.toString(),
-        score.user.username,
-        `${score.beatmapset.artist} - ${score.beatmapset.title} [${score.beatmap.version}]`,
-        Mods.parseModKey(score.mods),
-        (score.accuracy * 100).toFixed(2),
-        score.pp === null ? '0' : score.pp.toFixed(3),
-        score.beatmap.difficulty_rating.toFixed(2),
-        score.created_at.replace('Z', '+00:00'),
-        score.beatmapset.covers['list@2x']
-      ))
+  async getSheetUser (username) {
+    console.info(`MorFacade::getSheetUser (${username})`) // TODO: replace
+    const usernames = await this.getSheetUsernames()
+    const index = usernames.map(u => u.toLowerCase()).indexOf(username.toLowerCase())
+    if (index !== -1) {
+      const response = await this.#SHEETS.getRange(
+        Config.SHEETS.SPREADSHEET.ID,
+        Config.SHEETS.USERS.NAME,
+        `${User.columnLetter('userId')}${index + User.START_ROW}`,
+        `${User.columnLetter('pfpLink')}${index + User.START_ROW}`,
+        'FORMATTED_VALUE',
+        'ROWS'
+      )
+      const u = response.values[0]
+      return new User(u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13])
+    } else {
+      throw new NotFoundError(`${Config.SHEETS.SPREADSHEET.NAME} sheet search returned no results! username=${username}`)
     }
-    return ret
   }
 
   /**
@@ -211,6 +268,59 @@ export default class MorFacade {
   }
 
   /**
+   * Retrieves list of usernames from mor3 sheet; makes up to 1 Google API request
+   * @return {Promise<string[]>} array of usernames
+   * @example
+   *  const mor = await MorFacade.build()
+   *  const usernames = await mor.getSheetUsernames()
+   *  console.log(usernames[0])
+   */
+  async getSheetUsernames () {
+    console.info('MorFacade::getSheetUsernames ()') // TODO: replace
+    const response = await this.#SHEETS.getRange(
+      Config.SHEETS.SPREADSHEET.ID,
+      Config.SHEETS.USERS.NAME,
+      User.columnLetter('username'),
+      User.columnLetter('username'),
+      'FORMATTED_VALUE',
+      'COLUMNS'
+    )
+    return response.values[0].slice(1)
+  }
+
+  /**
+   * Retrieves scores from the mor3 sheet; makes up to 1 Google API request
+   * @param {string} mods mod string
+   * @throws {@link InvalidModsError} if mod string is invalid
+   * @return {Promise<Score[]>} array of Score objects
+   * @example
+   *  const mor = await MorFacade.build()
+   *  const scores = await mor.getSheetScores(Mods.HDHR)
+   *  console.log(scores[3].beatmapImgLink)
+   */
+  async getSheetScores (mods) {
+    console.info(`MorFacade::getSheetScores (${mods})`) // TODO: replace
+    if (!Mods.isValidModString(mods)) {
+      throw new InvalidModsError(`mods must be a valid mod string! Val=${mods}\n` +
+      `Valid mod strings: ${Mods.validModStrings().join(' ')}`)
+    }
+    const response = await this.#SHEETS.getRange(
+      Config.SHEETS.SPREADSHEET.ID,
+      Config.SHEETS[mods].NAME,
+      Score.columnLetter('scoreId'),
+      Score.columnLetter('beatmapImgLink'),
+      'FORMATTED_VALUE',
+      'ROWS'
+    )
+    const ret = []
+    response.values.slice(1).forEach(a => {
+      const s = new Score(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9])
+      ret.push(s)
+    })
+    return ret
+  }
+
+  /**
    * Retrieves list of score IDs from mor3 sheet; makes up to 1 Google API request
    * @param {string} mods mod string
    * @throws {@link InvalidModsError} if mod string is invalid
@@ -235,57 +345,6 @@ export default class MorFacade {
       'COLUMNS'
     )
     return response.values[0].slice(1)
-  }
-
-  /**
-   * Retrieves list of usernames from mor3 sheet; makes up to 1 Google API request
-   * @return {Promise<string[]>} array of usernames
-   * @example
-   *  const mor = await MorFacade.build()
-   *  const usernames = await mor.getSheetUsernames()
-   *  console.log(usernames[0])
-   */
-  async getSheetUsernames () {
-    console.info('MorFacade::getSheetUsernames ()') // TODO: replace
-    const response = await this.#SHEETS.getRange(
-      Config.SHEETS.SPREADSHEET.ID,
-      Config.SHEETS.USERS.NAME,
-      User.columnLetter('username'),
-      User.columnLetter('username'),
-      'FORMATTED_VALUE',
-      'COLUMNS'
-    )
-    return response.values[0].slice(1)
-  }
-
-  /**
-   * Retrieves a user from the mor3 sheet; makes up to 2 Google API requests
-   * @param {string} username username of the user
-   * @throws {@link NotFoundError} if user could not be found
-   * @return {Promise<User>} User object
-   * @example
-   *  const mor = await MorFacade.build()
-   *  const user = await mor.getSheetUser('spreadnuts')
-   *  console.log(user.pfpLink)
-   */
-  async getSheetUser (username) {
-    console.info(`MorFacade::getSheetUser (${username})`) // TODO: replace
-    const usernames = await this.getSheetUsernames()
-    const index = usernames.map(u => u.toLowerCase()).indexOf(username.toLowerCase())
-    if (index !== -1) {
-      const response = await this.#SHEETS.getRange(
-        Config.SHEETS.SPREADSHEET.ID,
-        Config.SHEETS.USERS.NAME,
-        `${User.columnLetter('userId')}${index + User.START_ROW}`,
-        `${User.columnLetter('pfpLink')}${index + User.START_ROW}`,
-        'FORMATTED_VALUE',
-        'ROWS'
-      )
-      const u = response.values[0]
-      return new User(u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13])
-    } else {
-      throw new NotFoundError(`${Config.SHEETS.SPREADSHEET.NAME} sheet search returned no results! username=${username}`)
-    }
   }
 
   /**
@@ -367,64 +426,6 @@ export default class MorFacade {
       userIndex + 2
     )
     return users[userIndex]
-  }
-
-  /**
-   * Retrieves scores from the mor3 sheet; makes up to 1 Google API request
-   * @param {string} mods mod string
-   * @throws {@link InvalidModsError} if mod string is invalid
-   * @return {Promise<Score[]>} array of Score objects
-   * @example
-   *  const mor = await MorFacade.build()
-   *  const scores = await mor.getSheetScores(Mods.HDHR)
-   *  console.log(scores[3].beatmapImgLink)
-   */
-  async getSheetScores (mods) {
-    console.info(`MorFacade::getSheetScores (${mods})`) // TODO: replace
-    if (!Mods.isValidModString(mods)) {
-      throw new InvalidModsError(`mods must be a valid mod string! Val=${mods}\n` +
-      `Valid mod strings: ${Mods.validModStrings().join(' ')}`)
-    }
-    const response = await this.#SHEETS.getRange(
-      Config.SHEETS.SPREADSHEET.ID,
-      Config.SHEETS[mods].NAME,
-      Score.columnLetter('scoreId'),
-      Score.columnLetter('beatmapImgLink'),
-      'FORMATTED_VALUE',
-      'ROWS'
-    )
-    const ret = []
-    response.values.slice(1).forEach(a => {
-      const s = new Score(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9])
-      ret.push(s)
-    })
-    return ret
-  }
-
-  /**
-   * Retrieves osu! score; makes up to 1 osu!API request
-   * @param {number} scoreId ID of the score
-   * @return {Promise<Score>} Score object
-   * @example
-   *  const mor = await MorFacade.build()
-   *  const score = await osu.getScore('4083979228')
-   *  console.log(score.mods)
-   */
-  async getOsuScore (scoreId) {
-    console.info(`MorFacade::getOsuScore (${scoreId})`) // TODO: replace
-    const data = await this.#OSU.getScore(scoreId)
-    return new Score(
-      data.id.toString(),
-      data.user.id.toString(),
-      data.user.username,
-      `${data.beatmapset.artist} - ${data.beatmapset.title} [${data.beatmap.version}]`,
-      Mods.parseModKey(data.mods),
-      (data.accuracy * 100).toFixed(2),
-      data.pp === null ? '0' : data.pp.toFixed(3),
-      data.beatmap.difficulty_rating.toFixed(2),
-      data.created_at.replace('Z', '+00:00'),
-      data.beatmapset.covers['list@2x']
-    )
   }
 
   /**
@@ -521,6 +522,36 @@ export default class MorFacade {
   }
 
   /**
+   * Replaces all users in a mor3 sheet with new ones; makes up to 2 Google API requests
+   * @param {User[]} users users to be added to the sheet
+   * @throws {@link TypeError} if parameters are invalid
+   * @return {Promise<User[]>} newly added users (array of User objects)
+   * @example
+   *  const mor = await MorFacade.build()
+   *  const users = await Promise.all([mor.getOsuUser('spreadnuts', 'username'), mor.getOsuUser('2', 'id')])
+   *  await mor.replaceUsers(users)
+   */
+  async replaceUsers (users) {
+    console.info(`MorFacade::replaceUsers (array of ${users.length} users)`) // TODO: replace
+    if (!Utils.isUserArray(users)) throw new TypeError(`users must be a valid User array! Val=${users}`)
+    await this.#SHEETS.deleteDimension(
+      Config.SHEETS.SPREADSHEET.ID,
+      Config.SHEETS.USERS.ID,
+      'ROWS',
+      1,
+      -1
+    )
+    await this.#SHEETS.appendRange(
+      Config.SHEETS.SPREADSHEET.ID,
+      users.map(u => u.toArray()),
+      Config.SHEETS.USERS.NAME,
+      'RAW',
+      'INSERT_ROWS'
+    )
+    return users
+  }
+
+  /**
    * Replaces all scores in a mor3 sheet with new ones; makes up to 2 Google API requests
    * @param {string} mods mod string
    * @param {Score[]} scores scores to be added to the sheet
@@ -555,36 +586,6 @@ export default class MorFacade {
       'INSERT_ROWS'
     )
     return scores
-  }
-
-  /**
-   * Replaces all users in a mor3 sheet with new ones; makes up to 2 Google API requests
-   * @param {User[]} users users to be added to the sheet
-   * @throws {@link TypeError} if parameters are invalid
-   * @return {Promise<User[]>} newly added users (array of User objects)
-   * @example
-   *  const mor = await MorFacade.build()
-   *  const users = await Promise.all([mor.getOsuUser('spreadnuts', 'username'), mor.getOsuUser('2', 'id')])
-   *  await mor.replaceUsers(users)
-   */
-  async replaceUsers (users) {
-    console.info(`MorFacade::replaceUsers (array of ${users.length} users)`) // TODO: replace
-    if (!Utils.isUserArray(users)) throw new TypeError(`users must be a valid User array! Val=${users}`)
-    await this.#SHEETS.deleteDimension(
-      Config.SHEETS.SPREADSHEET.ID,
-      Config.SHEETS.USERS.ID,
-      'ROWS',
-      1,
-      -1
-    )
-    await this.#SHEETS.appendRange(
-      Config.SHEETS.SPREADSHEET.ID,
-      users.map(u => u.toArray()),
-      Config.SHEETS.USERS.NAME,
-      'RAW',
-      'INSERT_ROWS'
-    )
-    return users
   }
 
   /**

@@ -1,5 +1,6 @@
-import { EmbedBuilder } from 'discord.js'
 import Config from '../../controller/Config.js'
+
+import { EmbedBuilder } from 'discord.js'
 
 /**
  * Removes a score from the MOR sheet and replies with the removed score

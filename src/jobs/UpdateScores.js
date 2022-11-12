@@ -1,14 +1,15 @@
-import MorFacade from '../controller/MorFacade.js'
-import * as fs from 'fs'
 import Config from '../controller/Config.js'
-import Mods from '../controller/Mods.js'
-import Utils from '../controller/Utils.js'
 import { NotFoundError } from '../controller/Errors.js'
+import Mods from '../controller/Mods.js'
+import MorFacade from '../controller/MorFacade.js'
 import Score from '../controller/Score.js'
+import Utils from '../controller/Utils.js'
+
+import * as fs from 'fs'
 
 /**
  * Takes every score in the MOR sheet and refreshes their data.
- * 
+ *
  * Mainly used after PP reworks; takes a VERY long time -
  * Suggested that you turn off the bot and any scheduled jobs before running this.
  */

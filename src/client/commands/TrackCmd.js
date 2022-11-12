@@ -1,5 +1,6 @@
-import { EmbedBuilder } from 'discord.js'
 import Config from '../../controller/Config.js'
+
+import { EmbedBuilder } from 'discord.js'
 
 /**
  * Adds a user to the MOR sheet and replies with their profile

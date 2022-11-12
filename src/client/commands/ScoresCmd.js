@@ -1,6 +1,7 @@
-import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js'
 import Config from '../../controller/Config.js'
 import { SheetEmptyError } from '../../controller/Errors.js'
+
+import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js'
 
 /**
  * Replies with a list of MOR scores

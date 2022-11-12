@@ -4,7 +4,7 @@ import Utils from '../controller/Utils.js'
 
 /**
  * Deletes all scores in the MOR3 spreadsheet.
- * 
+ *
  * Should only be run for testing purposes
  * WARNING: This script deletes all scores! Make sure you have a backup.
  */

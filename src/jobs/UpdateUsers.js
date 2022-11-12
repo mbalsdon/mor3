@@ -6,7 +6,7 @@ import Utils from '../controller/Utils.js'
 
 /**
  * Takes every user in the MOR sheet and refreshes their stats.
- * 
+ *
  * Should only be run individually for testing purposes -
  * Use runScheduledJobs() instead!
  * @see {@link RunScheduledJobs}

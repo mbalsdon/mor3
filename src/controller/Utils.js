@@ -1,17 +1,12 @@
 import Score from './Score.js'
 import User from './User.js'
 
-/**
- * Utils - Provides some useful functions for MOR (and general JavaScript)
- */
+/** Provides some useful functions for MOR (and general JavaScript) */
 export default class Utils {
-  /**
-   * Maximum number of rows allowed in Google Sheets
-   */
+  /** Maximum number of rows allowed in Google Sheets */
   static SHEETS_MAX_ROWS = 10000000
-  /**
-   * Maximum number of columns allowed in Google Sheets
-   */
+
+  /** Maximum number of columns allowed in Google Sheets */
   static SHEETS_MAX_COLS = 18278
 
   /**
@@ -51,92 +46,12 @@ export default class Utils {
   }
 
   /**
-   * Returns true if input is a valid osu! user rank
-   * @param {*} v
-   * @return {boolean}
-   */
-  static isValidRank (v) {
-    return (this.isPositiveNumericString(v) || v === 'null')
-  }
-
-  /**
    * Returns true if input is a non-negative numeric string
    * @param {*} v
    * @return {boolean}
    */
   static isNonNegativeNumericString (v) {
     return (this.isNumericString(v) && (parseInt(v) >= 0))
-  }
-
-  /**
-   * Returns true if input is a valid osu! score accuracy
-   * @param {*} v
-   * @return {boolean}
-   */
-  static isValidAccuracyString (v) {
-    return (this.isNumericString(v) && parseInt(v) >= 0 && parseInt(v) <= 100)
-  }
-
-  /**
-   * Returns true if input is a two-dimensional array
-   * @param {*} v
-   * @return {boolean}
-   */
-  static is2DArray (v) {
-    if (!Array.isArray(v)) return false
-    if (v.length === 0) return false
-    if (!v.every(a => Array.isArray(a))) return false
-    return true
-  }
-
-  /**
-   * Returns true if input is an array of strings
-   * @param {*} v
-   * @return {boolean}
-   */
-  static isStringArray (v) {
-    if (!Array.isArray(v)) return false
-    if (v.length === 0) return false
-    if (!v.every(x => this.isString(x))) return false
-    return true
-  }
-
-  /**
-   * Returns true if input is an array of numbers
-   * @param {*} v
-   * @return {boolean}
-   */
-  static isNumberArray (v) {
-    if (!Array.isArray(v)) return false
-    if (v.length === 0) return false
-    if (!v.every(x => this.isNumber(x))) return false
-    return true
-  }
-
-  /**
-   * Returns true if input is an array of Score objects
-   * @see {@link Score}
-   * @param {*} v
-   * @return {boolean}
-   */
-  static isScoreArray (v) {
-    if (!Array.isArray(v)) return false
-    if (v.length === 0) return false
-    if (!(v.every(a => a instanceof Score))) return false
-    return true
-  }
-
-  /**
-   * Returns true if input is an array of User objects
-   * @see {@link User}
-   * @param {*} v
-   * @return {boolean}
-   */
-  static isUserArray (v) {
-    if (!Array.isArray(v)) return false
-    if (v.length === 0) return false
-    if (!(v.every(a => a instanceof User))) return false
-    return true
   }
 
   /**
@@ -147,12 +62,26 @@ export default class Utils {
   static isValidHttpUrl (v) {
     if (!this.isString(v)) return false
     let url
-    try {
-      url = new URL(v)
-    } catch (_) {
-      return false
-    }
+    try { url = new URL(v) } catch (_) { return false }
     return url.protocol === 'http:' || url.protocol === 'https:'
+  }
+
+  /**
+   * Returns true if input is a valid osu! user rank
+   * @param {*} v
+   * @return {boolean}
+   */
+  static isValidRank (v) {
+    return (this.isPositiveNumericString(v) || v === 'null')
+  }
+
+  /**
+   * Returns true if input is a valid osu! score accuracy
+   * @param {*} v
+   * @return {boolean}
+   */
+  static isValidAccuracyString (v) {
+    return (this.isNumericString(v) && parseInt(v) >= 0 && parseInt(v) <= 100)
   }
 
   /**
@@ -203,6 +132,68 @@ export default class Utils {
   }
 
   /**
+   * Returns true if input is an array of numbers
+   * @param {*} v
+   * @return {boolean}
+   */
+  static isNumberArray (v) {
+    if (!Array.isArray(v)) return false
+    if (v.length === 0) return false
+    if (!v.every(x => this.isNumber(x))) return false
+    return true
+  }
+
+  /**
+   * Returns true if input is an array of strings
+   * @param {*} v
+   * @return {boolean}
+   */
+  static isStringArray (v) {
+    if (!Array.isArray(v)) return false
+    if (v.length === 0) return false
+    if (!v.every(x => this.isString(x))) return false
+    return true
+  }
+
+  /**
+   * Returns true if input is an array of Score objects
+   * @see {@link Score}
+   * @param {*} v
+   * @return {boolean}
+   */
+  static isScoreArray (v) {
+    if (!Array.isArray(v)) return false
+    if (v.length === 0) return false
+    if (!(v.every(a => a instanceof Score))) return false
+    return true
+  }
+
+  /**
+   * Returns true if input is an array of User objects
+   * @see {@link User}
+   * @param {*} v
+   * @return {boolean}
+   */
+  static isUserArray (v) {
+    if (!Array.isArray(v)) return false
+    if (v.length === 0) return false
+    if (!(v.every(a => a instanceof User))) return false
+    return true
+  }
+
+  /**
+   * Returns true if input is a two-dimensional array
+   * @param {*} v
+   * @return {boolean}
+   */
+  static is2DArray (v) {
+    if (!Array.isArray(v)) return false
+    if (v.length === 0) return false
+    if (!v.every(a => Array.isArray(a))) return false
+    return true
+  }
+
+  /**
    * Pauses thread execution for given amount of time
    * @param {number} ms milliseconds
    * @return {Promise<void>}
@@ -211,8 +202,6 @@ export default class Utils {
    *  await Utils.sleep(1000)
    */
   static async sleep (ms) {
-    return new Promise(resolve => {
-      setTimeout(resolve, ms)
-    })
+    return new Promise(resolve => setTimeout(resolve, ms))
   }
 }

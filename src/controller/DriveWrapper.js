@@ -1,7 +1,8 @@
-import { google } from 'googleapis'
-import 'dotenv/config'
 import { ConstructorError } from './Errors.js'
 import Utils from './Utils.js'
+
+import 'dotenv/config'
+import { google } from 'googleapis'
 
 /**
  * Wrapper class for Google Drive API v3

@@ -1,12 +1,8 @@
 import Utils from './Utils.js'
 
-/**
- * MOR User object - Contains data from an osu! user used in MOR sheets
- */
+/** Contains data from an osu! user used in MOR sheets */
 export default class User {
-  /**
-   * First row of MOR sheet containing score data
-   */
+  /** First row of MOR sheet containing score data */
   static START_ROW = 2
 
   userId
@@ -87,14 +83,6 @@ export default class User {
   }
 
   /**
-   * Converts User fields to array
-   * @return {string[]}
-   */
-  toArray () {
-    return Object.values(this)
-  }
-
-  /**
    * Given the field name of a User object, returns associated MOR sheet column
    * @param {string} columnName User object field name
    * @throws {@link TypeError} if parameters are invalid
@@ -115,5 +103,13 @@ export default class User {
     else if (columnName === 'top25s') return 'L'
     else if (columnName === 'pfpLink') return 'M'
     else throw new TypeError(`columnName is not valid! Val=${columnName}`)
+  }
+
+  /**
+   * Converts User fields to array
+   * @return {string[]}
+   */
+  toArray () {
+    return Object.values(this)
   }
 }

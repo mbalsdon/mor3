@@ -1,15 +1,16 @@
+import Config from '../controller/Config.js'
+import MorFacade from '../controller/MorFacade.js'
+import Utils from '../controller/Utils.js'
+
+import calcModTopLBPlays from './CalcModTopLBPlays.js'
 import scrapeTopPlays from './ScrapeTopPlays.js'
 import updateUsers from './UpdateUsers.js'
-import calcModTopLBPlays from './CalcModTopLBPlays.js'
-import MorFacade from '../controller/MorFacade.js'
-import Config from '../controller/Config.js'
-import Utils from '../controller/Utils.js'
 
 /**
  * Runs cron/scheduled MOR job scripts,
  * sets the Last Updated tag on the MOR sheet,
  * then creates a backup file.
- * 
+ *
  * This is what you should run if you want to update the MOR spreadsheet.
  */
 export default async function runScheduledJobs () {

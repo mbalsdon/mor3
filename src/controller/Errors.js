@@ -1,8 +1,8 @@
 /**
- * Signifies an invalid mod string
- * @see {@link Mods}
+ * Signifies that an asynchronous constructor was used directly - use the class build function instead
+ * @see {@link MorFacade.build}
  */
-export class InvalidModsError extends Error {
+export class ConstructorError extends Error {
   constructor (message) {
     super(message)
     this.name = this.constructor.name
@@ -10,10 +10,10 @@ export class InvalidModsError extends Error {
 }
 
 /**
- * Signifies that an asynchronous constructor was used directly - use the class build function instead
- * @see {@link MorFacade.build}
+ * Signifies an invalid mod string
+ * @see {@link Mods}
  */
-export class ConstructorError extends Error {
+export class InvalidModsError extends Error {
   constructor (message) {
     super(message)
     this.name = this.constructor.name

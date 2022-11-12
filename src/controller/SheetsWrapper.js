@@ -1,7 +1,8 @@
-import { google } from 'googleapis'
-import 'dotenv/config'
-import Utils from './Utils.js'
 import { ConstructorError } from './Errors.js'
+import Utils from './Utils.js'
+
+import 'dotenv/config'
+import { google } from 'googleapis'
 
 /**
  * Wrapper class for Google Sheets API v4
@@ -59,48 +60,6 @@ export default class SheetsWrapper {
     const response = await this.#SHEETS_CLIENT.spreadsheets.get({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId
-    })
-    return response.data
-  }
-
-  /**
-   * Updates spreadsheet values in a given range
-   * @see {@link https://developers.google.com/sheets/api/reference/rest/v4/UpdateValuesResponse} (Google Sheets API v4 UpdateValuesResponse object)
-   * @param {string} spreadsheetId the ID of the spreadsheet
-   * @param {string[][]} values 2D array of values to update the range with
-   * @param {string} sheetName name of the sheet containing the range to update
-   * @param {string} startCell first cell of the range to update
-   * @param {string} endCell last cell of the range to update
-   * @param {('RAW'|'USER_ENTERED')} valueInputOption whether to paste values raw or as if a user manually entered them (thus formatting the values)
-   * @throws {@link TypeError} if parameters are invalid
-   * @return {Promise<*>} Google Sheets API v4 UpdateValuesResponse object
-   * @example
-   *  const sheets = await SheetsWrapper.build()
-   *  const reponse = await sheets.updateRange(
-   *    '1K3AwhYhTViLFT6PTLzprTykzcLAa1CoumWL7-hSmBQM',
-   *    [['hello', 'world', ''], ['1', '2', '3']],
-   *    'Sheet5',
-   *    'A1',
-   *    'C2',
-   *    'RAW'
-   *  )
-   */
-  async updateRange (spreadsheetId, values, sheetName, startCell, endCell, valueInputOption = 'RAW') {
-    console.info(`SheetsWrapper::updateCells (${spreadsheetId}, ${values}, ${sheetName}, ${startCell}, ${endCell})`) // TODO: replace
-    if (!Utils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
-    if (!Utils.is2DArray(values)) throw new TypeError(`values must be a 2D array! Val=${values}`)
-    if (!Utils.isString(sheetName)) throw new TypeError(`sheetName must be a string! Val=${sheetName}`)
-    if (!Utils.isValidCell(startCell)) throw new TypeError(`startCell must be a valid cell! Val=${startCell}`)
-    if (!Utils.isValidCell(endCell)) throw new TypeError(`endCell must be a valid cell! Val=${endCell}`)
-    if (valueInputOption !== 'RAW' && valueInputOption !== 'USER_ENTERED') throw new TypeError(`valueInputOption must be one of 'RAW' or 'USER_ENTERED'! Val=${valueInputOption}`)
-    const response = await this.#SHEETS_CLIENT.spreadsheets.values.update({
-      auth: SheetsWrapper.#AUTH,
-      spreadsheetId,
-      range: `${sheetName}!${startCell}:${endCell}`,
-      valueInputOption,
-      resource: {
-        values
-      }
     })
     return response.data
   }
@@ -187,6 +146,90 @@ export default class SheetsWrapper {
   }
 
   /**
+   * Updates spreadsheet values in a given range
+   * @see {@link https://developers.google.com/sheets/api/reference/rest/v4/UpdateValuesResponse} (Google Sheets API v4 UpdateValuesResponse object)
+   * @param {string} spreadsheetId the ID of the spreadsheet
+   * @param {string[][]} values 2D array of values to update the range with
+   * @param {string} sheetName name of the sheet containing the range to update
+   * @param {string} startCell first cell of the range to update
+   * @param {string} endCell last cell of the range to update
+   * @param {('RAW'|'USER_ENTERED')} valueInputOption whether to paste values raw or as if a user manually entered them (thus formatting the values)
+   * @throws {@link TypeError} if parameters are invalid
+   * @return {Promise<*>} Google Sheets API v4 UpdateValuesResponse object
+   * @example
+   *  const sheets = await SheetsWrapper.build()
+   *  const reponse = await sheets.updateRange(
+   *    '1K3AwhYhTViLFT6PTLzprTykzcLAa1CoumWL7-hSmBQM',
+   *    [['hello', 'world', ''], ['1', '2', '3']],
+   *    'Sheet5',
+   *    'A1',
+   *    'C2',
+   *    'RAW'
+   *  )
+   */
+  async updateRange (spreadsheetId, values, sheetName, startCell, endCell, valueInputOption = 'RAW') {
+    console.info(`SheetsWrapper::updateCells (${spreadsheetId}, ${values}, ${sheetName}, ${startCell}, ${endCell})`) // TODO: replace
+    if (!Utils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
+    if (!Utils.is2DArray(values)) throw new TypeError(`values must be a 2D array! Val=${values}`)
+    if (!Utils.isString(sheetName)) throw new TypeError(`sheetName must be a string! Val=${sheetName}`)
+    if (!Utils.isValidCell(startCell)) throw new TypeError(`startCell must be a valid cell! Val=${startCell}`)
+    if (!Utils.isValidCell(endCell)) throw new TypeError(`endCell must be a valid cell! Val=${endCell}`)
+    if (valueInputOption !== 'RAW' && valueInputOption !== 'USER_ENTERED') throw new TypeError(`valueInputOption must be one of 'RAW' or 'USER_ENTERED'! Val=${valueInputOption}`)
+    const response = await this.#SHEETS_CLIENT.spreadsheets.values.update({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId,
+      range: `${sheetName}!${startCell}:${endCell}`,
+      valueInputOption,
+      resource: {
+        values
+      }
+    })
+    return response.data
+  }
+
+  /**
+   * Inserts range of empty rows/column into sheet
+   * @see {@link https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/batchUpdate} (Google Sheets API v4 batchUpdate Response object)
+   * @param {string} spreadsheetId the ID of the spreadsheet
+   * @param {string} sheetId the ID of the sheet
+   * @param {('ROWS'|'COLUMNS')} dimension whether to insert rows or columns into the sheet
+   * @param {number} startIndex index of the first row/column to insert at
+   * @param {number} endIndex index of the last row/column to insert at
+   * @throws {@link TypeError} if parameters are invalid
+   * @return {Promise<*>} Google Sheets API v4 batchUpdate Response object
+   * @example
+   *  const sheets = await SheetsWrapper.build()
+   *  await sheets.insertDimension(
+   *    '1K3AwhYhTViLFT6PTLzprTykzcLAa1CoumWL7-hSmBQM',
+   *    '521109209',
+   *    'COLUMNS',
+   *    7,
+   *    8
+   *  )
+   */
+  async insertDimension (spreadsheetId, sheetId, dimension, startIndex, endIndex) {
+    console.info(`SheetsWrapper::insertDimension (${spreadsheetId}, ${sheetId}, ${dimension}, ${startIndex}, ${endIndex})`) // TODO: replace
+    if (!Utils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
+    if (!Utils.isString(sheetId)) throw new TypeError(`sheetId must be a string! Val=${sheetId}`)
+    if (dimension !== 'ROWS' && dimension !== 'COLUMNS') throw new TypeError(`dimension must be one of 'ROWS' or 'COLUMNS'! Val=${dimension}`)
+    if (!Utils.isNumber(startIndex)) throw new TypeError(`startIndex must be a number! Val=${startIndex}`)
+    if (!Utils.isNumber(endIndex)) throw new TypeError(`endIndex must be a number! Val=${endIndex}`)
+    const resource = {
+      requests: [{
+        insertDimension: {
+          range: { sheetId, dimension, startIndex, endIndex }
+        }
+      }]
+    }
+    const response = await this.#SHEETS_CLIENT.spreadsheets.batchUpdate({
+      auth: SheetsWrapper.#AUTH,
+      spreadsheetId,
+      resource
+    })
+    return response.data
+  }
+
+  /**
    * Deletes specified range of rows/columns from given sheet
    * @see {@link https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/batchUpdate} (Google Sheets API v4 batchUpdate Response object)
    * @param {string} spreadsheetId the ID of the spreadsheet
@@ -267,48 +310,6 @@ export default class SheetsWrapper {
       })
     }
     const resource = { requests }
-    const response = await this.#SHEETS_CLIENT.spreadsheets.batchUpdate({
-      auth: SheetsWrapper.#AUTH,
-      spreadsheetId,
-      resource
-    })
-    return response.data
-  }
-
-  /**
-   * Inserts range of empty rows/column into sheet
-   * @see {@link https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/batchUpdate} (Google Sheets API v4 batchUpdate Response object)
-   * @param {string} spreadsheetId the ID of the spreadsheet
-   * @param {string} sheetId the ID of the sheet
-   * @param {('ROWS'|'COLUMNS')} dimension whether to insert rows or columns into the sheet
-   * @param {number} startIndex index of the first row/column to insert at
-   * @param {number} endIndex index of the last row/column to insert at
-   * @throws {@link TypeError} if parameters are invalid
-   * @return {Promise<*>} Google Sheets API v4 batchUpdate Response object
-   * @example
-   *  const sheets = await SheetsWrapper.build()
-   *  await sheets.insertDimension(
-   *    '1K3AwhYhTViLFT6PTLzprTykzcLAa1CoumWL7-hSmBQM',
-   *    '521109209',
-   *    'COLUMNS',
-   *    7,
-   *    8
-   *  )
-   */
-  async insertDimension (spreadsheetId, sheetId, dimension, startIndex, endIndex) {
-    console.info(`SheetsWrapper::insertDimension (${spreadsheetId}, ${sheetId}, ${dimension}, ${startIndex}, ${endIndex})`) // TODO: replace
-    if (!Utils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
-    if (!Utils.isString(sheetId)) throw new TypeError(`sheetId must be a string! Val=${sheetId}`)
-    if (dimension !== 'ROWS' && dimension !== 'COLUMNS') throw new TypeError(`dimension must be one of 'ROWS' or 'COLUMNS'! Val=${dimension}`)
-    if (!Utils.isNumber(startIndex)) throw new TypeError(`startIndex must be a number! Val=${startIndex}`)
-    if (!Utils.isNumber(endIndex)) throw new TypeError(`endIndex must be a number! Val=${endIndex}`)
-    const resource = {
-      requests: [{
-        insertDimension: {
-          range: { sheetId, dimension, startIndex, endIndex }
-        }
-      }]
-    }
     const response = await this.#SHEETS_CLIENT.spreadsheets.batchUpdate({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId,

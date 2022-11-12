@@ -1,14 +1,10 @@
 import Utils from './Utils.js'
 
-/**
- * Mods - Enumerates valid MOR mod strings and provides some useful functions for them
- */
+/** Enumerates valid MOR mod strings and provides some useful functions for them */
 export default class Mods {
-  /**
-   * Submitted Scores -
-   * This is not an osu! mod but the MorFacade client uses it to interface with the Submitted Scores sheet
-   */
+  /** Submitted Scores - This is not an osu! mod but the MorFacade client uses it to interface with the Submitted Scores sheet */
   static SS = 'SS'
+
   static NM = 'NM'
   static DT = 'DT'
   static HR = 'HR'
@@ -50,6 +46,15 @@ export default class Mods {
   static HDHRHTFL = 'HDHRHTFL'
 
   /**
+     * Returns array of all valid MOR mod strings
+     * @see {@link MorFacade.getSheetScores}
+     * @return {string[]} array of valid mod strings
+     */
+  static validModStrings () {
+    return Object.keys(Mods)
+  }
+
+  /**
    * Returns true if the input mod string is valid, false if not
    * @see {@link MorFacade.getSheetScores}
    * @param {string} modString MOR mod string
@@ -57,15 +62,6 @@ export default class Mods {
    */
   static isValidModString (modString) {
     return Object.keys(Mods).includes(modString)
-  }
-
-  /**
-   * Returns array of all valid MOR mod strings
-   * @see {@link MorFacade.getSheetScores}
-   * @return {string[]} array of valid mod strings
-   */
-  static validModStrings () {
-    return Object.keys(Mods)
   }
 
   /**

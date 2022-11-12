@@ -1,17 +1,18 @@
-import 'dotenv/config'
-import fetch from 'node-fetch'
 import { NotFoundError, ConstructorError } from './Errors.js'
 import Utils from './Utils.js'
+
+import 'dotenv/config'
+import fetch from 'node-fetch'
 
 /**
  * Wrapper class for osu!API v2
  * @see {@link https://osu.ppy.sh/docs/}
  */
 export default class OsuWrapper {
-  #TOKEN
-
   static #API_URL = 'https://osu.ppy.sh/api/v2'
   static #TOKEN_URL = 'https://osu.ppy.sh/oauth/token'
+
+  #TOKEN
 
   /**
    * @return standard osu!API v2 headers object
