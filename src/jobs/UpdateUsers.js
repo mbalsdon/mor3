@@ -54,7 +54,7 @@ export default async function updateUsers () {
         else throw new RangeError(`i = ${i} - This should never happen!`)
       }
     }
-    updatedUsers.push(new MorUser(
+    updatedUsers.push(new MorUser([
       user.userId,
       user.username,
       user.globalRank,
@@ -68,7 +68,7 @@ export default async function updateUsers () {
       top10s.toString(),
       top25s.toString(),
       user.pfpLink
-    ))
+    ]))
   }
   console.info('::updateUsers () >> Updating the sheet...') // TODO: replace
   updatedUsers.sort((a, b) => { return parseInt(b.pp) - parseInt(a.pp) })

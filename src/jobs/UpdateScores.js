@@ -62,7 +62,7 @@ export default async function updateScores () {
     console.info('::updateScores () >> Grabbing updated scores from cache...') // TODO: replace
     const updatedCache = JSON.parse(fs.readFileSync(MorConfig.UPDATE_SCORES_CACHE))
     const updatedScores = updatedCache.scores.map(s => {
-      return new MorScore(s.scoreId, s.userId, s.username, s.beatmap, s.mods, s.accuracy, s.pp, s.starRating, s.date, s.beatmapImgLink)
+      return new MorScore([s.scoreId, s.userId, s.username, s.beatmap, s.mods, s.accuracy, s.pp, s.starRating, s.date, s.beatmapImgLink])
     })
     if (mods !== Mods.SS) updatedScores.sort((a, b) => { return parseInt(b.pp) - parseInt(a.pp) })
     console.info('::updateScores() >> Updating sheet and resetting cache...') // TODO: replace

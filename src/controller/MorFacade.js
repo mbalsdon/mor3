@@ -64,14 +64,16 @@ export default class MorFacade {
   async getOsuUser (username, searchParam = 'username') {
     console.info(`MorFacade::getOsuUser (${username})`) // TODO: replace
     const response = await this.#OSU.getUser(username, searchParam)
-    return new MorUser(response.id.toString(),
+    return new MorUser([
+      response.id.toString(),
       response.username,
       String(response.statistics.global_rank),
       response.statistics.pp === null ? '0' : response.statistics.pp.toFixed(3),
       response.statistics.hit_accuracy.toFixed(2),
       Math.round(response.statistics.play_time / 3600).toString(),
       '-1', '-1', '-1', '-1', '-1', '-1',
-      response.avatar_url)
+      response.avatar_url
+    ])
   }
 
   /**
@@ -86,7 +88,7 @@ export default class MorFacade {
   async getOsuScore (scoreId) {
     console.info(`MorFacade::getOsuScore (${scoreId})`) // TODO: replace
     const data = await this.#OSU.getScore(scoreId)
-    return new MorScore(
+    return new MorScore([
       data.id.toString(),
       data.user.id.toString(),
       data.user.username,
@@ -97,7 +99,7 @@ export default class MorFacade {
           data.beatmap.difficulty_rating.toFixed(2),
           data.created_at.replace('Z', '+00:00'),
           data.beatmapset.covers['list@2x']
-    )
+    ])
   }
 
   /**
@@ -115,7 +117,7 @@ export default class MorFacade {
     const scores = await this.#OSU.getUserPlays(userId, type)
     const ret = []
     for (const score of scores) {
-      ret.push(new MorScore(
+      ret.push(new MorScore([
         score.id.toString(),
         score.user.id.toString(),
         score.user.username,
@@ -126,7 +128,7 @@ export default class MorFacade {
         score.beatmap.difficulty_rating.toFixed(2),
         score.created_at.replace('Z', '+00:00'),
         score.beatmapset.covers['list@2x']
-      ))
+      ]))
     }
     return ret
   }
@@ -213,8 +215,8 @@ export default class MorFacade {
         'FORMATTED_VALUE',
         'ROWS'
       )
-      const u = response.values[0]
-      return new MorUser(u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13])
+      const userArray = response.values[0]
+      return new MorUser(userArray)
     } else {
       throw new NotFoundError(`${MorConfig.SHEETS.SPREADSHEET.NAME} sheet search returned no results! username=${username}`)
     }
@@ -239,9 +241,9 @@ export default class MorFacade {
       'ROWS'
     )
     const ret = []
-    response.values.slice(1).forEach(a => {
-      const u = new MorUser(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11], a[12], a[13])
-      ret.push(u)
+    response.values.slice(1).forEach(v => {
+      const user = new MorUser(v)
+      ret.push(user)
     })
     return ret
   }
@@ -314,7 +316,7 @@ export default class MorFacade {
     )
     const ret = []
     response.values.slice(1).forEach(a => {
-      const s = new MorScore(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9])
+      const s = new MorScore(a)
       ret.push(s)
     })
     return ret

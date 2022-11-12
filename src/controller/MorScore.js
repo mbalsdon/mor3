@@ -18,18 +18,30 @@ export default class MorScore {
 
   /**
    * Constructs a MOR Score object
-   * @param {string} scoreId ID of the score
-   * @param {string} userId ID of the user who set the score
-   * @param {string} username username of the user who set the score
-   * @param {string} beatmap beatmap of the score
-   * @param {string} mods mods of the score
-   * @param {string} accuracy accuracy of the score
-   * @param {string} pp pp of the score
-   * @param {string} starRating star rating of the score's map
-   * @param {string} date date the score was set on
-   * @param {string} beatmapImgLink beatmap image URL of the score
+   * @param {string[]} values Array of strings containing the following values:
+   *    
+   *    values[0] - scoreId (string): ID of the score
+   *    
+   *    values[1] - userId (string): ID of the user who set the score
+   *    
+   *    values[2] - username (string): username of the user who set the score
+   *    
+   *    values[3] - beatmap (string): beatmap of the score
+   *    
+   *    values[4] - mods (string): mods of the score
+   *    
+   *    values[5] - accuracy (string): accuracy of the score
+   *    
+   *    values[6] - pp (string): pp of the score
+   *    
+   *    values[7] - starRating (string): star rating of the score's map
+   *    
+   *    values[8] - date (string): date the score was set on
+   *    
+   *    values[9] - beatmapImgLink (string): beatmap image URL of the score
+   * 
    * @example
-   *  const myScore = new Score(
+   *  const myScore = new Score([
    *    '2283307549',
    *    '124493',
    *    'Cookiezi',
@@ -40,30 +52,30 @@ export default class MorScore {
    *    '7.26',
    *    '2022-07-27T07:27:27+00:00',
    *    'https://assets.ppy.sh/beatmaps/292301/covers/list@2x.jpg?1650630372'
-   *  )
+   *  ])
    */
-  constructor (scoreId, userId, username, beatmap, mods, accuracy, pp, starRating, date, beatmapImgLink) {
-    if (!MorUtils.isPositiveNumericString(scoreId)) throw new TypeError(`scoreId must be a positive number string! Val=${scoreId}`)
-    else if (!MorUtils.isPositiveNumericString(userId)) throw new TypeError(`userId must be a positive number string! Val= ${userId}`)
-    else if (!MorUtils.isString(username)) throw new TypeError(`username must be a string! Val=${username}`)
-    else if (!MorUtils.isValidBeatmapString(beatmap)) throw new TypeError(`beatmap must be a valid beatmap string! Val=${beatmap}`)
-    else if (!MorUtils.isString(mods)) throw new TypeError(`mods must be a string! Val=${mods}`)
-    else if (!MorUtils.isValidAccuracyString(accuracy)) throw new TypeError(`accuracy must be a valid accuracy string! Val=${accuracy}`)
-    else if (!MorUtils.isNonNegativeNumericString(pp)) throw new TypeError(`pp must be a a non-negative number string! Val=${pp}`)
-    else if (!MorUtils.isPositiveNumericString(starRating)) throw new TypeError(`starRating must be a positive number string! Val=${starRating}`)
-    else if (!MorUtils.isValidDate(date)) throw new TypeError(`date must be a valid date string! Val=${date}`)
-    else if (!MorUtils.isValidHttpUrl(beatmapImgLink)) throw new TypeError(`beatmapImgLink must be a valid HTTP URL string! Val=${beatmapImgLink}`)
+  constructor (values) {
+    if (!MorUtils.isPositiveNumericString(values[0])) throw new TypeError(`scoreId must be a positive number string! Val=${values[0]}`)
+    else if (!MorUtils.isPositiveNumericString(values[1])) throw new TypeError(`userId must be a positive number string! Val= ${values[1]}`)
+    else if (!MorUtils.isString(values[2])) throw new TypeError(`username must be a string! Val=${values[2]}`)
+    else if (!MorUtils.isValidBeatmapString(values[3])) throw new TypeError(`beatmap must be a valid beatmap string! Val=${values[3]}`)
+    else if (!MorUtils.isString(values[4])) throw new TypeError(`mods must be a string! Val=${values[4]}`)
+    else if (!MorUtils.isValidAccuracyString(values[5])) throw new TypeError(`accuracy must be a valid accuracy string! Val=${values[5]}`)
+    else if (!MorUtils.isNonNegativeNumericString(values[6])) throw new TypeError(`pp must be a a non-negative number string! Val=${values[6]}`)
+    else if (!MorUtils.isPositiveNumericString(values[7])) throw new TypeError(`starRating must be a positive number string! Val=${values[7]}`)
+    else if (!MorUtils.isValidDate(values[8])) throw new TypeError(`date must be a valid date string! Val=${values[8]}`)
+    else if (!MorUtils.isValidHttpUrl(values[9])) throw new TypeError(`beatmapImgLink must be a valid HTTP URL string! Val=${values[9]}`)
     else {
-      this.scoreId = scoreId
-      this.userId = userId
-      this.username = username
-      this.beatmap = beatmap
-      this.mods = mods
-      this.accuracy = accuracy
-      this.pp = pp
-      this.starRating = starRating
-      this.date = date
-      this.beatmapImgLink = beatmapImgLink
+      this.scoreId = values[0]
+      this.userId = values[1]
+      this.username = values[2]
+      this.beatmap = values[3]
+      this.mods = values[4]
+      this.accuracy = values[5]
+      this.pp = values[6]
+      this.starRating = values[7]
+      this.date = values[8]
+      this.beatmapImgLink = values[9]
     }
   }
 

@@ -21,64 +21,74 @@ export default class MorUser {
 
   /**
    * Constructs a MOR User object
-   * @param {string} userId ID of the user
-   * @param {string} username username of the user
-   * @param {string} globalRank global rank of the user
-   * @param {string} pp profile pp of the user
-   * @param {string} accuracy profile accuracy of the user
-   * @param {string} playtime profile playtime of the user
-   * @param {string} top1s number of user's MOR sheet top 1s
-   * @param {string} top2s number of user's MOR sheet top 2s
-   * @param {string} top3s number of user's MOR sheet top 3s
-   * @param {string} top5s number of user's MOR sheet top 5s
-   * @param {string} top10s number of user's MOR sheet top 10s
-   * @param {string} top25s number of user's MOR sheet top 25s
-   * @param {string} pfpLink profile picture URL of the user
+   * @param {string[]} values Array of strings containing the following values:
+
+   *    values[0] - userId (string): ID of the user
+   * 
+   *    values[1] - username (string): username of the user
+   * 
+   *    values[2] - globalRank (string): global rank of the user
+   * 
+   *    values[3] - pp (string): profile pp of the user
+   * 
+   *    values[4] - accuracy (string): profile accuracy of the user
+   * 
+   *    values[5] - playtime (string): profile playtime of the user
+   * 
+   *    values[6] - top1s (string): number of user's MOR sheet top 1s
+   * 
+   *    values[7] - top2s (string): number of user's MOR sheet top 2s
+   * 
+   *    values[8] - top3s (string): number of user's MOR sheet top 3s
+   *
+   *    values[9] - top5s (string): number of user's MOR sheet top 5s
+   * 
+   *    values[10] - top10s (string): number of user's MOR sheet top 10s
+   * 
+   *    values[11] - top25s (string): number of user's MOR sheet top 25s
+   * 
+   *    values[12] - pfpLink (string): profile picture URL of the user
+   * 
    * @example
-   *  const myUser = new MorUser(
+   *  const myUser = new MorUser([
    *    '6385683',
    *    'spreadnuts',
    *    '1446',
    *    '10756.8',
    *    '98.95',
    *    '1470',
-   *    '1',
-   *    '2',
-   *    '1',
-   *    '1',
-   *    '5',
-   *    '13',
+   *    '1', '2', '1', '1', '5', '13',
    *    'https://a.ppy.sh/6385683?1660441648.jpeg'
-   *  )
+   *  ])
    */
-  constructor (userId, username, globalRank, pp, accuracy, playtime, top1s, top2s, top3s, top5s, top10s, top25s, pfpLink) {
-    if (!MorUtils.isPositiveNumericString(userId)) throw new TypeError(`userId must be a positive number string! Val=${userId}`)
-    else if (!MorUtils.isString(username)) throw new TypeError(`username must be a string! Val=${username}`)
-    else if (!MorUtils.isValidRank(globalRank)) throw new TypeError(`globalRank must be a valid rank string! Val=${globalRank}`)
-    else if (!MorUtils.isNonNegativeNumericString(pp)) throw new TypeError(`pp must be a a non-negative number string! Val=${pp}`)
-    else if (!MorUtils.isValidAccuracyString(accuracy)) throw new TypeError(`accuracy must be a valid accuracy string! Val=${accuracy}`)
-    else if (!MorUtils.isPositiveNumericString(playtime)) throw new TypeError(`playtime must be a positive number string! Val=${playtime}`)
-    else if (!MorUtils.isNumericString(top1s)) throw new TypeError(`top1s must be a number string! Val=${top1s}`)
-    else if (!MorUtils.isNumericString(top2s)) throw new TypeError(`top2s must be a number string! Val=${top2s}`)
-    else if (!MorUtils.isNumericString(top3s)) throw new TypeError(`top3s must be a number string! Val=${top3s}`)
-    else if (!MorUtils.isNumericString(top5s)) throw new TypeError(`top5s must be a number string! Val=${top5s}`)
-    else if (!MorUtils.isNumericString(top10s)) throw new TypeError(`top10s must be a number string! Val=${top10s}`)
-    else if (!MorUtils.isNumericString(top25s)) throw new TypeError(`top25s must be a number string! Val=${top25s}`)
-    else if (!MorUtils.isValidHttpUrl(pfpLink)) throw new TypeError(`pfpLink must be a valid HTTP URL string! Val=${pfpLink}`)
+  constructor (values) {
+    if (!MorUtils.isPositiveNumericString(values[0])) throw new TypeError(`userId must be a positive number string! Val=${values[0]}`)
+    else if (!MorUtils.isString(values[1])) throw new TypeError(`username must be a string! Val=${values[1]}`)
+    else if (!MorUtils.isValidRank(values[2])) throw new TypeError(`globalRank must be a valid rank string! Val=${values[2]}`)
+    else if (!MorUtils.isNonNegativeNumericString(values[3])) throw new TypeError(`pp must be a a non-negative number string! Val=${values[3]}`)
+    else if (!MorUtils.isValidAccuracyString(values[4])) throw new TypeError(`accuracy must be a valid accuracy string! Val=${values[4]}`)
+    else if (!MorUtils.isPositiveNumericString(values[5])) throw new TypeError(`playtime must be a positive number string! Val=${values[5]}`)
+    else if (!MorUtils.isNumericString(values[6])) throw new TypeError(`top1s must be a number string! Val=${values[6]}`)
+    else if (!MorUtils.isNumericString(values[7])) throw new TypeError(`top2s must be a number string! Val=${values[7]}`)
+    else if (!MorUtils.isNumericString(values[8])) throw new TypeError(`top3s must be a number string! Val=${values[8]}`)
+    else if (!MorUtils.isNumericString(values[9])) throw new TypeError(`top5s must be a number string! Val=${values[9]}`)
+    else if (!MorUtils.isNumericString(values[10])) throw new TypeError(`top10s must be a number string! Val=${values[10]}`)
+    else if (!MorUtils.isNumericString(values[11])) throw new TypeError(`top25s must be a number string! Val=${values[11]}`)
+    else if (!MorUtils.isValidHttpUrl(values[12])) throw new TypeError(`pfpLink must be a valid HTTP URL string! Val=${values[12]}`)
     else {
-      this.userId = userId
-      this.username = username
-      this.globalRank = globalRank
-      this.pp = pp
-      this.accuracy = accuracy
-      this.playtime = playtime
-      this.top1s = top1s
-      this.top2s = top2s
-      this.top3s = top3s
-      this.top5s = top5s
-      this.top10s = top10s
-      this.top25s = top25s
-      this.pfpLink = pfpLink
+      this.userId = values[0]
+      this.username = values[1]
+      this.globalRank = values[2]
+      this.pp = values[3]
+      this.accuracy = values[4]
+      this.playtime = values[5]
+      this.top1s = values[6]
+      this.top2s = values[7]
+      this.top3s = values[8]
+      this.top5s = values[9]
+      this.top10s = values[10]
+      this.top25s = values[11]
+      this.pfpLink = values[12]
     }
   }
 
