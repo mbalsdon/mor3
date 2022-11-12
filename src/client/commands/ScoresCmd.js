@@ -2,6 +2,7 @@ import MorConfig from '../../controller/MorConfig.js'
 import { SheetEmptyError } from '../../controller/MorErrors.js'
 
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js'
+import MorUtils from '../../controller/MorUtils.js'
 
 /**
  * Replies with a list of MOR scores
@@ -36,13 +37,7 @@ export default async function scoresCmd (facade, client, interaction) {
       for (let i = 0; i < lim; i++) {
         const pageIndex = perPage * (page - 1) + i
         const s = scores[pageIndex]
-        let medalEmoji = ':skull:' // TODO: MorUtils medalEmoji
-        if (pageIndex <= 24) medalEmoji = ':small_orange_diamond:'
-        if (pageIndex <= 9) medalEmoji = ':military_medal:'
-        if (pageIndex <= 4) medalEmoji = ':medal:'
-        if (pageIndex === 2) medalEmoji = ':third_place:'
-        if (pageIndex === 1) medalEmoji = ':second_place:'
-        if (pageIndex === 0) medalEmoji = ':first_place:'
+        let medalEmoji = MorUtils.medalEmoji(pageIndex)
         const scoreStr = `**${pageIndex + 1}. [${s.beatmap}](https://osu.ppy.sh/scores/osu/${s.scoreId}) +${s.mods}** [${s.starRating}★]\n` +
               `▸ ${medalEmoji} ▸ **${s.pp}pp** ▸ ${s.accuracy}%\n` +
               `▸ Set by [${s.username}](https://osu.ppy.sh/users/${s.userId}) on ${s.date}\n`

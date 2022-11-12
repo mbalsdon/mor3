@@ -194,6 +194,22 @@ export default class MorUtils {
   }
 
   /**
+   * Returns Discord emoji based on some arbitrary ranking
+   * @param {number} rank 
+   * @return {string}
+   */
+  static medalEmoji (rank) {
+    let medalEmoji = ':skull:'
+    if (rank <= 24) medalEmoji = ':small_orange_diamond:'
+    if (rank <= 9) medalEmoji = ':military_medal:'
+    if (rank <= 4) medalEmoji = ':medal:'
+    if (rank === 2) medalEmoji = ':third_place:'
+    if (rank === 1) medalEmoji = ':second_place:'
+    if (rank === 0) medalEmoji = ':first_place:'
+    return medalEmoji
+  }
+
+  /**
    * Pauses thread execution for given amount of time
    * @param {number} ms milliseconds
    * @return {Promise<void>}
