@@ -1,5 +1,5 @@
-import { NotFoundError, ConstructorError } from './Errors.js'
-import Utils from './Utils.js'
+import { NotFoundError, ConstructorError } from './MorErrors.js'
+import MorUtils from './MorUtils.js'
 
 import 'dotenv/config'
 import fetch from 'node-fetch'
@@ -82,7 +82,7 @@ export default class OsuWrapper {
    */
   async getUser (user, searchParam = 'username') {
     console.info(`OsuWrapper::getUser (${user}, ${searchParam})`) // TODO: replace
-    if (!Utils.isString(user)) throw new TypeError(`user must be a string! Val=${user}`)
+    if (!MorUtils.isString(user)) throw new TypeError(`user must be a string! Val=${user}`)
     if (searchParam !== 'username' && searchParam !== 'id') throw new TypeError(`searchParam must be one of 'id' or 'username'! Val=${searchParam}`)
     const url = new URL(`${OsuWrapper.#API_URL}/users/${user}/osu`)
     const params = { key: searchParam }
@@ -100,7 +100,7 @@ export default class OsuWrapper {
   /**
    * Retrieves osu! score data from osu!API v2
    * @see {@link https://osu.ppy.sh/docs/index.html#score} (osu!API v2 Score object)
-   * @param {number} scoreId
+   * @param {string} scoreId
    * @throws {@link TypeError} if parameters are invalid
    * @throws {@link NotFoundError} if score could not be found
    * @return {Promise<*>} osu!API v2 Score object
@@ -111,7 +111,7 @@ export default class OsuWrapper {
    */
   async getScore (scoreId) {
     console.info(`OsuWrapper::getScore (${scoreId})`) // TODO: replace
-    if (!Utils.isPositiveNumericString(scoreId)) throw new TypeError(`scoreId must be a positive number string! Val=${scoreId}`)
+    if (!MorUtils.isPositiveNumericString(scoreId)) throw new TypeError(`scoreId must be a positive number string! Val=${scoreId}`)
     const url = new URL(`${OsuWrapper.#API_URL}/scores/osu/${scoreId}`)
     const params = { key: 'id' }
     Object.keys(params).forEach((key) => url.searchParams.append(key, params[key]))
@@ -128,7 +128,7 @@ export default class OsuWrapper {
   /**
    * Retrieves osu! user's top plays/firsts from osu!API v2
    * @see {@link https://osu.ppy.sh/docs/index.html#score} (osu!API v2 Score object)
-   * @param {number} userId user's ID
+   * @param {string} userId user's ID
    * @param {('best'|'firsts')} type whether to fetch the user's top plays or firsts
    * @throws {@link TypeError} if parameters are invalid
    * @throws {@link NotFoundError} if user could not be found
@@ -140,7 +140,7 @@ export default class OsuWrapper {
    */
   async getUserPlays (userId, type = 'best') {
     console.info(`OsuWrapper::getUserPlays (${userId}, ${type})`) // TODO: replace
-    if (!Utils.isPositiveNumericString(userId)) throw new TypeError(`userId must be a positive number string! Val=${userId}`)
+    if (!MorUtils.isPositiveNumericString(userId)) throw new TypeError(`userId must be a positive number string! Val=${userId}`)
     if (type !== 'best' && type !== 'firsts') throw new TypeError(`type must be one of 'best' or 'firsts'! Val=${type}`)
     const url = new URL(`${OsuWrapper.#API_URL}/users/${userId}/scores/${type}`)
     const params = {

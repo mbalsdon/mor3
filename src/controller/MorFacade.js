@@ -1,12 +1,12 @@
-import Config from './Config.js'
+import MorConfig from './MorConfig.js'
 import DriveWrapper from './DriveWrapper.js'
-import { AlreadyExistsError, ConstructorError, InvalidModsError, NotFoundError } from './Errors.js'
+import { AlreadyExistsError, ConstructorError, InvalidModsError, NotFoundError } from './MorErrors.js'
 import Mods from './Mods.js'
 import OsuWrapper from './OsuWrapper.js'
-import Score from './Score.js'
+import MorScore from './MorScore.js'
 import SheetsWrapper from './SheetsWrapper.js'
-import User from './User.js'
-import Utils from './Utils.js'
+import MorUser from './MorUser.js'
+import MorUtils from './MorUtils.js'
 
 import 'dotenv/config'
 
@@ -55,7 +55,7 @@ export default class MorFacade {
    * Retrieves osu! user data from osu!API v2; makes up to 1 osu!API request
    * @param {string} user user's name if searchParam is 'username', user's ID if searchParam is 'id'
    * @param {('username'|'id')} searchParam whether to query the API by username or user ID
-   * @return {Promise<User>} User object
+   * @return {Promise<MorUser>} MorUser object
    * @example
    *  const mor = await MorFacade.build()
    *  const user = await mor.getOsuUser('6385683', 'id')
@@ -64,7 +64,7 @@ export default class MorFacade {
   async getOsuUser (username, searchParam = 'username') {
     console.info(`MorFacade::getOsuUser (${username})`) // TODO: replace
     const response = await this.#OSU.getUser(username, searchParam)
-    return new User(response.id.toString(),
+    return new MorUser(response.id.toString(),
       response.username,
       String(response.statistics.global_rank),
       response.statistics.pp === null ? '0' : response.statistics.pp.toFixed(3),
@@ -76,8 +76,8 @@ export default class MorFacade {
 
   /**
    * Retrieves osu! score; makes up to 1 osu!API request
-   * @param {number} scoreId ID of the score
-   * @return {Promise<Score>} Score object
+   * @param {string} scoreId ID of the score
+   * @return {Promise<MorScore>} MorScore object
    * @example
    *  const mor = await MorFacade.build()
    *  const score = await osu.getScore('4083979228')
@@ -86,7 +86,7 @@ export default class MorFacade {
   async getOsuScore (scoreId) {
     console.info(`MorFacade::getOsuScore (${scoreId})`) // TODO: replace
     const data = await this.#OSU.getScore(scoreId)
-    return new Score(
+    return new MorScore(
       data.id.toString(),
       data.user.id.toString(),
       data.user.username,
@@ -102,9 +102,9 @@ export default class MorFacade {
 
   /**
    * Retrieves osu! user's top plays/firsts from osu!API v2; makes up to 1 osu!API request
-   * @param {number} userId user's ID
+   * @param {string} userId user's ID
    * @param {('best'|'firsts')} type whether to fetch the user's top plays or firsts
-   * @return {Promise<Score[]>} array of Score objects
+   * @return {Promise<MorScore[]>} array of MorScore objects
    * @example
    *  const mor = await MorFacade.build()
    *  const myFirsts = await mor.getOsuUserScores('6385683', 'firsts')
@@ -115,7 +115,7 @@ export default class MorFacade {
     const scores = await this.#OSU.getUserPlays(userId, type)
     const ret = []
     for (const score of scores) {
-      ret.push(new Score(
+      ret.push(new MorScore(
         score.id.toString(),
         score.user.id.toString(),
         score.user.username,
@@ -142,7 +142,7 @@ export default class MorFacade {
    */
   async getSheetMetadata () {
     console.info('MorFacade::getSheetMetadata ()') // TODO: replace
-    const response = await this.#SHEETS.getMetadata(Config.SHEETS.SPREADSHEET.ID)
+    const response = await this.#SHEETS.getMetadata(MorConfig.SHEETS.SPREADSHEET.ID)
     return response
   }
 
@@ -157,10 +157,10 @@ export default class MorFacade {
   async getSheetLastUpdated () {
     console.info('MorFacade::getSheetLastUpdated ()') // TODO: replace
     const response = await this.#SHEETS.getRange(
-      Config.SHEETS.SPREADSHEET.ID,
-      Config.SHEETS.MAIN.NAME,
-      Config.LAST_UPDATE_CELL,
-      Config.LAST_UPDATE_CELL,
+      MorConfig.SHEETS.SPREADSHEET.ID,
+      MorConfig.SHEETS.MAIN.NAME,
+      MorConfig.LAST_UPDATE_CELL,
+      MorConfig.LAST_UPDATE_CELL,
       'FORMATTED_VALUE',
       'ROWS')
     return response.values[0][0]
@@ -178,13 +178,13 @@ export default class MorFacade {
    */
   async setSheetLastUpdated (date) {
     console.info(`MorFacade::setSheetLastUpdated (${date})`) // TODO: replace
-    if (!Utils.isValidDate(date)) throw new TypeError(`date must be a valid date string! Val=${date}`)
+    if (!MorUtils.isValidDate(date)) throw new TypeError(`date must be a valid date string! Val=${date}`)
     const response = await this.#SHEETS.updateRange(
-      Config.SHEETS.SPREADSHEET.ID,
+      MorConfig.SHEETS.SPREADSHEET.ID,
       [[date]],
-      Config.SHEETS.MAIN.NAME,
-      Config.LAST_UPDATE_CELL,
-      Config.LAST_UPDATE_CELL,
+      MorConfig.SHEETS.MAIN.NAME,
+      MorConfig.LAST_UPDATE_CELL,
+      MorConfig.LAST_UPDATE_CELL,
       'RAW'
     )
     return response
@@ -194,7 +194,7 @@ export default class MorFacade {
    * Retrieves a user from the mor3 sheet; makes up to 2 Google API requests
    * @param {string} username username of the user
    * @throws {@link NotFoundError} if user could not be found
-   * @return {Promise<User>} User object
+   * @return {Promise<MorUser>} MorUser object
    * @example
    *  const mor = await MorFacade.build()
    *  const user = await mor.getSheetUser('spreadnuts')
@@ -206,23 +206,23 @@ export default class MorFacade {
     const index = usernames.map(u => u.toLowerCase()).indexOf(username.toLowerCase())
     if (index !== -1) {
       const response = await this.#SHEETS.getRange(
-        Config.SHEETS.SPREADSHEET.ID,
-        Config.SHEETS.USERS.NAME,
-        `${User.columnLetter('userId')}${index + User.START_ROW}`,
-        `${User.columnLetter('pfpLink')}${index + User.START_ROW}`,
+        MorConfig.SHEETS.SPREADSHEET.ID,
+        MorConfig.SHEETS.USERS.NAME,
+        `${MorUser.columnLetter('userId')}${index + MorUser.START_ROW}`,
+        `${MorUser.columnLetter('pfpLink')}${index + MorUser.START_ROW}`,
         'FORMATTED_VALUE',
         'ROWS'
       )
       const u = response.values[0]
-      return new User(u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13])
+      return new MorUser(u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13])
     } else {
-      throw new NotFoundError(`${Config.SHEETS.SPREADSHEET.NAME} sheet search returned no results! username=${username}`)
+      throw new NotFoundError(`${MorConfig.SHEETS.SPREADSHEET.NAME} sheet search returned no results! username=${username}`)
     }
   }
 
   /**
    * Retrieves list of users from mor3 sheet; makes up to 1 Google API request
-   * @return {Promise<User[]>} array of User objects
+   * @return {Promise<MorUser[]>} array of MorUser objects
    * @example
    *  const mor = await MorFacade.build()
    *  const users = await mor.getSheetUsers()
@@ -231,16 +231,16 @@ export default class MorFacade {
   async getSheetUsers () {
     console.info('MorFacade::getSheetUsers ()') // TODO: replace
     const response = await this.#SHEETS.getRange(
-      Config.SHEETS.SPREADSHEET.ID,
-      Config.SHEETS.USERS.NAME,
-      User.columnLetter('userId'),
-      User.columnLetter('pfpLink'),
+      MorConfig.SHEETS.SPREADSHEET.ID,
+      MorConfig.SHEETS.USERS.NAME,
+      MorUser.columnLetter('userId'),
+      MorUser.columnLetter('pfpLink'),
       'FORMATTED_VALUE',
       'ROWS'
     )
     const ret = []
     response.values.slice(1).forEach(a => {
-      const u = new User(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11], a[12], a[13])
+      const u = new MorUser(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9], a[10], a[11], a[12], a[13])
       ret.push(u)
     })
     return ret
@@ -257,10 +257,10 @@ export default class MorFacade {
   async getSheetUserIds () {
     console.info('MorFacade::getSheetUserIds ()') // TODO: replace
     const response = await this.#SHEETS.getRange(
-      Config.SHEETS.SPREADSHEET.ID,
-      Config.SHEETS.USERS.NAME,
-      User.columnLetter('userId'),
-      User.columnLetter('userId'),
+      MorConfig.SHEETS.SPREADSHEET.ID,
+      MorConfig.SHEETS.USERS.NAME,
+      MorUser.columnLetter('userId'),
+      MorUser.columnLetter('userId'),
       'FORMATTED_VALUE',
       'COLUMNS'
     )
@@ -278,10 +278,10 @@ export default class MorFacade {
   async getSheetUsernames () {
     console.info('MorFacade::getSheetUsernames ()') // TODO: replace
     const response = await this.#SHEETS.getRange(
-      Config.SHEETS.SPREADSHEET.ID,
-      Config.SHEETS.USERS.NAME,
-      User.columnLetter('username'),
-      User.columnLetter('username'),
+      MorConfig.SHEETS.SPREADSHEET.ID,
+      MorConfig.SHEETS.USERS.NAME,
+      MorUser.columnLetter('username'),
+      MorUser.columnLetter('username'),
       'FORMATTED_VALUE',
       'COLUMNS'
     )
@@ -292,7 +292,7 @@ export default class MorFacade {
    * Retrieves scores from the mor3 sheet; makes up to 1 Google API request
    * @param {string} mods mod string
    * @throws {@link InvalidModsError} if mod string is invalid
-   * @return {Promise<Score[]>} array of Score objects
+   * @return {Promise<MorScore[]>} array of MorScore objects
    * @example
    *  const mor = await MorFacade.build()
    *  const scores = await mor.getSheetScores(Mods.HDHR)
@@ -305,16 +305,16 @@ export default class MorFacade {
       `Valid mod strings: ${Mods.validModStrings().join(' ')}`)
     }
     const response = await this.#SHEETS.getRange(
-      Config.SHEETS.SPREADSHEET.ID,
-      Config.SHEETS[mods].NAME,
-      Score.columnLetter('scoreId'),
-      Score.columnLetter('beatmapImgLink'),
+      MorConfig.SHEETS.SPREADSHEET.ID,
+      MorConfig.SHEETS[mods].NAME,
+      MorScore.columnLetter('scoreId'),
+      MorScore.columnLetter('beatmapImgLink'),
       'FORMATTED_VALUE',
       'ROWS'
     )
     const ret = []
     response.values.slice(1).forEach(a => {
-      const s = new Score(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9])
+      const s = new MorScore(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9])
       ret.push(s)
     })
     return ret
@@ -337,10 +337,10 @@ export default class MorFacade {
       `Valid mod strings: ${Mods.validModStrings().join(' ')}`)
     }
     const response = await this.#SHEETS.getRange(
-      Config.SHEETS.SPREADSHEET.ID,
-      Config.SHEETS[mods].NAME,
-      Score.columnLetter('scoreId'),
-      Score.columnLetter('scoreId'),
+      MorConfig.SHEETS.SPREADSHEET.ID,
+      MorConfig.SHEETS[mods].NAME,
+      MorScore.columnLetter('scoreId'),
+      MorScore.columnLetter('scoreId'),
       'FORMATTED_VALUE',
       'COLUMNS'
     )
@@ -351,7 +351,7 @@ export default class MorFacade {
    * Inserts user into the mor3 sheet (sorted by pp); makes up to 1 osu!API request and up to 3 Google API requests
    * @param {string} username username of the user
    * @throws {@link AlreadyExistsError} if user was already added
-   * @return {Promise<User>} User object for the added user
+   * @return {Promise<MorUser>} MorUser object for the added user
    * @example
    *  const mor = await MorFacade.build()
    *  try {
@@ -365,7 +365,7 @@ export default class MorFacade {
   async addSheetUser (username) {
     console.info(`MorFacade::addSheetUser (${username})`) // TODO: replace
     const [user, sheetUsers] = await Promise.all([this.getOsuUser(username), this.getSheetUsers()])
-    if (sheetUsers.map(u => u.userId).includes(user.userId)) throw new AlreadyExistsError(`${Config.SHEETS.SPREADSHEET.NAME} sheet already contains that user! username=${username}`)
+    if (sheetUsers.map(u => u.userId).includes(user.userId)) throw new AlreadyExistsError(`${MorConfig.SHEETS.SPREADSHEET.NAME} sheet already contains that user! username=${username}`)
     const ppVals = sheetUsers.map(u => u.pp)
     ppVals.push(user.pp)
     ppVals.sort((a, b) => { return parseInt(b) - parseInt(a) })
@@ -373,26 +373,26 @@ export default class MorFacade {
     // Append instead of assert if user is to be added to the end of sheet
     if (user.pp === '0' || userIndex + 1 === ppVals.length) {
       await this.#SHEETS.appendRange(
-        Config.SHEETS.SPREADSHEET.ID,
+        MorConfig.SHEETS.SPREADSHEET.ID,
         [user.toArray()],
-        Config.SHEETS.USERS.NAME,
+        MorConfig.SHEETS.USERS.NAME,
         'RAW',
         'INSERT_ROWS'
       )
     } else {
       await this.#SHEETS.insertDimension(
-        Config.SHEETS.SPREADSHEET.ID,
-        Config.SHEETS.USERS.ID,
+        MorConfig.SHEETS.SPREADSHEET.ID,
+        MorConfig.SHEETS.USERS.ID,
         'ROWS',
         userIndex + 1,
         userIndex + 2
       )
       await this.#SHEETS.updateRange(
-        Config.SHEETS.SPREADSHEET.ID,
+        MorConfig.SHEETS.SPREADSHEET.ID,
         [user.toArray()],
-        Config.SHEETS.USERS.NAME,
-        `${User.columnLetter('userId')}${userIndex + 2}`,
-        `${User.columnLetter('pfpLink')}${userIndex + 2}`, 'RAW'
+        MorConfig.SHEETS.USERS.NAME,
+        `${MorUser.columnLetter('userId')}${userIndex + 2}`,
+        `${MorUser.columnLetter('pfpLink')}${userIndex + 2}`, 'RAW'
       )
     }
     return user
@@ -402,7 +402,7 @@ export default class MorFacade {
    * Deletes user from the mor3 sheet; makes up to 2 Google API requests
    * @param {string} username username of the user
    * @throws {@link NotFoundError} if user was not found
-   * @return {Promise<User>} User object for the deleted user
+   * @return {Promise<MorUser>} MorUser object for the deleted user
    * @example
    *  const mor = await MorFacade.build()
    *  try {
@@ -417,10 +417,10 @@ export default class MorFacade {
     console.info(`MorFacade::deleteSheetUser (${username})`) // TODO: replace
     const users = await this.getSheetUsers()
     const userIndex = users.map(u => { return u.username.toLowerCase() }).indexOf(username.toLowerCase())
-    if (userIndex === -1) throw new NotFoundError(`${Config.SHEETS.SPREADSHEET.NAME} sheet returned no results! username=${username}`)
+    if (userIndex === -1) throw new NotFoundError(`${MorConfig.SHEETS.SPREADSHEET.NAME} sheet returned no results! username=${username}`)
     await this.#SHEETS.deleteDimension(
-      Config.SHEETS.SPREADSHEET.ID,
-      Config.SHEETS.USERS.ID,
+      MorConfig.SHEETS.SPREADSHEET.ID,
+      MorConfig.SHEETS.USERS.ID,
       'ROWS',
       userIndex + 1,
       userIndex + 2
@@ -432,7 +432,7 @@ export default class MorFacade {
    * Adds an osu! score to the mor3 sheet; makes up to 1 Google API request
    * @param {string} scoreId ID of the score
    * @throws {@link AlreadyExistsError} if score already exists in the sheet
-   * @return {Promise<Score>} Score object for the added score
+   * @return {Promise<MorScore>} MorScore object for the added score
    * @example
    *  const mor = await MorFacade.build()
    *  try {
@@ -447,12 +447,12 @@ export default class MorFacade {
     console.info(`MorFacade::addSubmittedScore (${scoreId})`) // TODO: replace
     const submittedScores = await this.getSheetScores(Mods.SS)
     const ssIndex = submittedScores.map(ss => { return ss.scoreId }).indexOf(scoreId)
-    if (ssIndex !== -1) throw new AlreadyExistsError(`${Config.SHEETS.SS.NAME} sheet already contains that score! scoreId=${scoreId}`)
+    if (ssIndex !== -1) throw new AlreadyExistsError(`${MorConfig.SHEETS.SS.NAME} sheet already contains that score! scoreId=${scoreId}`)
     const score = await this.getOsuScore(scoreId)
     await this.#SHEETS.appendRange(
-      Config.SHEETS.SPREADSHEET.ID,
+      MorConfig.SHEETS.SPREADSHEET.ID,
       [score.toArray()],
-      Config.SHEETS.SS.NAME,
+      MorConfig.SHEETS.SS.NAME,
       'RAW',
       'INSERT_ROWS'
     )
@@ -464,7 +464,7 @@ export default class MorFacade {
    * @param {string} scoreId ID of the score
    * @throws {@link TypeError} if parameters are invalid
    * @throws {@link NotFoundError} if score could not be found in the sheet
-   * @return {Promise<Score>} Score object of the deleted score
+   * @return {Promise<MorScore>} MorScore object of the deleted score
    * @example
    *  const mor = await MorFacade.build()
    *  try {
@@ -477,10 +477,10 @@ export default class MorFacade {
    */
   async deleteSubmittedScore (scoreId) {
     console.info(`MorFacade::deleteScore (${scoreId})`) // TODO: replace
-    if (!Utils.isPositiveNumericString(scoreId)) throw new TypeError(`scoreId must be a positive number string! Val=${scoreId}`)
+    if (!MorUtils.isPositiveNumericString(scoreId)) throw new TypeError(`scoreId must be a positive number string! Val=${scoreId}`)
     const submittedScores = await this.getSheetScores(Mods.SS)
     const ssIndex = submittedScores.map(ss => { return ss.scoreId }).indexOf(scoreId)
-    if (ssIndex === -1) throw new NotFoundError(`${Config.SHEETS.SPREADSHEET.NAME} sheet returned no results! scoreId=${scoreId}`)
+    if (ssIndex === -1) throw new NotFoundError(`${MorConfig.SHEETS.SPREADSHEET.NAME} sheet returned no results! scoreId=${scoreId}`)
     const mods = Mods.parseModKey(submittedScores[ssIndex].mods)
     const modScores = await this.getSheetScores(mods)
     const msIndex = modScores.map(ms => { return ms.scoreId }).indexOf(scoreId)
@@ -488,8 +488,8 @@ export default class MorFacade {
     // Score is in both sheets
     if (msIndex !== -1 && ssIndex !== -1) {
       await this.#SHEETS.deleteMultipleDimensions(
-        Config.SHEETS.SPREADSHEET.ID,
-        [Config.SHEETS.SS.ID, Config.SHEETS[mods].ID],
+        MorConfig.SHEETS.SPREADSHEET.ID,
+        [MorConfig.SHEETS.SS.ID, MorConfig.SHEETS[mods].ID],
         ['ROWS', 'ROWS'],
         [ssIndex + 1, msIndex + 1],
         [ssIndex + 2, msIndex + 2]
@@ -498,8 +498,8 @@ export default class MorFacade {
     // Score is in modsheet
     } else if (msIndex !== -1) {
       await this.#SHEETS.deleteDimension(
-        Config.SHEETS.SPREADSHEET.ID,
-        Config.SHEETS[mods].ID,
+        MorConfig.SHEETS.SPREADSHEET.ID,
+        MorConfig.SHEETS[mods].ID,
         'ROWS',
         msIndex + 1,
         msIndex + 2
@@ -508,43 +508,53 @@ export default class MorFacade {
     // Score is in submitted scores sheet
     } else if (ssIndex !== -1) {
       await this.#SHEETS.deleteDimension(
-        Config.SHEETS.SPREADSHEET.ID,
-        Config.SHEETS.SS.ID,
+        MorConfig.SHEETS.SPREADSHEET.ID,
+        MorConfig.SHEETS.SS.ID,
         'ROWS',
         ssIndex + 1,
         ssIndex + 2
       )
       ret = submittedScores[ssIndex]
     } else {
-      throw new NotFoundError(`${Config.SHEETS.SPREADSHEET.NAME} sheet returned no results! scoreId=${scoreId}`)
+      throw new NotFoundError(`${MorConfig.SHEETS.SPREADSHEET.NAME} sheet returned no results! scoreId=${scoreId}`)
     }
     return ret
   }
 
   /**
    * Replaces all users in a mor3 sheet with new ones; makes up to 2 Google API requests
-   * @param {User[]} users users to be added to the sheet
+   * @param {MorUser[]} users users to be added to the sheet
    * @throws {@link TypeError} if parameters are invalid
-   * @return {Promise<User[]>} newly added users (array of User objects)
+   * @return {Promise<MorUser[]>} newly added users (array of MorUser objects)
    * @example
    *  const mor = await MorFacade.build()
    *  const users = await Promise.all([mor.getOsuUser('spreadnuts', 'username'), mor.getOsuUser('2', 'id')])
-   *  await mor.replaceUsers(users)
+   *  await mor.replaceSheetUsers(users)
    */
-  async replaceUsers (users) {
-    console.info(`MorFacade::replaceUsers (array of ${users.length} users)`) // TODO: replace
-    if (!Utils.isUserArray(users)) throw new TypeError(`users must be a valid User array! Val=${users}`)
-    await this.#SHEETS.deleteDimension(
-      Config.SHEETS.SPREADSHEET.ID,
-      Config.SHEETS.USERS.ID,
-      'ROWS',
-      1,
-      -1
-    )
+  async replaceSheetUsers (users) {
+    console.info(`MorFacade::replaceSheetUsers (array of ${users.length} users)`) // TODO: replace
+    if (!MorUtils.isMorUserArray(users)) throw new TypeError(`users must be a valid MorUser array! Val=${users}`)
+    let hasOneRow = false
+    const metadata = await this.getSheetMetadata()
+    for (const sheet of metadata.sheets) {
+      if (sheet.properties.title === MorConfig.SHEETS.USERS.NAME && sheet.properties.gridProperties.rowCount === 1) {
+        hasOneRow = true
+        break
+      }
+    }
+    if (!hasOneRow) {
+      await this.#SHEETS.deleteDimension(
+        MorConfig.SHEETS.SPREADSHEET.ID,
+        MorConfig.SHEETS.USERS.ID,
+        'ROWS',
+        1,
+        -1
+      )
+    }
     await this.#SHEETS.appendRange(
-      Config.SHEETS.SPREADSHEET.ID,
+      MorConfig.SHEETS.SPREADSHEET.ID,
       users.map(u => u.toArray()),
-      Config.SHEETS.USERS.NAME,
+      MorConfig.SHEETS.USERS.NAME,
       'RAW',
       'INSERT_ROWS'
     )
@@ -554,10 +564,10 @@ export default class MorFacade {
   /**
    * Replaces all scores in a mor3 sheet with new ones; makes up to 2 Google API requests
    * @param {string} mods mod string
-   * @param {Score[]} scores scores to be added to the sheet
+   * @param {MorScore[]} scores scores to be added to the sheet
    * @throws {@link InvalidModsError} if mod string is invalid
    * @throws {@link TypeError} if parameters are invalid
-   * @return {Promise<Score[]>} newly added scores (array of Score objects)
+   * @return {Promise<MorScore[]>} newly added scores (array of MorScore objects)
    * @example
    *  const mor = await MorFacade.build()
    *  const myTops = await mor.getOsuUserScores('6385683', 'best')
@@ -570,18 +580,28 @@ export default class MorFacade {
       throw new InvalidModsError(`mods must be a valid mod string! Val=${mods}\n` +
       `Valid mod strings: ${Mods.validModStrings().join(' ')}`)
     }
-    if (!Utils.isScoreArray(scores)) throw new TypeError(`scores must be a valid Score array! Val=${scores}`)
-    await this.#SHEETS.deleteDimension(
-      Config.SHEETS.SPREADSHEET.ID,
-      Config.SHEETS[mods].ID,
-      'ROWS',
-      1,
-      -1
-    )
+    if (!MorUtils.isMorScoreArray(scores)) throw new TypeError(`scores must be a valid MorScore array! Val=${scores}`)
+    let hasOneRow = false
+    const metadata = await this.getSheetMetadata()
+    for (const sheet of metadata.sheets) {
+      if (sheet.properties.title === MorConfig.SHEETS[mods].NAME && sheet.properties.gridProperties.rowCount === 1) {
+        hasOneRow = true
+        break
+      }
+    }
+    if (!hasOneRow) {
+      await this.#SHEETS.deleteDimension(
+        MorConfig.SHEETS.SPREADSHEET.ID,
+        MorConfig.SHEETS[mods].ID,
+        'ROWS',
+        1,
+        -1
+      )
+    }
     await this.#SHEETS.appendRange(
-      Config.SHEETS.SPREADSHEET.ID,
+      MorConfig.SHEETS.SPREADSHEET.ID,
       scores.map(s => s.toArray()),
-      Config.SHEETS[mods].NAME,
+      MorConfig.SHEETS[mods].NAME,
       'RAW',
       'INSERT_ROWS'
     )
@@ -589,11 +609,11 @@ export default class MorFacade {
   }
 
   /**
-   * Deletes all scores in a mor3 sheet; makes up to 2 Google API requests
+   * Deletes all scores in a mor3 sheet; makes up to 3 Google API requests
    * @see {@link https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/batchUpdate} (Google Sheets API v4 batchUpdate Response object)
    * @param {string} mods mod string
    * @throws {@link InvalidModsError} if mod string is invalid
-   * @return {Promise<*>} Google Sheets API v4 batchUpdate Response object
+   * @return {Promise<void>} Google Sheets API v4 batchUpdate Response object
    * @example
    *  const mor = await MorFacade.build()
    *  await mor.wipeSheet(Mods.EZHDDTFL)
@@ -604,21 +624,30 @@ export default class MorFacade {
       throw new InvalidModsError(`mods must be a valid mod string! Val=${mods}\n` +
       `Valid mod strings: ${Mods.validModStrings().join(' ')}`)
     }
-    const ret = await this.#SHEETS.deleteDimension(
-      Config.SHEETS.SPREADSHEET.ID,
-      Config.SHEETS[mods].ID,
-      'ROWS',
-      1,
-      -1
-    )
+    let hasOneRow = false
+    const metadata = await this.getSheetMetadata()
+    for (const sheet of metadata.sheets) {
+      if (sheet.properties.title === MorConfig.SHEETS[mods].NAME && sheet.properties.gridProperties.rowCount === 1) {
+        hasOneRow = true
+        break
+      }
+    }
+    if (!hasOneRow) {
+      await this.#SHEETS.deleteDimension(
+        MorConfig.SHEETS.SPREADSHEET.ID,
+        MorConfig.SHEETS[mods].ID,
+        'ROWS',
+        1,
+        -1
+      )
+    }
     await this.#SHEETS.appendRange(
-      Config.SHEETS.SPREADSHEET.ID,
+      MorConfig.SHEETS.SPREADSHEET.ID,
       [['']],
-      Config.SHEETS[mods].NAME,
+      MorConfig.SHEETS[mods].NAME,
       'RAW',
       'INSERT_ROWS'
     )
-    return ret
   }
 
   /**
@@ -633,7 +662,7 @@ export default class MorFacade {
    */
   async backupFile (fileId, name) {
     console.info(`MorFacade::backupFile (${fileId}, ${name})`)
-    const ret = await this.#DRIVE.copyFile(fileId, name, Config.DRIVE.BACKUP_FOLDER_ID)
+    const ret = await this.#DRIVE.copyFile(fileId, name, MorConfig.DRIVE.BACKUP_FOLDER_ID)
     return ret
   }
 }
