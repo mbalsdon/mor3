@@ -67,7 +67,9 @@ export default class MorFacade {
     return new MorUser([
       response.id.toString(),
       response.username,
+      response.playstyle === null ? 'null' : response.playstyle.map(p => { return p[0].toUpperCase() + p.substring(1) }).join(', '),
       String(response.statistics.global_rank),
+      String(response.statistics.country_rank),
       response.statistics.pp === null ? '0' : response.statistics.pp.toFixed(3),
       response.statistics.hit_accuracy.toFixed(2),
       Math.round(response.statistics.play_time / 3600).toString(),

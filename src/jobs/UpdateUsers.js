@@ -57,7 +57,9 @@ export default async function updateUsers () {
     updatedUsers.push(new MorUser([
       user.userId,
       user.username,
+      user.playstyle,
       user.globalRank,
+      user.countryRank,
       user.pp,
       user.accuracy,
       user.playtime,
