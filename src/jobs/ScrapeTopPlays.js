@@ -11,7 +11,13 @@ import MorUtils from '../controller/MorUtils.js'
  * @see {@link RunScheduledJobs}
  */
 export default async function scrapeTopPlays () {
-  // TODO: doc
+  
+  /**
+   * Populates a dictionary with given array of MorScores -
+   * Key: mods; Value: MorScore array
+   * @param {{}} dict 
+   * @param {MorScore[]} scores 
+   */
   const populateDict = function (dict, scores) {
     console.info(`::scrapeTopPlays >> populateDict (dict, array of ${scores.length} scores)`) // TODO: replace
     for (const s of scores) {
@@ -28,7 +34,7 @@ export default async function scrapeTopPlays () {
   const userIds = await mor.getSheetUserIds()
   await MorUtils.sleep(1000)
   console.info(`::scrapeTopPlays () >> Grabbing tops/firsts from ${userIds.length} users...`) // TODO: replace
-  // Key: mods; Value: score array (sorted by pp)
+  // Key: mods; Value: MorScore array
   const dict = {}
   for (const userId of userIds) {
     const userTops = await mor.getOsuUserScores(userId, 'best')
