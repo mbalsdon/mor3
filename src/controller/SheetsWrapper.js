@@ -1,5 +1,5 @@
-import { ConstructorError } from './Errors.js'
-import Utils from './Utils.js'
+import { ConstructorError } from './MorErrors.js'
+import MorUtils from './MorUtils.js'
 
 import 'dotenv/config'
 import { google } from 'googleapis'
@@ -56,7 +56,7 @@ export default class SheetsWrapper {
    */
   async getMetadata (spreadsheetId) {
     console.info(`SheetsWrapper::getMetadata (${spreadsheetId})`) // TODO: replace
-    if (!Utils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
+    if (!MorUtils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
     const response = await this.#SHEETS_CLIENT.spreadsheets.get({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId
@@ -89,10 +89,10 @@ export default class SheetsWrapper {
    */
   async getRange (spreadsheetId, sheetName, startCell, endCell, valueRenderOption = 'FORMATTED_VALUE', majorDimension = 'ROWS') {
     console.info(`SheetsWrapper::getRange (${spreadsheetId}, ${sheetName}, ${startCell}, ${endCell}, ${valueRenderOption}, ${majorDimension})`) // TODO: replace
-    if (!Utils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
-    if (!Utils.isString(sheetName)) throw new TypeError(`sheetName must be a string! Val=${sheetName}`)
-    if (!Utils.isValidCell(startCell)) throw new TypeError(`startCell must be a valid cell! Val=${startCell}`)
-    if (!Utils.isValidCell(endCell)) throw new TypeError(`endCell must be a valid cell! Val=${endCell}`)
+    if (!MorUtils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
+    if (!MorUtils.isString(sheetName)) throw new TypeError(`sheetName must be a string! Val=${sheetName}`)
+    if (!MorUtils.isValidCell(startCell)) throw new TypeError(`startCell must be a valid cell! Val=${startCell}`)
+    if (!MorUtils.isValidCell(endCell)) throw new TypeError(`endCell must be a valid cell! Val=${endCell}`)
     if (valueRenderOption !== 'UNFORMATTED_VALUE' && valueRenderOption !== 'FORMATTED_VALUE' && valueRenderOption !== 'FORMULA') throw new TypeError(`valueRenderOption must be one of 'UNFORMATTED_VALUE', 'FORMATTED_VALUE', or 'FORMULA'! Val=${valueRenderOption}`)
     if (majorDimension !== 'ROWS' && majorDimension !== 'COLUMNS') throw new TypeError(`majorDimension must be one of 'ROWS' or 'COLUMNS'! Val=${majorDimension}`)
     const response = await this.#SHEETS_CLIENT.spreadsheets.values.get({
@@ -127,9 +127,9 @@ export default class SheetsWrapper {
    */
   async appendRange (spreadsheetId, values, sheetName, valueInputOption = 'RAW', insertDataOption = 'INSERT_ROWS') {
     console.info(`SheetsWrapper::appendRange (${spreadsheetId}, array of ${values.length} values, ${sheetName}, ${valueInputOption}, ${insertDataOption})`) // TODO: replace
-    if (!Utils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
-    if (!Utils.is2DArray(values)) throw new TypeError(`values must be a 2D array! Val=${values}`)
-    if (!Utils.isString(sheetName)) throw new TypeError(`sheetName must be a string! Val=${sheetName}`)
+    if (!MorUtils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
+    if (!MorUtils.is2DArray(values)) throw new TypeError(`values must be a 2D array! Val=${values}`)
+    if (!MorUtils.isString(sheetName)) throw new TypeError(`sheetName must be a string! Val=${sheetName}`)
     if (valueInputOption !== 'RAW' && valueInputOption !== 'USER_ENTERED') throw new TypeError(`valueInputOption must be one of 'RAW' or 'USER_ENTERED'! Val=${valueInputOption}`)
     if (insertDataOption !== 'OVERWRITE' && insertDataOption !== 'INSERT_ROWS') throw new TypeError(`insertDataOption must be one of 'OVERWRITE' or 'INSERT_ROWS'! Val=${insertDataOption}`)
     const response = await this.#SHEETS_CLIENT.spreadsheets.values.append({
@@ -169,11 +169,11 @@ export default class SheetsWrapper {
    */
   async updateRange (spreadsheetId, values, sheetName, startCell, endCell, valueInputOption = 'RAW') {
     console.info(`SheetsWrapper::updateCells (${spreadsheetId}, ${values}, ${sheetName}, ${startCell}, ${endCell})`) // TODO: replace
-    if (!Utils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
-    if (!Utils.is2DArray(values)) throw new TypeError(`values must be a 2D array! Val=${values}`)
-    if (!Utils.isString(sheetName)) throw new TypeError(`sheetName must be a string! Val=${sheetName}`)
-    if (!Utils.isValidCell(startCell)) throw new TypeError(`startCell must be a valid cell! Val=${startCell}`)
-    if (!Utils.isValidCell(endCell)) throw new TypeError(`endCell must be a valid cell! Val=${endCell}`)
+    if (!MorUtils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
+    if (!MorUtils.is2DArray(values)) throw new TypeError(`values must be a 2D array! Val=${values}`)
+    if (!MorUtils.isString(sheetName)) throw new TypeError(`sheetName must be a string! Val=${sheetName}`)
+    if (!MorUtils.isValidCell(startCell)) throw new TypeError(`startCell must be a valid cell! Val=${startCell}`)
+    if (!MorUtils.isValidCell(endCell)) throw new TypeError(`endCell must be a valid cell! Val=${endCell}`)
     if (valueInputOption !== 'RAW' && valueInputOption !== 'USER_ENTERED') throw new TypeError(`valueInputOption must be one of 'RAW' or 'USER_ENTERED'! Val=${valueInputOption}`)
     const response = await this.#SHEETS_CLIENT.spreadsheets.values.update({
       auth: SheetsWrapper.#AUTH,
@@ -209,11 +209,11 @@ export default class SheetsWrapper {
    */
   async insertDimension (spreadsheetId, sheetId, dimension, startIndex, endIndex) {
     console.info(`SheetsWrapper::insertDimension (${spreadsheetId}, ${sheetId}, ${dimension}, ${startIndex}, ${endIndex})`) // TODO: replace
-    if (!Utils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
-    if (!Utils.isString(sheetId)) throw new TypeError(`sheetId must be a string! Val=${sheetId}`)
+    if (!MorUtils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
+    if (!MorUtils.isString(sheetId)) throw new TypeError(`sheetId must be a string! Val=${sheetId}`)
     if (dimension !== 'ROWS' && dimension !== 'COLUMNS') throw new TypeError(`dimension must be one of 'ROWS' or 'COLUMNS'! Val=${dimension}`)
-    if (!Utils.isNumber(startIndex)) throw new TypeError(`startIndex must be a number! Val=${startIndex}`)
-    if (!Utils.isNumber(endIndex)) throw new TypeError(`endIndex must be a number! Val=${endIndex}`)
+    if (!MorUtils.isNumber(startIndex)) throw new TypeError(`startIndex must be a number! Val=${startIndex}`)
+    if (!MorUtils.isNumber(endIndex)) throw new TypeError(`endIndex must be a number! Val=${endIndex}`)
     const resource = {
       requests: [{
         insertDimension: {
@@ -251,13 +251,13 @@ export default class SheetsWrapper {
    */
   async deleteDimension (spreadsheetId, sheetId, dimension, startIndex, endIndex = -1) {
     console.info(`SheetsWrapper::deleteDimension (${spreadsheetId}, ${sheetId}, ${dimension}, ${startIndex}, ${endIndex})`) // TODO: replace
-    if (!Utils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
-    if (!Utils.isString(sheetId)) throw new TypeError(`sheetId must be a string! Val=${sheetId}`)
+    if (!MorUtils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
+    if (!MorUtils.isString(sheetId)) throw new TypeError(`sheetId must be a string! Val=${sheetId}`)
     if (dimension !== 'ROWS' && dimension !== 'COLUMNS') throw new TypeError(`dimension must be one of 'ROWS' or 'COLUMNS'! Val=${dimension}`)
-    if (!Utils.isNumber(startIndex)) throw new TypeError(`startIndex must be a number! Val=${startIndex}`)
-    if (!Utils.isNumber(endIndex)) throw new TypeError(`endIndex must be a number! Val=${endIndex}`)
-    if (dimension === 'ROWS' && endIndex === -1) endIndex = Utils.SHEETS_MAX_ROWS
-    if (dimension === 'COLUMNS' && startIndex === -1) startIndex = Utils.SHEETS_MAX_COLS
+    if (!MorUtils.isNumber(startIndex)) throw new TypeError(`startIndex must be a number! Val=${startIndex}`)
+    if (!MorUtils.isNumber(endIndex)) throw new TypeError(`endIndex must be a number! Val=${endIndex}`)
+    if (dimension === 'ROWS' && endIndex === -1) endIndex = MorUtils.SHEETS_MAX_ROWS
+    if (dimension === 'COLUMNS' && startIndex === -1) startIndex = MorUtils.SHEETS_MAX_COLS
     const resource = {
       requests: [{
         deleteDimension: {
@@ -295,11 +295,11 @@ export default class SheetsWrapper {
    */
   async deleteMultipleDimensions (spreadsheetId, sheetIds, dimensions, startIndices, endIndices) {
     console.info(`SheetsWrapper::deleteMultipleDimensions (${spreadsheetId}, ${sheetIds}, ${dimensions}, ${startIndices}, ${endIndices})`) // TODO: replace
-    if (!Utils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
-    if (!Utils.isStringArray(sheetIds)) throw new TypeError(`sheetIds must be an array of strings! Val=${sheetIds}`)
+    if (!MorUtils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
+    if (!MorUtils.isStringArray(sheetIds)) throw new TypeError(`sheetIds must be an array of strings! Val=${sheetIds}`)
     if (!dimensions.every(d => d === 'ROWS' || d === 'COLUMNS')) throw new TypeError(`dimensions must be an array of 'ROWS' or 'COLUMNS'! Val=${dimensions}`)
-    if (!Utils.isNumberArray(startIndices)) throw new TypeError(`startIndices must be an array of numbers! Val=${startIndices}`)
-    if (!Utils.isNumberArray(endIndices)) throw new TypeError(`endIndices must be an array of numbers! Val=${endIndices}`)
+    if (!MorUtils.isNumberArray(startIndices)) throw new TypeError(`startIndices must be an array of numbers! Val=${startIndices}`)
+    if (!MorUtils.isNumberArray(endIndices)) throw new TypeError(`endIndices must be an array of numbers! Val=${endIndices}`)
     if (dimensions.length !== sheetIds.length || startIndices.length !== sheetIds.length || endIndices.length !== sheetIds.length) throw new RangeError(`Input arrays must be of the same length! Lengths=${sheetIds.length},${dimensions.length},${startIndices.length},${endIndices.length}`)
     const requests = []
     for (let i = 0; i < sheetIds.length; i++) {

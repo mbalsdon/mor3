@@ -1,5 +1,5 @@
-import { ConstructorError } from './Errors.js'
-import Utils from './Utils.js'
+import { ConstructorError } from './MorErrors.js'
+import MorUtils from './MorUtils.js'
 
 import 'dotenv/config'
 import { google } from 'googleapis'
@@ -57,9 +57,9 @@ export default class DriveWrapper {
    */
   async copyFile (fileId, name, folderId) {
     console.info(`DriveWrapper::copyFile (${fileId}, ${name}, ${folderId})`) // TODO: replace
-    if (!Utils.isString(fileId)) throw new TypeError(`fileId must be a string! Val=${fileId}`)
-    if (!Utils.isString(name)) throw new TypeError(`name must be a string! Val=${name}`)
-    if (!Utils.isString(folderId)) throw new TypeError(`folderId must be a string! Val=${folderId}`)
+    if (!MorUtils.isString(fileId)) throw new TypeError(`fileId must be a string! Val=${fileId}`)
+    if (!MorUtils.isString(name)) throw new TypeError(`name must be a string! Val=${name}`)
+    if (!MorUtils.isString(folderId)) throw new TypeError(`folderId must be a string! Val=${folderId}`)
     const response = await this.#DRIVE_CLIENT.files.copy({
       auth: DriveWrapper.#AUTH,
       fileId,

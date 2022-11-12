@@ -1,4 +1,4 @@
-import Config from '../../controller/Config.js'
+import MorConfig from '../../controller/MorConfig.js'
 
 import { EmbedBuilder } from '@discordjs/builders'
 
@@ -18,7 +18,7 @@ export default async function metadataCmd (facade, interaction) {
       ret = ret + `**${sheet.properties.title}:** ${sheet.properties.gridProperties.rowCount - 1} ${sheet.properties.gridProperties.rowCount - 1 === 1 ? 'entry' : 'entries'}\n`
     }
     const embed = new EmbedBuilder()
-      .setColor(Config.BOT_EMBED_COLOR)
+      .setColor(MorConfig.BOT_EMBED_COLOR)
       .setAuthor({ name: `${metadata.properties.title} metadata`, iconURL: 'https://spreadnuts.s-ul.eu/MdfvA3q5', url: 'https://docs.google.com/spreadsheets/d/1hduRLLIFjVwLGjXyt7ph3301xfXS6qjSnYCm18YP4iA/edit#gid=0' })
       .setDescription(ret)
       .setFooter({ text: `Last update: ${lastUpdated}` })

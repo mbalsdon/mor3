@@ -1,8 +1,8 @@
-import Score from './Score.js'
-import User from './User.js'
+import MorScore from './MorScore.js'
+import MorUser from './MorUser.js'
 
 /** Provides some useful functions for MOR (and general JavaScript) */
-export default class Utils {
+export default class MorUtils {
   /** Maximum number of rows allowed in Google Sheets */
   static SHEETS_MAX_ROWS = 10000000
 
@@ -156,28 +156,28 @@ export default class Utils {
   }
 
   /**
-   * Returns true if input is an array of Score objects
-   * @see {@link Score}
+   * Returns true if input is an array of MorScore objects
+   * @see {@link MorScore}
    * @param {*} v
    * @return {boolean}
    */
-  static isScoreArray (v) {
+  static isMorScoreArray (v) {
     if (!Array.isArray(v)) return false
     if (v.length === 0) return false
-    if (!(v.every(a => a instanceof Score))) return false
+    if (!(v.every(a => a instanceof MorScore))) return false
     return true
   }
 
   /**
-   * Returns true if input is an array of User objects
-   * @see {@link User}
+   * Returns true if input is an array of MorUser objects
+   * @see {@link MorUser}
    * @param {*} v
    * @return {boolean}
    */
-  static isUserArray (v) {
+  static isMorUserArray (v) {
     if (!Array.isArray(v)) return false
     if (v.length === 0) return false
-    if (!(v.every(a => a instanceof User))) return false
+    if (!(v.every(a => a instanceof MorUser))) return false
     return true
   }
 

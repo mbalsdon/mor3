@@ -1,8 +1,8 @@
-import { NotFoundError } from '../controller/Errors.js'
+import { NotFoundError } from '../controller/MorErrors.js'
 import Mods from '../controller/Mods.js'
 import MorFacade from '../controller/MorFacade.js'
-import User from '../controller/User.js'
-import Utils from '../controller/Utils.js'
+import MorUser from '../controller/MorUser.js'
+import MorUtils from '../controller/MorUtils.js'
 
 /**
  * Takes every user in the MOR sheet and refreshes their stats.
@@ -21,11 +21,11 @@ export default async function updateUsers () {
   for (const mods of Mods.validModStrings()) {
     if (mods === Mods.SS) continue
     dict[mods] = await mor.getSheetScores(mods)
-    await Utils.sleep(1000)
+    await MorUtils.sleep(1000)
   }
   console.info('::updateUsers () >> Retrieving user IDs from sheet...') // TODO: replace
   const userIds = await mor.getSheetUserIds()
-  await Utils.sleep(1000)
+  await MorUtils.sleep(1000)
   console.info(`::updateUsers () >> Refreshing data for ${userIds.length} users...`) // TODO: replace
   const updatedUsers = []
   for (const userId of userIds) {
@@ -37,7 +37,7 @@ export default async function updateUsers () {
         continue
       } else throw error
     }
-    await Utils.sleep(1000)
+    await MorUtils.sleep(1000)
     console.info(`::updateUsers () >> Counting top25s for user ${userId}...`) // TODO: replace
     let [top1s, top2s, top3s, top5s, top10s, top25s] = [0, 0, 0, 0, 0, 0]
     for (const key of Object.keys(dict)) {
@@ -54,7 +54,7 @@ export default async function updateUsers () {
         else throw new RangeError(`i = ${i} - This should never happen!`)
       }
     }
-    updatedUsers.push(new User(
+    updatedUsers.push(new MorUser(
       user.userId,
       user.username,
       user.globalRank,
@@ -72,8 +72,8 @@ export default async function updateUsers () {
   }
   console.info('::updateUsers () >> Updating the sheet...') // TODO: replace
   updatedUsers.sort((a, b) => { return parseInt(b.pp) - parseInt(a.pp) })
-  await mor.replaceUsers(updatedUsers)
-  await Utils.sleep(2000)
+  await mor.replaceSheetUsers(updatedUsers)
+  await MorUtils.sleep(3000)
   const dateString = new Date(Date.now()).toISOString()
   console.info(`::updateUsers () >> Job completed at ${dateString}, updated ${updatedUsers.length} users`) // TODO: replace
   console.timeEnd('::updateUsers () >> Time elapsed') // TODO: replace

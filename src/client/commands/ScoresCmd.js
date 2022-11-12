@@ -1,5 +1,5 @@
-import Config from '../../controller/Config.js'
-import { SheetEmptyError } from '../../controller/Errors.js'
+import MorConfig from '../../controller/MorConfig.js'
+import { SheetEmptyError } from '../../controller/MorErrors.js'
 
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js'
 
@@ -18,7 +18,7 @@ export default async function scoresCmd (facade, client, interaction) {
     const perPage = 5
     const scores = await facade.getSheetScores(inputMods)
     const numPages = Math.ceil(scores.length / perPage)
-    if (numPages === 0) throw new SheetEmptyError(`The ${Config.SHEETS[inputMods].NAME} sheet is empty!`)
+    if (numPages === 0) throw new SheetEmptyError(`The ${MorConfig.SHEETS[inputMods].NAME} sheet is empty!`)
     const lastUpdated = await facade.getSheetLastUpdated()
 
     /**
@@ -36,7 +36,7 @@ export default async function scoresCmd (facade, client, interaction) {
       for (let i = 0; i < lim; i++) {
         const pageIndex = perPage * (page - 1) + i
         const s = scores[pageIndex]
-        let medalEmoji = ':skull:' // TODO: Utils medalEmoji
+        let medalEmoji = ':skull:' // TODO: MorUtils medalEmoji
         if (pageIndex <= 24) medalEmoji = ':small_orange_diamond:'
         if (pageIndex <= 9) medalEmoji = ':military_medal:'
         if (pageIndex <= 4) medalEmoji = ':medal:'
@@ -50,8 +50,8 @@ export default async function scoresCmd (facade, client, interaction) {
       }
       const beatmapImgLink = scores[perPage * (page - 1)].beatmapImgLink
       const embed = new EmbedBuilder()
-        .setColor(Config.BOT_EMBED_COLOR)
-        .setAuthor({ name: `+${inputMods} Score Leaderboard`, iconURL: `${beatmapImgLink}`, url: `https://docs.google.com/spreadsheets/d/${Config.SHEETS.SPREADSHEET.ID}/edit#gid=${Config.SHEETS[inputMods].ID}` })
+        .setColor(MorConfig.BOT_EMBED_COLOR)
+        .setAuthor({ name: `+${inputMods} Score Leaderboard`, iconURL: `${beatmapImgLink}`, url: `https://docs.google.com/spreadsheets/d/${MorConfig.SHEETS.SPREADSHEET.ID}/edit#gid=${MorConfig.SHEETS[inputMods].ID}` })
         .setThumbnail(`${beatmapImgLink}`)
         .setDescription(desc)
         .setFooter({ text: `Last update: ${lastUpdated}` })

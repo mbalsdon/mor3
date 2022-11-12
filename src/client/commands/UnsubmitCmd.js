@@ -1,4 +1,4 @@
-import Config from '../../controller/Config.js'
+import MorConfig from '../../controller/MorConfig.js'
 
 import { EmbedBuilder } from 'discord.js'
 
@@ -15,7 +15,7 @@ export default async function unsubmitCmd (facade, interaction) {
     const lastUpdated = await facade.getSheetLastUpdated()
     const score = await facade.deleteSubmittedScore(scoreId)
     const embed = new EmbedBuilder()
-      .setColor(Config.BOT_EMBED_COLOR)
+      .setColor(MorConfig.BOT_EMBED_COLOR)
       .setAuthor({ name: 'Successfully added score:' })
       .setThumbnail(`${score.beatmapImgLink}`)
       .setDescription(`**[${score.beatmap}](https://osu.ppy.sh/scores/osu/${score.scoreId}) +${score.mods}** [${score.starRating}★]\n` +

@@ -1,5 +1,5 @@
-import Config from '../../controller/Config.js'
-import { SheetEmptyError } from '../../controller/Errors.js'
+import MorConfig from '../../controller/MorConfig.js'
+import { SheetEmptyError } from '../../controller/MorErrors.js'
 
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js'
 
@@ -17,7 +17,7 @@ export default async function usersCmd (facade, client, interaction) {
     const perPage = 5
     const users = await facade.getSheetUsers()
     const numPages = Math.ceil(users.length / perPage)
-    if (numPages === 0) throw new SheetEmptyError(`The ${Config.SHEETS.USERS.NAME} sheet is empty!`)
+    if (numPages === 0) throw new SheetEmptyError(`The ${MorConfig.SHEETS.USERS.NAME} sheet is empty!`)
     const lastUpdated = await facade.getSheetLastUpdated()
 
     /**
@@ -43,7 +43,7 @@ export default async function usersCmd (facade, client, interaction) {
       }
       const pfpLink = users[perPage * (page - 1)].pfpLink
       const embed = new EmbedBuilder()
-        .setColor(Config.BOT_EMBED_COLOR)
+        .setColor(MorConfig.BOT_EMBED_COLOR)
         .setThumbnail(`${pfpLink}`)
         .setDescription(desc)
         .setFooter({ text: `Last update: ${lastUpdated}` })

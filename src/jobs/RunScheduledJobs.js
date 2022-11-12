@@ -1,6 +1,6 @@
-import Config from '../controller/Config.js'
+import MorConfig from '../controller/MorConfig.js'
 import MorFacade from '../controller/MorFacade.js'
-import Utils from '../controller/Utils.js'
+import MorUtils from '../controller/MorUtils.js'
 
 import calcModTopLBPlays from './CalcModTopLBPlays.js'
 import scrapeTopPlays from './ScrapeTopPlays.js'
@@ -28,11 +28,11 @@ export default async function runScheduledJobs () {
   let dateString = new Date(Date.now()).toISOString()
   dateString = dateString.slice(0, dateString.length - 5) + '+00:00'
   const metadata = await mor.getSheetMetadata()
-  await Utils.sleep(1000)
+  await MorUtils.sleep(1000)
   await mor.setSheetLastUpdated(dateString)
-  await Utils.sleep(1000)
-  await mor.backupFile(Config.SHEETS.SPREADSHEET.ID, `${metadata.properties.title} ${dateString}`, Config.DRIVE.BACKUP_FOLDER_ID)
-  await Utils.sleep(1000)
+  await MorUtils.sleep(1000)
+  await mor.backupFile(MorConfig.SHEETS.SPREADSHEET.ID, `${metadata.properties.title} ${dateString}`, MorConfig.DRIVE.BACKUP_FOLDER_ID)
+  await MorUtils.sleep(1000)
   console.info(`::runScheduledJobs () >> Job completed at ${dateString}`) // TODO: replace
   console.timeEnd('::runScheduledJobs () >> Time elapsed') // TODO: replace
 }

@@ -1,7 +1,7 @@
-import Utils from './Utils.js'
+import MorUtils from './MorUtils.js'
 
 /** Contains data from an osu! user used in MOR sheets */
-export default class User {
+export default class MorUser {
   /** First row of MOR sheet containing score data */
   static START_ROW = 2
 
@@ -35,7 +35,7 @@ export default class User {
    * @param {string} top25s number of user's MOR sheet top 25s
    * @param {string} pfpLink profile picture URL of the user
    * @example
-   *  const myUser = new User(
+   *  const myUser = new MorUser(
    *    '6385683',
    *    'spreadnuts',
    *    '1446',
@@ -52,19 +52,19 @@ export default class User {
    *  )
    */
   constructor (userId, username, globalRank, pp, accuracy, playtime, top1s, top2s, top3s, top5s, top10s, top25s, pfpLink) {
-    if (!Utils.isPositiveNumericString(userId)) throw new TypeError(`userId must be a positive number string! Val=${userId}`)
-    else if (!Utils.isString(username)) throw new TypeError(`username must be a string! Val=${username}`)
-    else if (!Utils.isValidRank(globalRank)) throw new TypeError(`globalRank must be a valid rank string! Val=${globalRank}`)
-    else if (!Utils.isNonNegativeNumericString(pp)) throw new TypeError(`pp must be a a non-negative number string! Val=${pp}`)
-    else if (!Utils.isValidAccuracyString(accuracy)) throw new TypeError(`accuracy must be a valid accuracy string! Val=${accuracy}`)
-    else if (!Utils.isPositiveNumericString(playtime)) throw new TypeError(`playtime must be a positive number string! Val=${playtime}`)
-    else if (!Utils.isNumericString(top1s)) throw new TypeError(`top1s must be a number string! Val=${top1s}`)
-    else if (!Utils.isNumericString(top2s)) throw new TypeError(`top2s must be a number string! Val=${top2s}`)
-    else if (!Utils.isNumericString(top3s)) throw new TypeError(`top3s must be a number string! Val=${top3s}`)
-    else if (!Utils.isNumericString(top5s)) throw new TypeError(`top5s must be a number string! Val=${top5s}`)
-    else if (!Utils.isNumericString(top10s)) throw new TypeError(`top10s must be a number string! Val=${top10s}`)
-    else if (!Utils.isNumericString(top25s)) throw new TypeError(`top25s must be a number string! Val=${top25s}`)
-    else if (!Utils.isValidHttpUrl(pfpLink)) throw new TypeError(`pfpLink must be a valid HTTP URL string! Val=${pfpLink}`)
+    if (!MorUtils.isPositiveNumericString(userId)) throw new TypeError(`userId must be a positive number string! Val=${userId}`)
+    else if (!MorUtils.isString(username)) throw new TypeError(`username must be a string! Val=${username}`)
+    else if (!MorUtils.isValidRank(globalRank)) throw new TypeError(`globalRank must be a valid rank string! Val=${globalRank}`)
+    else if (!MorUtils.isNonNegativeNumericString(pp)) throw new TypeError(`pp must be a a non-negative number string! Val=${pp}`)
+    else if (!MorUtils.isValidAccuracyString(accuracy)) throw new TypeError(`accuracy must be a valid accuracy string! Val=${accuracy}`)
+    else if (!MorUtils.isPositiveNumericString(playtime)) throw new TypeError(`playtime must be a positive number string! Val=${playtime}`)
+    else if (!MorUtils.isNumericString(top1s)) throw new TypeError(`top1s must be a number string! Val=${top1s}`)
+    else if (!MorUtils.isNumericString(top2s)) throw new TypeError(`top2s must be a number string! Val=${top2s}`)
+    else if (!MorUtils.isNumericString(top3s)) throw new TypeError(`top3s must be a number string! Val=${top3s}`)
+    else if (!MorUtils.isNumericString(top5s)) throw new TypeError(`top5s must be a number string! Val=${top5s}`)
+    else if (!MorUtils.isNumericString(top10s)) throw new TypeError(`top10s must be a number string! Val=${top10s}`)
+    else if (!MorUtils.isNumericString(top25s)) throw new TypeError(`top25s must be a number string! Val=${top25s}`)
+    else if (!MorUtils.isValidHttpUrl(pfpLink)) throw new TypeError(`pfpLink must be a valid HTTP URL string! Val=${pfpLink}`)
     else {
       this.userId = userId
       this.username = username
@@ -83,8 +83,8 @@ export default class User {
   }
 
   /**
-   * Given the field name of a User object, returns associated MOR sheet column
-   * @param {string} columnName User object field name
+   * Given the field name of a MorUser object, returns associated MOR sheet column
+   * @param {string} columnName MorUser object field name
    * @throws {@link TypeError} if parameters are invalid
    * @return {string} associated MOR sheet column
    */
@@ -106,7 +106,7 @@ export default class User {
   }
 
   /**
-   * Converts User fields to array
+   * Converts MorUser fields to array
    * @return {string[]}
    */
   toArray () {

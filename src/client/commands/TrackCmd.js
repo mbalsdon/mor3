@@ -1,4 +1,4 @@
-import Config from '../../controller/Config.js'
+import MorConfig from '../../controller/MorConfig.js'
 
 import { EmbedBuilder } from 'discord.js'
 
@@ -14,7 +14,7 @@ export default async function trackCmd (facade, interaction) {
   try {
     const user = await facade.addSheetUser(username)
     const embed = new EmbedBuilder()
-      .setColor(Config.BOT_EMBED_COLOR)
+      .setColor(MorConfig.BOT_EMBED_COLOR)
       .setAuthor({ name: `MOR3 now tracking: ${user.username}`, iconURL: user.pfpLink, url: `https://osu.ppy.sh/users/${user.userId}` })
       .setDescription(
         `▸ **:globe_with_meridians: Global Rank:** #${user.globalRank}\n` +

@@ -1,4 +1,4 @@
-import Config from '../../controller/Config.js'
+import MorConfig from '../../controller/MorConfig.js'
 
 import { EmbedBuilder } from 'discord.js'
 
@@ -11,7 +11,7 @@ export default async function helpCmd (interaction) {
   console.info('Bot::helpCmd ()') // TODO: replace
   try {
     const embed = new EmbedBuilder()
-      .setColor(Config.BOT_EMBED_COLOR)
+      .setColor(MorConfig.BOT_EMBED_COLOR)
       .setAuthor({ name: 'mor3 commands', iconURL: 'https://spreadnuts.s-ul.eu/MdfvA3q5', url: 'https://github.com/mbalsdon/mor3' })
       .setDescription('`help` - Documentation on the bot\'s commands\n' +
             '`ping` - Checks if the bot is alive\n' +

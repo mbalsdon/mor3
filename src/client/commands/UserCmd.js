@@ -1,4 +1,4 @@
-import Config from '../../controller/Config.js'
+import MorConfig from '../../controller/MorConfig.js'
 
 import { EmbedBuilder } from 'discord.js'
 
@@ -15,7 +15,7 @@ export default async function userCmd (facade, interaction) {
     const lastUpdated = await facade.getSheetLastUpdated()
     const user = await facade.getSheetUser(username)
     const embed = new EmbedBuilder()
-      .setColor(Config.BOT_EMBED_COLOR)
+      .setColor(MorConfig.BOT_EMBED_COLOR)
       .setAuthor({ name: `MOR3 profile for ${user.username}`, iconURL: `${user.pfpLink}`, url: `https://osu.ppy.sh/users/${user.id}` })
       .setDescription( // TODO: some dupecode here from scores.js (medalemoji)
         `▸ **:globe_with_meridians: Global Rank:** #${user.globalRank}\n` +

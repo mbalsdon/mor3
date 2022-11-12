@@ -10,7 +10,7 @@ import untrackCmd from './commands/UntrackCmd.js'
 import submitCmd from './commands/SubmitCmd.js'
 import unsubmitCmd from './commands/UnsubmitCmd.js'
 
-import { ConstructorError } from '../controller/Errors.js'
+import { ConstructorError } from '../controller/MorErrors.js'
 import MorFacade from '../controller/MorFacade.js'
 
 import 'dotenv/config'

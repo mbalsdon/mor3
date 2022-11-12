@@ -1,4 +1,4 @@
-import Utils from './Utils.js'
+import MorUtils from './MorUtils.js'
 
 /** Enumerates valid MOR mod strings and provides some useful functions for them */
 export default class Mods {
@@ -86,7 +86,7 @@ export default class Mods {
    */
   static parseModKey (mods) {
     let pMods = mods
-    if (!Utils.isString(pMods) && !Array.isArray(pMods)) throw new TypeError(`mods must be either a string or an array! Val=${mods}`)
+    if (!MorUtils.isString(pMods) && !Array.isArray(pMods)) throw new TypeError(`mods must be either a string or an array! Val=${mods}`)
     pMods = (Array.isArray(pMods)) ? pMods.join().replaceAll(',', '') : pMods
     pMods = pMods.replace('NC', Mods.DT)
     pMods = pMods.replace('NF', '')
