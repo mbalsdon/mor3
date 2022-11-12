@@ -138,4 +138,4 @@ gcp_key.json
 
 # local data
 src/jobs/cache
-config.json
+mor_config.json
