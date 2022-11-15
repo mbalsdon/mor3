@@ -54,6 +54,12 @@ export default class Bot {
     return new Bot(morFacade, botClient)
   }
 
+  static async startBot () {
+    console.info('Bot::startBot ()') // TODO: replace
+    const bot = await Bot.build()
+    await bot.start()
+  }
+
   /**
    * Causes the bot to begin listening for commands (i.e. starts the bot)
    * @example
@@ -84,6 +90,12 @@ export default class Bot {
       else if (commandName === 'submit') await submitCmd(this.#FACADE, interaction)
       else if (commandName === 'unsubmit') await unsubmitCmd(this.#FACADE, interaction)
       else if (commandName === 'scores') await scoresCmd(this.#FACADE, this.#DISCORD, interaction)
+    })
+
+    this.#DISCORD.on('error', error => {
+      console.info(`Bot >> RECEIEVED ERROR "${error.name}: ${error.message}"`) // TODO: replace
+      this.#DISCORD.removeAllListeners()
+      Bot.startBot()
     })
 
     // Must be the last line of code
