@@ -54,6 +54,12 @@ export default class Bot {
     return new Bot(morFacade, botClient)
   }
 
+  /**
+   * Initializes and starts the bot
+   * @return {Promise<void>}
+   * @example
+   * await Bot.startBot()
+   */
   static async startBot () {
     console.info('Bot::startBot ()') // TODO: replace
     const bot = await Bot.build()
@@ -73,6 +79,7 @@ export default class Bot {
       console.info('Bot >> MOR3 is online!') // TODO: replace
     })
 
+    // Listen for chat commands
     this.#DISCORD.on('interactionCreate', async interaction => {
       if (!interaction.isChatInputCommand()) return
 
@@ -92,13 +99,14 @@ export default class Bot {
       else if (commandName === 'scores') await scoresCmd(this.#FACADE, this.#DISCORD, interaction)
     })
 
+    // Attempt to restart the bot on error
     this.#DISCORD.on('error', error => {
       console.info(`Bot >> RECEIEVED ERROR "${error.name}: ${error.message}"`) // TODO: replace
       this.#DISCORD.removeAllListeners()
       Bot.startBot()
     })
 
-    // Must be the last line of code
+    // Authenticate the bot; must be the last line of code
     await this.#DISCORD.login(process.env.DISCORD_API_BOT_TOKEN)
   }
 }
