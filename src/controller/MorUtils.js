@@ -198,7 +198,7 @@ export default class MorUtils {
 
   /**
    * Returns Discord emoji based on some arbitrary ranking
-   * @param {number} rank 
+   * @param {number} rank
    * @return {string}
    */
   static medalEmoji (rank) {

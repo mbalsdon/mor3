@@ -11,12 +11,11 @@ import MorUtils from '../controller/MorUtils.js'
  * @see {@link RunScheduledJobs}
  */
 export default async function scrapeTopPlays () {
-  
   /**
    * Populates a dictionary with given array of MorScores -
    * Key: mods; Value: MorScore array
-   * @param {{}} dict 
-   * @param {MorScore[]} scores 
+   * @param {{}} dict
+   * @param {MorScore[]} scores
    */
   const populateDict = function (dict, scores) {
     console.info(`::scrapeTopPlays >> populateDict (dict, array of ${scores.length} scores)`) // TODO: replace

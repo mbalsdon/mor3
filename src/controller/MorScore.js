@@ -19,27 +19,27 @@ export default class MorScore {
   /**
    * Constructs a MOR Score object
    * @param {string[]} values Array of strings containing the following values:
-   *    
+   *
    *    values[0] - scoreId (string): ID of the score
-   *    
+   *
    *    values[1] - userId (string): ID of the user who set the score
-   *    
+   *
    *    values[2] - username (string): username of the user who set the score
-   *    
+   *
    *    values[3] - beatmap (string): beatmap of the score
-   *    
+   *
    *    values[4] - mods (string): mods of the score
-   *    
+   *
    *    values[5] - accuracy (string): accuracy of the score
-   *    
+   *
    *    values[6] - pp (string): pp of the score
-   *    
+   *
    *    values[7] - starRating (string): star rating of the score's map
-   *    
+   *
    *    values[8] - date (string): date the score was set on
-   *    
+   *
    *    values[9] - beatmapImgLink (string): beatmap image URL of the score
-   * 
+   *
    * @example
    *  const myScore = new Score([
    *    '2283307549',

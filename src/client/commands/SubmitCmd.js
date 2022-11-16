@@ -28,21 +28,29 @@ export default async function submitCmd (facade, interaction) {
     await interaction.reply({ embeds: [embed] })
   } catch (error) {
     if (error instanceof AlreadyExistsError) {
-      await interaction.reply({ content: `\`\`\`Score with ID "${scoreId}" has already been added!\n\n` +
+      await interaction.reply({
+        content: `\`\`\`Score with ID "${scoreId}" has already been added!\n\n` +
                                          `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-                                ephemeral: true })
+        ephemeral: true
+      })
     } else if (error instanceof TypeError) {
-      await interaction.reply({ content: `\`\`\`Score ID must be a positive number! Your input: "${scoreId}".\n\n` +
+      await interaction.reply({
+        content: `\`\`\`Score ID must be a positive number! Your input: "${scoreId}".\n\n` +
                                          `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-                                ephemeral: true })
+        ephemeral: true
+      })
     } else if (error instanceof NotFoundError) {
-      await interaction.reply({ content: `\`\`\`Could not find score with ID "${scoreId}"!\n\n` +
+      await interaction.reply({
+        content: `\`\`\`Could not find score with ID "${scoreId}"!\n\n` +
                                          `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-                                ephemeral: true })
+        ephemeral: true
+      })
     } else {
-      await interaction.reply({ content: `\`\`\`${error.name}: ${error.message}\n\n` +
-                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``, 
-                                ephemeral: true })
+      await interaction.reply({
+        content: `\`\`\`${error.name}: ${error.message}\n\n` +
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
+        ephemeral: true
+      })
       throw error
     }
   }

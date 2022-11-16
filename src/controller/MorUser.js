@@ -26,35 +26,35 @@ export default class MorUser {
    * @param {string[]} values Array of strings containing the following values:
 
    *    values[0] - userId (string): ID of the user
-   * 
+   *
    *    values[1] - username (string): username of the user
-   * 
+   *
    *    values[2] - playstyle (string): profile playstyle of the user
-   * 
+   *
    *    values[3] - globalRank (string): global rank of the user
-   * 
+   *
    *    values[4] - countryRank (string): country rank of the user
-   * 
+   *
    *    values[5] - pp (string): profile pp of the user
-   * 
+   *
    *    values[6] - accuracy (string): profile accuracy of the user
-   * 
+   *
    *    values[7] - playtime (string): profile playtime of the user
-   * 
+   *
    *    values[8] - top1s (string): number of user's MOR sheet top 1s
-   * 
+   *
    *    values[9] - top2s (string): number of user's MOR sheet top 2s
-   * 
+   *
    *    values[10] - top3s (string): number of user's MOR sheet top 3s
    *
    *    values[11] - top5s (string): number of user's MOR sheet top 5s
-   * 
+   *
    *    values[12] - top10s (string): number of user's MOR sheet top 10s
-   * 
+   *
    *    values[13] - top25s (string): number of user's MOR sheet top 25s
-   * 
+   *
    *    values[14] - pfpLink (string): profile picture URL of the user
-   * 
+   *
    * @example
    *  const myUser = new MorUser([
    *    '6385683',

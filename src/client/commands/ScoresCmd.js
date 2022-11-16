@@ -39,7 +39,7 @@ export default async function scoresCmd (facade, client, interaction) {
       for (let i = 0; i < lim; i++) {
         const pageIndex = perPage * (page - 1) + i
         const s = scores[pageIndex]
-        let medalEmoji = MorUtils.medalEmoji(pageIndex)
+        const medalEmoji = MorUtils.medalEmoji(pageIndex)
         const scoreStr = `**${pageIndex + 1}. [${s.beatmap}](https://osu.ppy.sh/scores/osu/${s.scoreId}) +${s.mods}** [${s.starRating}★]\n` +
               `▸ ${medalEmoji} ▸ **${s.pp}pp** ▸ ${s.accuracy}%\n` +
               `▸ Set by [${s.username}](https://osu.ppy.sh/users/${s.userId}) on ${s.date}\n`
@@ -133,18 +133,24 @@ export default async function scoresCmd (facade, client, interaction) {
     await interaction.reply({ embeds: [embed], components: [buttons] })
   } catch (error) {
     if (error instanceof InvalidModsError) {
-      await interaction.reply({ content: `\`\`\`"${inputMods}" is not a valid mod combo!\n` +
+      await interaction.reply({
+        content: `\`\`\`"${inputMods}" is not a valid mod combo!\n` +
                                          `Valid mod combos: ${Mods.validModStrings().join(' ')}\n\n` +
-                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``, 
-                                ephemeral: true})
-    } else if (error instanceof SheetEmptyError) {
-      await interaction.reply({ content: `\`\`\`The "${inputMods}" sheet is empty!\n\n` +
                                          `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-                                ephemeral: true })
+        ephemeral: true
+      })
+    } else if (error instanceof SheetEmptyError) {
+      await interaction.reply({
+        content: `\`\`\`The "${inputMods}" sheet is empty!\n\n` +
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
+        ephemeral: true
+      })
     } else {
-      await interaction.reply({ content: `\`\`\`${error.name}: ${error.message}\n\n` +
-                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``, 
-                                ephemeral: true })
+      await interaction.reply({
+        content: `\`\`\`${error.name}: ${error.message}\n\n` +
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
+        ephemeral: true
+      })
       throw error
     }
   }

@@ -11,9 +11,11 @@ export default async function pingCmd (interaction) {
   try {
     await interaction.reply('pong!')
   } catch (error) {
-    await interaction.reply({ content: `\`\`\`${error.name}: ${error.message}\n\n` +
-                                       `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``, 
-                              ephemeral: true })
+    await interaction.reply({
+      content: `\`\`\`${error.name}: ${error.message}\n\n` +
+                                       `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
+      ephemeral: true
+    })
     throw error
   }
 }

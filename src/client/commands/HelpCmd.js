@@ -29,9 +29,11 @@ export default async function helpCmd (interaction) {
       .setFooter({ text: 'https://github.com/mbalsdon/mor3' })
     await interaction.reply({ embeds: [embed] })
   } catch (error) {
-    await interaction.reply({ content: `\`\`\`${error.name}: ${error.message}\n\n` +
-                                       `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``, 
-                              ephemeral: true })
+    await interaction.reply({
+      content: `\`\`\`${error.name}: ${error.message}\n\n` +
+                                       `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
+      ephemeral: true
+    })
     throw error
   }
 }

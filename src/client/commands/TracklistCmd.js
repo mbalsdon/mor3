@@ -21,9 +21,11 @@ export default async function tracklistCmd (facade, interaction) {
     await interaction.reply({ files: ['./tracklist.txt'] })
     fs.unlinkSync('./tracklist.txt')
   } catch (error) {
-    await interaction.reply({ content: `\`\`\`${error.name}: ${error.message}\n\n` +
-                                       `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``, 
-                              ephemeral: true })
+    await interaction.reply({
+      content: `\`\`\`${error.name}: ${error.message}\n\n` +
+                                       `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
+      ephemeral: true
+    })
     throw error
   }
 }

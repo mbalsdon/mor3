@@ -46,13 +46,17 @@ export default async function userCmd (facade, interaction) {
     await interaction.reply({ embeds: [embed] })
   } catch (error) {
     if (error instanceof NotFoundError) {
-      await interaction.reply({ content: `\`\`\`Could not find user "${username}"!\n\n` + 
-                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``, 
-                                ephemeral: true })
+      await interaction.reply({
+        content: `\`\`\`Could not find user "${username}"!\n\n` +
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
+        ephemeral: true
+      })
     } else {
-      await interaction.reply({ content: `\`\`\`${error.name}: ${error.message}\n\n` +
-                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``, 
-                                ephemeral: true })
+      await interaction.reply({
+        content: `\`\`\`${error.name}: ${error.message}\n\n` +
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
+        ephemeral: true
+      })
       throw error
     }
   }
