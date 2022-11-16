@@ -1,4 +1,6 @@
 import MorConfig from '../../controller/MorConfig.js'
+import { AlreadyExistsError, NotFoundError } from '../../controller/MorErrors.js'
+import MorUtils from '../../controller/MorUtils.js'
 
 import { EmbedBuilder } from 'discord.js'
 
@@ -6,6 +8,7 @@ import { EmbedBuilder } from 'discord.js'
  * Adds a user to the MOR sheet and replies with their profile
  * @param {MorFacade} facade
  * @param {ChatInputCommandInteraction<CacheType>} interaction
+ * @throws {@link Error} if any unhandled exceptions are caught
  * @return {Promise<void>}
  */
 export default async function trackCmd (facade, interaction) {
@@ -26,6 +29,19 @@ export default async function trackCmd (facade, interaction) {
       .setFooter({ text: `owobot: >track add "${user.username}" | Bathbot: <track "${user.username}"` })
     await interaction.reply({ embeds: [embed] })
   } catch (error) {
-    await interaction.reply({ content: `\`\`\`${error.name}: ${error.message}\n\nDM spreadnuts#1566 on Discord if you believe that this is a bug.\`\`\``, ephemeral: true })
+    if (error instanceof AlreadyExistsError) {
+      await interaction.reply({ content: `\`\`\`User "${username}" has already been added!\n\n` +
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
+                                ephemeral: true })
+    } else if (error instanceof NotFoundError) {
+      await interaction.reply({ content: `\`\`\`User "${username}" could not be found!\n\n` +
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
+                                ephemeral: true })
+    } else {
+      await interaction.reply({ content: `\`\`\`${error.name}: ${error.message}\n\n` +
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``, 
+                                ephemeral: true })
+      throw error
+    }
   }
 }

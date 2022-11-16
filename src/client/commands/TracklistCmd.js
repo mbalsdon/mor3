@@ -1,9 +1,12 @@
+import MorUtils from '../../controller/MorUtils.js'
+
 import * as fs from 'fs'
 
 /**
  * Replies with a .txt file of MOR users
  * @param {MorFacade} facade
  * @param {ChatInputCommandInteraction<CacheType>} interaction
+ * @throws {@link Error} if any unhandled exceptions are caught
  * @return {Promise<void>}
  */
 export default async function tracklistCmd (facade, interaction) {
@@ -18,6 +21,9 @@ export default async function tracklistCmd (facade, interaction) {
     await interaction.reply({ files: ['./tracklist.txt'] })
     fs.unlinkSync('./tracklist.txt')
   } catch (error) {
-    await interaction.reply({ content: `\`\`\`${error.name}: ${error.message}\n\nDM spreadnuts#1566 on Discord if you believe that this is a bug.\`\`\``, ephemeral: true })
+    await interaction.reply({ content: `\`\`\`${error.name}: ${error.message}\n\n` +
+                                       `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``, 
+                              ephemeral: true })
+    throw error
   }
 }

@@ -1,4 +1,6 @@
 import MorConfig from '../../controller/MorConfig.js'
+import { NotFoundError } from '../../controller/MorErrors.js'
+import MorUtils from '../../controller/MorUtils.js'
 
 import { EmbedBuilder } from 'discord.js'
 
@@ -6,6 +8,7 @@ import { EmbedBuilder } from 'discord.js'
  * Removes a score from the MOR sheet and replies with the removed score
  * @param {MorFacade} facade
  * @param {ChatInputCommandInteraction<CacheType>} interaction
+ * @throws {@link Error} if any unhandled exceptions are caught
  * @return {Promise<void>}
  */
 export default async function unsubmitCmd (facade, interaction) {
@@ -24,6 +27,19 @@ export default async function unsubmitCmd (facade, interaction) {
       .setFooter({ text: `Last update: ${lastUpdated}` })
     await interaction.reply({ embeds: [embed] })
   } catch (error) {
-    await interaction.reply({ content: `\`\`\`${error.name}: ${error.message}\n\nDM spreadnuts#1566 on Discord if you believe that this is a bug.\`\`\``, ephemeral: true })
+    if (error instanceof NotFoundError) {
+      await interaction.reply({ content: `\`\`\`Could not find score with ID "${scoreId}"!\n\n` + 
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``, 
+                                ephemeral: true })
+    } else if (error instanceof TypeError) {
+      await interaction.reply({ content: `\`\`\`Score ID must be a positive number! Your input: "${scoreId}"\n\n` +
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
+                                ephemeral: true })
+    } else {
+      await interaction.reply({ content: `\`\`\`${error.name}: ${error.message}\n\n` +
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``, 
+                                ephemeral: true })
+      throw error
+    }
   }
 }

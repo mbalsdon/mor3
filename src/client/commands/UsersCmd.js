@@ -1,5 +1,6 @@
 import MorConfig from '../../controller/MorConfig.js'
 import { SheetEmptyError } from '../../controller/MorErrors.js'
+import MorUtils from '../../controller/MorUtils.js'
 
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js'
 
@@ -8,6 +9,7 @@ import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'disc
  * @param {MorFacade} facade
  * @param {Client<boolean>} client
  * @param {ChatInputCommandInteraction<CacheType>} interaction
+ * @throws {@link Error} if any unhandled exceptions are caught
  * @return {Promise<void>}
  */
 export default async function usersCmd (facade, client, interaction) {
@@ -127,6 +129,15 @@ export default async function usersCmd (facade, client, interaction) {
     }, 20000)
     await interaction.reply({ embeds: [embed], components: [buttons] })
   } catch (error) {
-    await interaction.reply({ content: `\`\`\`${error.name}: ${error.message}\n\nDM spreadnuts#1566 on Discord if you believe that this is a bug.\`\`\``, ephemeral: true })
+    if (error instanceof SheetEmptyError) {
+      await interaction.reply({ content: `\`\`\`The "${MorConfig.SHEETS.USERS.NAME}" sheet is empty!\n\n` +
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
+                                ephemeral: true })
+    } else {
+      await interaction.reply({ content: `\`\`\`${error.name}: ${error.message}\n\n` +
+                                       `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``, 
+                              ephemeral: true })
+      throw error
+    }
   }
 }

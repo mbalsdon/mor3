@@ -1,10 +1,12 @@
 import MorConfig from '../../controller/MorConfig.js'
+import MorUtils from '../../controller/MorUtils.js'
 
 import { EmbedBuilder } from 'discord.js'
 
 /**
  * Replies with a list of MOR's bot commands
  * @param {ChatInputCommandInteraction<CacheType>} interaction
+ * @throws {@link Error} if any unhandled exceptions are caught
  * @return {Promise<void>}
  */
 export default async function helpCmd (interaction) {
@@ -27,6 +29,9 @@ export default async function helpCmd (interaction) {
       .setFooter({ text: 'https://github.com/mbalsdon/mor3' })
     await interaction.reply({ embeds: [embed] })
   } catch (error) {
-    await interaction.reply({ content: `\`\`\`${error.name}: ${error.message}\n\nDM spreadnuts#1566 on Discord if you believe that this is a bug.\`\`\``, ephemeral: true })
+    await interaction.reply({ content: `\`\`\`${error.name}: ${error.message}\n\n` +
+                                       `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``, 
+                              ephemeral: true })
+    throw error
   }
 }

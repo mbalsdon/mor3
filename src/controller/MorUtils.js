@@ -9,6 +9,9 @@ export default class MorUtils {
   /** Maximum number of columns allowed in Google Sheets */
   static SHEETS_MAX_COLS = 18278
 
+  /** Discord bot error tag string */
+  static DISCORD_BOT_ERROR_STR = 'DM spreadnuts#1566 on Discord or open an issue at https://github.com/mbalsdon/mor3/issues if you believe that this is a bug.'
+
   /**
    * Returns true if input is a number
    * @param {*} v
