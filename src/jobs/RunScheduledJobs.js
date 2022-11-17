@@ -1,30 +1,38 @@
+import MorConfig from '../controller/MorConfig.js'
+import MorFacade from '../controller/MorFacade.js'
+import MorUtils from '../controller/MorUtils.js'
+
+import calcModTopLBPlays from './CalcModTopLBPlays.js'
 import scrapeTopPlays from './ScrapeTopPlays.js'
 import updateUsers from './UpdateUsers.js'
-import calcModTopLBPlays from './CalcModTopLBPlays.js'
-import DriveWrapper from '../controller/DriveWrapper.js'
-import SheetsWrapper from '../controller/SheetsWrapper.js'
-import * as fs from 'fs'
 
-const configRaw = fs.readFileSync('./src/config.json')
-const config = JSON.parse(configRaw)
-
+/**
+ * Runs cron/scheduled MOR job scripts,
+ * sets the Last Updated tag on the MOR sheet,
+ * then creates a backup file.
+ *
+ * This is what you should run if you want to update the MOR spreadsheet.
+ */
 export default async function runScheduledJobs () {
-  console.time('::runScheduledJobs() >> time elapsed')
-  console.info('::runScheduledJobs() >> Running scheduled tasks... This may take a while')
-
+  console.time('::runScheduledJobs () >> Time elapsed') // TODO: replace
+  console.info('::runScheduledJobs () >> Running scheduled tasks... This may take a while') // TODO: replace
   // Ordering matters; scrapeTopPlays should come before updateUsers/calcTopModLBPlays
+  console.info('::runScheduledJobs () >> Running the scrapeTopPlays script...') // TODO: replace
   await scrapeTopPlays()
+  console.info('::runScheduledJobs () >> Running the updateUsers script...') // TODO: replace
   await updateUsers()
+  console.info('::runScheduledJobs () >> Running the calcModTopLBPlays script...') // TODO: replace
   await calcModTopLBPlays()
-
-  // Archive the spreadsheet & update the "last updated" tag
-  const sheets = await SheetsWrapper.build()
-  const drive = await DriveWrapper.build()
-  const dateString = new Date(Date.now()).toISOString()
-  const metadata = await sheets.fetchMetadata()
-  await drive.copyFile(config.SPREADSHEETS.SPREADSHEET_ID, `${metadata.properties.title} ${dateString}`)
-  await sheets.lastUpdated(dateString)
-
-  console.info(`::runScheduledJobs() >> job completed at ${dateString}`)
-  console.timeEnd('::runScheduledJobs() >> time elapsed')
+  console.info('::runScheduledJobs () >> Archiving the spreadsheet and updating the "last updated" tag...') // TODO: replace
+  const mor = await MorFacade.build()
+  let dateString = new Date(Date.now()).toISOString()
+  dateString = dateString.slice(0, dateString.length - 5) + '+00:00'
+  const metadata = await mor.getSheetMetadata()
+  await MorUtils.sleep(1000)
+  await mor.setSheetLastUpdated(dateString)
+  await MorUtils.sleep(1000)
+  await mor.backupFile(MorConfig.SHEETS.SPREADSHEET.ID, `${metadata.properties.title} ${dateString}`, MorConfig.DRIVE.BACKUP_FOLDER_ID)
+  await MorUtils.sleep(1000)
+  console.info(`::runScheduledJobs () >> Job completed at ${dateString}`) // TODO: replace
+  console.timeEnd('::runScheduledJobs () >> Time elapsed') // TODO: replace
 }

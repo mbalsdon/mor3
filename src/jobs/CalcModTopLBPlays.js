@@ -1,16 +1,13 @@
-import SheetsWrapper from '../controller/SheetsWrapper.js'
-
+/**
+ * TODO
+ */
 export default async function calcModTopLBPlays () {
-  console.time('::calcModTopLBPlays() >> time elapsed')
-  console.info('::calcModTopLBPlays() >> Determining users\' best plays... This may take a while')
-
-  const sheets = await SheetsWrapper.build()
+  console.time('::calcModTopLBPlays () >> time elapsed') // TODO: replace
+  console.info('::calcModTopLBPlays () >> Determining users\' best plays... This may take a while') // TODO: replace
 
   console.info('THIS FUNCTION IS NOT IMPLEMENTED YET!')
-
   const dateString = new Date(Date.now()).toISOString()
-  await sheets.lastUpdated(dateString)
 
-  console.info(`::scrapeTopPlays() >> job completed at ${dateString}`)
-  console.timeEnd('::calcModTopLBPlays() >> time elapsed')
+  console.info(`::scrapeTopPlays () >> job completed at ${dateString}`) // TODO: replace
+  console.timeEnd('::calcModTopLBPlays () >> time elapsed') // TODO: replace
 }

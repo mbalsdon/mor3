@@ -1,14 +1,19 @@
-import * as fs from 'fs'
+import MorConfig from '../../controller/MorConfig.js'
+import MorUtils from '../../controller/MorUtils.js'
+
 import { EmbedBuilder } from 'discord.js'
 
-const configRaw = fs.readFileSync('./src/config.json')
-const config = JSON.parse(configRaw)
-
+/**
+ * Replies with a list of MOR's bot commands
+ * @param {ChatInputCommandInteraction<CacheType>} interaction
+ * @throws {@link Error} if any unhandled exceptions are caught
+ * @return {Promise<void>}
+ */
 export default async function helpCmd (interaction) {
-  console.info('::helpCmd()')
+  console.info('Bot::helpCmd ()') // TODO: replace
   try {
     const embed = new EmbedBuilder()
-      .setColor(config.BOT_EMBED_COLOR)
+      .setColor(MorConfig.BOT_EMBED_COLOR)
       .setAuthor({ name: 'mor3 commands', iconURL: 'https://spreadnuts.s-ul.eu/MdfvA3q5', url: 'https://github.com/mbalsdon/mor3' })
       .setDescription('`help` - Documentation on the bot\'s commands\n' +
             '`ping` - Checks if the bot is alive\n' +
@@ -24,6 +29,11 @@ export default async function helpCmd (interaction) {
       .setFooter({ text: 'https://github.com/mbalsdon/mor3' })
     await interaction.reply({ embeds: [embed] })
   } catch (error) {
-    await interaction.reply({ content: `\`\`\`${error.message}\nDM spreadnuts#1566 on Discord if you believe that this is a bug.\`\`\``, ephemeral: true })
+    await interaction.reply({
+      content: `\`\`\`${error.name}: ${error.message}\n\n` +
+                                       `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
+      ephemeral: true
+    })
+    throw error
   }
 }

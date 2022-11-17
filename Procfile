@@ -1,1 +1,0 @@
-worker: node ./src/client/deploy-commands.js && node index.js

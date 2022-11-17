@@ -1,4 +1,6 @@
 import Bot from './src/client/Bot.js'
+import runScheduledJobs from './src/jobs/RunScheduledJobs.js'
+import * as cron from 'node-cron'
 
-const client = await Bot.build()
-client.start()
+await Bot.startBot()
+cron.schedule('0 */12 * * *', runScheduledJobs)
