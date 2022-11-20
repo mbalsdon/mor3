@@ -24,9 +24,9 @@ export default async function metadataCmd (facade, interaction) {
       .setAuthor({ name: `${metadata.properties.title} metadata`, iconURL: 'https://spreadnuts.s-ul.eu/MdfvA3q5', url: 'https://docs.google.com/spreadsheets/d/1hduRLLIFjVwLGjXyt7ph3301xfXS6qjSnYCm18YP4iA/edit#gid=0' })
       .setDescription(ret)
       .setFooter({ text: `Last update: ${lastUpdated}` })
-    await interaction.reply({ embeds: [embed] })
+    await interaction.editReply({ embeds: [embed] })
   } catch (error) {
-    await interaction.reply({
+    await interaction.editReply({
       content: `\`\`\`${error.name}: ${error.message}\n\n` +
                                          `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
       ephemeral: true

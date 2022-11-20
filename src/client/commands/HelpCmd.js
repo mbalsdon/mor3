@@ -27,9 +27,9 @@ export default async function helpCmd (interaction) {
             '`unsubmit` - Removes a submitted score from the database\n' +
             '`scores` - Displays list of scores for a given mod combo, sorted by PP\n')
       .setFooter({ text: 'https://github.com/mbalsdon/mor3' })
-    await interaction.reply({ embeds: [embed] })
+    await interaction.editReply({ embeds: [embed] })
   } catch (error) {
-    await interaction.reply({
+    await interaction.editReply({
       content: `\`\`\`${error.name}: ${error.message}\n\n` +
                                        `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
       ephemeral: true

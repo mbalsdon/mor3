@@ -29,22 +29,22 @@ export default async function trackCmd (facade, interaction) {
       )
       .setThumbnail(user.pfpLink)
       .setFooter({ text: `owobot: >track add "${user.username}" | Bathbot: <track "${user.username}"` })
-    await interaction.reply({ embeds: [embed] })
+    await interaction.editReply({ embeds: [embed] })
   } catch (error) {
     if (error instanceof AlreadyExistsError) {
-      await interaction.reply({
+      await interaction.editReply({
         content: `\`\`\`User "${username}" has already been added!\n\n` +
                                          `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
         ephemeral: true
       })
     } else if (error instanceof NotFoundError) {
-      await interaction.reply({
+      await interaction.editReply({
         content: `\`\`\`User "${username}" could not be found!\n\n` +
                                          `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
         ephemeral: true
       })
     } else {
-      await interaction.reply({
+      await interaction.editReply({
         content: `\`\`\`${error.name}: ${error.message}\n\n` +
                                          `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
         ephemeral: true

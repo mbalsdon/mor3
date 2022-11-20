@@ -25,28 +25,28 @@ export default async function submitCmd (facade, interaction) {
               `▸ **${score.pp}pp** ▸ ${score.accuracy}%\n` +
               `▸ Set by [${score.username}](https://osu.ppy.sh/users/${score.userId}) on ${score.date}\n`)
       .setFooter({ text: `Last update: ${lastUpdated}` })
-    await interaction.reply({ embeds: [embed] })
+    await interaction.editReply({ embeds: [embed] })
   } catch (error) {
     if (error instanceof AlreadyExistsError) {
-      await interaction.reply({
+      await interaction.editReply({
         content: `\`\`\`Score with ID "${scoreId}" has already been added!\n\n` +
                                          `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
         ephemeral: true
       })
     } else if (error instanceof TypeError) {
-      await interaction.reply({
+      await interaction.editReply({
         content: `\`\`\`Score ID must be a positive number! Your input: "${scoreId}".\n\n` +
                                          `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
         ephemeral: true
       })
     } else if (error instanceof NotFoundError) {
-      await interaction.reply({
+      await interaction.editReply({
         content: `\`\`\`Could not find score with ID "${scoreId}"!\n\n` +
                                          `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
         ephemeral: true
       })
     } else {
-      await interaction.reply({
+      await interaction.editReply({
         content: `\`\`\`${error.name}: ${error.message}\n\n` +
                                          `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
         ephemeral: true
