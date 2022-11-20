@@ -83,6 +83,7 @@ export default class Bot {
     this.#DISCORD.on('interactionCreate', async interaction => {
       if (!interaction.isChatInputCommand()) return
 
+      await interaction.deferReply()
       const { commandName } = interaction
       console.info(`Bot >> received command "${commandName}"`) // TODO: replace
 
