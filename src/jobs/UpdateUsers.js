@@ -22,11 +22,11 @@ export default async function updateUsers () {
   for (const mods of Mods.validModStrings()) {
     if (mods === Mods.SS) continue
     dict[mods] = await mor.getSheetScores(mods)
-    await MorUtils.sleep(MorConfig.API_COOLDOWN_MS)
+    await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
   }
   console.info('::updateUsers () >> Retrieving user IDs from sheet...') // TODO: replace
   const userIds = await mor.getSheetUserIds()
-  await MorUtils.sleep(MorConfig.API_COOLDOWN_MS)
+  await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
   console.info(`::updateUsers () >> Refreshing data for ${userIds.length} users...`) // TODO: replace
   const updatedUsers = []
   for (const userId of userIds) {
@@ -38,7 +38,7 @@ export default async function updateUsers () {
         continue
       } else throw error
     }
-    await MorUtils.sleep(MorConfig.API_COOLDOWN_MS)
+    await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
     console.info(`::updateUsers () >> Counting top25s for user ${userId}...`) // TODO: replace
     let [top1s, top2s, top3s, top5s, top10s, top25s] = [0, 0, 0, 0, 0, 0]
     for (const key of Object.keys(dict)) {
@@ -76,7 +76,7 @@ export default async function updateUsers () {
   console.info('::updateUsers () >> Updating the sheet...') // TODO: replace
   updatedUsers.sort((a, b) => { return parseInt(b.pp) - parseInt(a.pp) })
   await mor.replaceSheetUsers(updatedUsers)
-  await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
+  await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 9)
   const dateString = new Date(Date.now()).toISOString()
   console.info(`::updateUsers () >> Job completed at ${dateString}, updated ${updatedUsers.length} users`) // TODO: replace
   console.timeEnd('::updateUsers () >> Time elapsed') // TODO: replace
