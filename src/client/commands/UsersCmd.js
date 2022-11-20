@@ -120,23 +120,23 @@ export default async function usersCmd (facade, client, interaction) {
       await interaction.update({ embeds: [embed], components: [buttons] })
     }
 
-    // Listen for buttonpresses for 20 seconds
+    // Listen for buttonpresses for 60 seconds
     console.info('Bot::usersCmd >> listening for button presses...')
     client.on('interactionCreate', pageButtons)
     setTimeout(function () {
       console.info('Bot::usersCmd >> no longer listening for button presses')
       client.off('interactionCreate', pageButtons)
-    }, 20000)
-    await interaction.reply({ embeds: [embed], components: [buttons] })
+    }, 60000)
+    await interaction.editReply({ embeds: [embed], components: [buttons] })
   } catch (error) {
     if (error instanceof SheetEmptyError) {
-      await interaction.reply({
+      await interaction.editReply({
         content: `\`\`\`The "${MorConfig.SHEETS.USERS.NAME}" sheet is empty!\n\n` +
                                          `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
         ephemeral: true
       })
     } else {
-      await interaction.reply({
+      await interaction.editReply({
         content: `\`\`\`${error.name}: ${error.message}\n\n` +
                                        `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
         ephemeral: true

@@ -18,10 +18,10 @@ export default async function tracklistCmd (facade, interaction) {
       ret = ret + `${user.userId},${user.username}\n`
     }
     fs.writeFileSync('./tracklist.txt', ret)
-    await interaction.reply({ files: ['./tracklist.txt'] })
+    await interaction.editReply({ files: ['./tracklist.txt'] })
     fs.unlinkSync('./tracklist.txt')
   } catch (error) {
-    await interaction.reply({
+    await interaction.editReply({
       content: `\`\`\`${error.name}: ${error.message}\n\n` +
                                        `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
       ephemeral: true

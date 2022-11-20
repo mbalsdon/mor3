@@ -16,10 +16,11 @@ import * as fs from 'fs'
  */
 export default class MorConfig {
   static #cfg = JSON.parse(fs.readFileSync('./mor_config.json'))
-  static LAST_UPDATE_CELL = this.#cfg.LAST_UPDATE_CELL
   static BOT_EMBED_COLOR = this.#cfg.BOT_EMBED_COLOR
+  static LAST_UPDATE_CELL = this.#cfg.LAST_UPDATE_CELL
+  static JOBS_CACHE = this.#cfg.JOBS_CACHE
+  static UPDATE_SCORES_CACHE = this.#cfg.UPDATE_SCORES_CACHE
+  static API_COOLDOWN_MS = this.#cfg.API_COOLDOWN_MS
   static SHEETS = this.#cfg.SHEETS
   static DRIVE = this.#cfg.DRIVE
-  static JOBS_CACHE = './src/jobs/cache'
-  static UPDATE_SCORES_CACHE = `${this.JOBS_CACHE}/updateScores.json`
 }

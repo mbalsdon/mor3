@@ -1,4 +1,5 @@
 import Mods from '../controller/Mods.js'
+import MorConfig from '../controller/MorConfig.js'
 import MorFacade from '../controller/MorFacade.js'
 import MorUtils from '../controller/MorUtils.js'
 
@@ -15,7 +16,7 @@ export default async function wipeScores () {
   for (const mods of Mods.validModStrings()) {
     console.info(`::wipeScores () >> Deleting ${mods} scores...`) // TODO: replace
     await mor.wipeSheet(mods)
-    await MorUtils.sleep(3000)
+    await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
   }
   const dateString = new Date(Date.now()).toISOString()
   console.info(`::wipeScores () >> Job completed at ${dateString}`) // TODO: replace

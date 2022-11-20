@@ -1,6 +1,6 @@
+import Mods from '../controller/Mods.js'
 import MorConfig from '../controller/MorConfig.js'
 import { NotFoundError } from '../controller/MorErrors.js'
-import Mods from '../controller/Mods.js'
 import MorFacade from '../controller/MorFacade.js'
 import MorScore from '../controller/MorScore.js'
 import MorUtils from '../controller/MorUtils.js'
@@ -34,7 +34,7 @@ export default async function updateScores () {
   for (const mods of modStrings) {
     const cache = { currentModSheet: mods, scores: [] }
     dict[mods] = await mor.getSheetScoreIds(mods)
-    await MorUtils.sleep(1000)
+    await MorUtils.sleep(MorConfig.API_COOLDOWN_MS)
     // Decide which score to start at and populate cache with already-updated scores
     let index = 0
     if (mods === currentModSheet) {
@@ -49,7 +49,7 @@ export default async function updateScores () {
     for (let i = index; i < dict[mods].length; i++) {
       try {
         const score = await mor.getOsuScore(dict[mods][i])
-        await MorUtils.sleep(1000)
+        await MorUtils.sleep(MorConfig.API_COOLDOWN_MS)
         cache.scores.push(score)
         fs.writeFileSync(MorConfig.UPDATE_SCORES_CACHE, JSON.stringify(cache))
       } catch (error) {
@@ -68,7 +68,7 @@ export default async function updateScores () {
     console.info('::updateScores() >> Updating sheet and resetting cache...') // TODO: replace
     if (updatedScores.length === 0) await mor.wipeSheet(mods)
     else await mor.replaceSheetScores(mods, updatedScores)
-    await MorUtils.sleep(3000)
+    await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
     fs.writeFileSync(MorConfig.UPDATE_SCORES_CACHE, JSON.stringify({ currentModSheet: Mods.SS, scores: [] }))
   }
   let dateString = new Date(Date.now()).toISOString()

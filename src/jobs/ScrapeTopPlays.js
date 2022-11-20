@@ -1,4 +1,5 @@
 import Mods from '../controller/Mods.js'
+import MorConfig from '../controller/MorConfig.js'
 import MorFacade from '../controller/MorFacade.js'
 import MorUtils from '../controller/MorUtils.js'
 
@@ -31,26 +32,26 @@ export default async function scrapeTopPlays () {
   const mor = await MorFacade.build()
   console.info('::scrapeTopPlays () >> Getting user IDs of tracked players...') // TODO: replace
   const userIds = await mor.getSheetUserIds()
-  await MorUtils.sleep(1000)
+  await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
   console.info(`::scrapeTopPlays () >> Grabbing tops/firsts from ${userIds.length} users...`) // TODO: replace
   // Key: mods; Value: MorScore array
   const dict = {}
   for (const userId of userIds) {
     const userTops = await mor.getOsuUserScores(userId, 'best')
-    await MorUtils.sleep(1000)
+    await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
     const userFirsts = await mor.getOsuUserScores(userId, 'firsts')
-    await MorUtils.sleep(1000)
+    await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
     populateDict(dict, userTops.concat(userFirsts))
   }
   console.info('::scrapeTopPlays () >> Retrieving submitted scores...') // TODO: replace
   const submittedScores = await mor.getSheetScores(Mods.SS)
-  await MorUtils.sleep(1000)
+  await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
   populateDict(dict, submittedScores)
   console.info('::scrapeTopPlays () >> Collecting data from the sheet and inserting any new scores...') // TODO: replace
   let numInserted = 0
   for (const key of Object.keys(dict)) {
     const sheetScores = await mor.getSheetScores(key)
-    await MorUtils.sleep(1000)
+    await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
     for (const dictScore of dict[key]) {
       // Check if score already in sheetScores, insert if not
       if (!sheetScores.some(s => s.scoreId === dictScore.scoreId)) {
@@ -61,7 +62,7 @@ export default async function scrapeTopPlays () {
     console.info(`::scrapeTopPlays () >> Updating the ${key} sheet...`) // TODO: replace
     sheetScores.sort((a, b) => { return parseInt(b.pp) - parseInt(a.pp) })
     await mor.replaceSheetScores(key, sheetScores)
-    await MorUtils.sleep(3000)
+    await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 9)
   }
   const dateString = new Date(Date.now()).toISOString()
   console.info(`::scrapeTopPlays () >> Job completed at ${dateString}, inserted ${numInserted} new plays.`) // TODO: replace
