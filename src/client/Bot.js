@@ -15,6 +15,8 @@ import MorFacade from '../controller/MorFacade.js'
 
 import 'dotenv/config'
 import { Client, GatewayIntentBits } from 'discord.js'
+import MorUtils from '../controller/MorUtils.js'
+import MorConfig from '../controller/MorConfig.js'
 
 /**
  * MOR Discord Bot client - To run the bot, build it and then call start.
@@ -58,10 +60,11 @@ export default class Bot {
    * Initializes and starts the bot
    * @return {Promise<void>}
    * @example
-   * await Bot.startBot()
+   * await Bot.restart()
    */
-  static async startBot () {
-    console.info('Bot::startBot ()') // TODO: replace
+  static async restart () {
+    console.info('Bot::restart ()') // TODO: replace
+    await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 30)
     const bot = await Bot.build()
     await bot.start()
   }
@@ -103,8 +106,9 @@ export default class Bot {
     // Attempt to restart the bot on error
     this.#DISCORD.on('error', error => {
       console.info(`Bot >> RECEIEVED ERROR "${error.name}: ${error.message}"`) // TODO: replace
+      console.info(`Bot >> Attempting to restart bot after ${(MorConfig.API_COOLDOWN_MS / 1000) * 30} seconds...`)
       this.#DISCORD.removeAllListeners()
-      Bot.startBot()
+      Bot.restart()
     })
 
     // Authenticate the bot; must be the last line of code
