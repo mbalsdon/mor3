@@ -27,11 +27,7 @@ export default async function runScheduledJobs () {
   const mor = await MorFacade.build()
   let dateString = new Date(Date.now()).toISOString()
   dateString = dateString.slice(0, dateString.length - 5) + '+00:00'
-  const metadata = await mor.getSheetMetadata()
-  await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
   await mor.setSheetLastUpdated(dateString)
-  await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
-  await mor.backupFile(MorConfig.SHEETS.SPREADSHEET.ID, `${metadata.properties.title} ${dateString}`, MorConfig.DRIVE.BACKUP_FOLDER_ID)
   await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
   console.info(`::runScheduledJobs () >> Job completed at ${dateString}`) // TODO: replace
   console.timeEnd('::runScheduledJobs () >> Time elapsed') // TODO: replace

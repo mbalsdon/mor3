@@ -1,5 +1,6 @@
 import Mods from '../controller/Mods.js'
 import MorConfig from '../controller/MorConfig.js'
+import { NotFoundError } from '../controller/MorErrors.js'
 import MorFacade from '../controller/MorFacade.js'
 import MorUtils from '../controller/MorUtils.js'
 
@@ -37,11 +38,18 @@ export default async function scrapeTopPlays () {
   // Key: mods; Value: MorScore array
   const dict = {}
   for (const userId of userIds) {
-    const userTops = await mor.getOsuUserScores(userId, 'best')
-    await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
-    const userFirsts = await mor.getOsuUserScores(userId, 'firsts')
-    await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
-    populateDict(dict, userTops.concat(userFirsts))
+    try {
+      const userTops = await mor.getOsuUserScores(userId, 'best')
+      await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
+      const userFirsts = await mor.getOsuUserScores(userId, 'firsts')
+      await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
+      populateDict(dict, userTops.concat(userFirsts))
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        console.info(`::scrapeTopPlays () >> Couldn't find user ${userId}, skipping...`) // TODO: replace
+        continue
+      }
+    }
   }
   console.info('::scrapeTopPlays () >> Retrieving submitted scores...') // TODO: replace
   const submittedScores = await mor.getSheetScores(Mods.SS)

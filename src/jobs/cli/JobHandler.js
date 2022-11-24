@@ -1,4 +1,5 @@
 import calcModTopLBPlays from '../CalcModTopLBPlays.js'
+import createBackup from '../CreateBackup.js'
 import runScheduledJobs from '../RunScheduledJobs.js'
 import scrapeTopPlays from '../ScrapeTopPlays.js'
 import updateScores from '../UpdateScores.js'
@@ -17,7 +18,8 @@ const commands = {
   updateScores,
   calcModTopLBPlays,
   runScheduledJobs,
-  wipeScores
+  wipeScores,
+  createBackup
 }
 
 const args = process.argv.slice(2)
