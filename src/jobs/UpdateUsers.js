@@ -34,7 +34,7 @@ export default async function updateUsers () {
     console.info(`::updateUsers () >> Grabbing osu!API data for user ${userId}...`) // TODO: replace
     try { user = await mor.getOsuUser(userId, 'id') } catch (error) {
       if (error instanceof NotFoundError) {
-        console.info(`::updateUsers () >> Couldn't find user ${userId}, skipping...`)
+        console.info(`::updateUsers () >> Couldn't find user ${userId}, skipping...`) // TODO: replace
         continue
       } else throw error
     }
