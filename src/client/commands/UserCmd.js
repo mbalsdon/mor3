@@ -17,24 +17,26 @@ export default async function userCmd (facade, interaction) {
   try {
     const lastUpdated = await facade.getSheetLastUpdated()
     const user = await facade.getSheetUser(username)
+    const sheetRank = await facade.getSheetUserRank(username)
     const embed = new EmbedBuilder()
       .setColor(MorConfig.BOT_EMBED_COLOR)
-      .setAuthor({ name: `MOR3 profile for ${user.username}`, iconURL: `${user.pfpLink}`, url: `https://osu.ppy.sh/users/${user.id}` })
+      .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} profile for ${user.username}`, iconURL: `${user.pfpLink}`, url: `https://osu.ppy.sh/users/${user.id}` })
       .setDescription(
-        `▸ **:video_game: Playstyle:** ${user.playstyle}\n` +
-        `▸ **:globe_with_meridians: Global Rank:** #${user.globalRank}\n` +
+        `▸ **:trophy: ${MorConfig.SHEETS.SPREADSHEET.NAME} Rank:** #${sheetRank}\n` +
         `▸ **:map: Country Rank:** #${user.countryRank}\n` +
+        `▸ **:globe_with_meridians: Global Rank:** #${user.globalRank}\n` +
+        `▸ **:video_game: Playstyle:** ${user.playstyle}\n` +
         `▸ **:farmer: PP:** ${user.pp}pp\n` +
         `▸ **:dart: Profile Accuracy:** ${user.accuracy}%\n` +
         `▸ **:desktop: Total Playtime:** ${user.playtime} hours\n\n` +
 
-        `▸ **:first_place: Mod leaderboard #1s:** ${user.top1s}\n` +
-        `▸ **:second_place: Mod leaderboard #2s:** ${user.top2s}\n` +
-        `▸ **:third_place: Mod leaderboard #3s:** ${user.top3s}\n\n` +
-
-        `▸ **:medal: Mod leaderboard Top 5s:** ${user.top5s}\n` +
-        `▸ **:military_medal: Mod leaderboard Top 10s:** ${user.top10s}\n` +
-        `▸ **:small_orange_diamond: Mod leaderboard Top 25s:** ${user.top25s}\n`
+        `▸ **:first_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #1s:** ${user.top1s}\n` +
+        `▸ **:second_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #2s:** ${user.top2s}\n` +
+        `▸ **:third_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #3s:** ${user.top3s}\n` +
+        `▸ **:medal: ${MorConfig.SHEETS.SPREADSHEET.NAME} Top 5s:** ${user.top5s}\n` +
+        `▸ **:military_medal: ${MorConfig.SHEETS.SPREADSHEET.NAME} Top 10s:** ${user.top10s}\n` +
+        `▸ **:small_orange_diamond: ${MorConfig.SHEETS.SPREADSHEET.NAME} Top 25s:** ${user.top25s}\n` +
+        (user.autotrack === 'TRUE' ? '' : `\n**:warning: NOTE:** This user's plays are not being automatically tracked!`)
       )
       .setThumbnail(user.pfpLink)
       // .addFields(

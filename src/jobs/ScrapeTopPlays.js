@@ -32,21 +32,26 @@ export default async function scrapeTopPlays () {
   console.info('::scrapeTopPlays () >> Scraping user top 100s and #1s... This may take a while!') // TODO: replace
   const mor = await MorFacade.build()
   console.info('::scrapeTopPlays () >> Getting user IDs of tracked players...') // TODO: replace
-  const userIds = await mor.getSheetUserIds()
+  // const userIds = await mor.getSheetUserIds()
+  const users = await mor.getSheetUsers()
   await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
-  console.info(`::scrapeTopPlays () >> Grabbing tops/firsts from ${userIds.length} users...`) // TODO: replace
+  console.info(`::scrapeTopPlays () >> Grabbing tops/firsts from ${users.length} users...`) // TODO: replace
   // Key: mods; Value: MorScore array
   const dict = {}
-  for (const userId of userIds) {
+  for (const user of users) {
+    if (user.autotrack === 'FALSE') {
+      console.info(`::scrapeTopPlays () >> Tracking for ${user.username} is ${user.autotrack}, skipping...`) // TODO: replace
+      continue
+    }
     try {
-      const userTops = await mor.getOsuUserScores(userId, 'best')
+      const userTops = await mor.getOsuUserScores(user.userId, 'best')
       await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
-      const userFirsts = await mor.getOsuUserScores(userId, 'firsts')
+      const userFirsts = await mor.getOsuUserScores(user.userId, 'firsts')
       await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
       populateDict(dict, userTops.concat(userFirsts))
     } catch (error) {
       if (error instanceof NotFoundError) {
-        console.info(`::scrapeTopPlays () >> Couldn't find user ${userId}, skipping...`) // TODO: replace
+        console.info(`::scrapeTopPlays () >> Couldn't find user ${user.username}, skipping...`) // TODO: replace
         continue
       }
     }

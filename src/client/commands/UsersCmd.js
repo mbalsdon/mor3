@@ -46,6 +46,7 @@ export default async function usersCmd (facade, client, interaction) {
       const pfpLink = users[perPage * (page - 1)].pfpLink
       const embed = new EmbedBuilder()
         .setColor(MorConfig.BOT_EMBED_COLOR)
+        .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} User Leaderboard`, iconURL: `${pfpLink}`, url: `https://docs.google.com/spreadsheets/d/${MorConfig.SHEETS.SPREADSHEET.ID}/edit#gid=${MorConfig.SHEETS.USERS.ID}` })
         .setThumbnail(`${pfpLink}`)
         .setDescription(desc)
         .setFooter({ text: `Last update: ${lastUpdated}` })
@@ -126,6 +127,7 @@ export default async function usersCmd (facade, client, interaction) {
     setTimeout(function () {
       console.info('Bot::usersCmd >> no longer listening for button presses')
       client.off('interactionCreate', pageButtons)
+      interaction.editReply({ embeds: [embed], components: [] })
     }, 60000)
     await interaction.editReply({ embeds: [embed], components: [buttons] })
   } catch (error) {

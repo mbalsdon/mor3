@@ -20,11 +20,11 @@ export default async function helpCmd (interaction) {
             '`metadata` - Displays mor3 sheet metadata\n' +
             '`users` - Displays list of tracked users, sorted by PP\n' +
             '`user` - Displays a user\'s stats\n' +
-            '`track` - Adds a user to be tracked\n' +
-            '`untrack` - Removes a user from being tracked\n' +
+            '`track` - Adds a user to be tracked [MODERATORS ONLY]\n' +
+            '`untrack` - Removes a user from being tracked [MODERATORS ONLY]\n' +
             '`tracklist` - Lists all tracked users in a .txt file\n' +
             '`submit` - Manually submits a score to the database\n' +
-            '`unsubmit` - Removes a submitted score from the database\n' +
+            '`unsubmit` - Removes a submitted score from the database [MODERATORS ONLY]\n' +
             '`scores` - Displays list of scores for a given mod combo, sorted by PP\n')
       .setFooter({ text: 'https://github.com/mbalsdon/mor3' })
     await interaction.editReply({ embeds: [embed] })

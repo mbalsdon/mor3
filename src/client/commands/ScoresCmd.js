@@ -48,7 +48,7 @@ export default async function scoresCmd (facade, client, interaction) {
       const beatmapImgLink = scores[perPage * (page - 1)].beatmapImgLink
       const embed = new EmbedBuilder()
         .setColor(MorConfig.BOT_EMBED_COLOR)
-        .setAuthor({ name: `+${inputMods} Score Leaderboard`, iconURL: `${beatmapImgLink}`, url: `https://docs.google.com/spreadsheets/d/${MorConfig.SHEETS.SPREADSHEET.ID}/edit#gid=${MorConfig.SHEETS[inputMods].ID}` })
+        .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} ${inputMods} Score Leaderboard`, iconURL: `${beatmapImgLink}`, url: `https://docs.google.com/spreadsheets/d/${MorConfig.SHEETS.SPREADSHEET.ID}/edit#gid=${MorConfig.SHEETS[inputMods].ID}` })
         .setThumbnail(`${beatmapImgLink}`)
         .setDescription(desc)
         .setFooter({ text: `Last update: ${lastUpdated}` })
@@ -129,6 +129,7 @@ export default async function scoresCmd (facade, client, interaction) {
     setTimeout(function () {
       console.info('Bot::scoresCmd >> no longer listening for button presses')
       client.off('interactionCreate', pageButtons)
+      interaction.editReply({ embeds: [embed], components: [] })
     }, 60000)
     await interaction.editReply({ embeds: [embed], components: [buttons] })
   } catch (error) {

@@ -74,7 +74,8 @@ export default class MorFacade {
       response.statistics.hit_accuracy.toFixed(2),
       Math.round(response.statistics.play_time / 3600).toString(),
       '-1', '-1', '-1', '-1', '-1', '-1',
-      response.avatar_url
+      response.avatar_url,
+      'FALSE'
     ])
   }
 
@@ -213,7 +214,7 @@ export default class MorFacade {
         MorConfig.SHEETS.SPREADSHEET.ID,
         MorConfig.SHEETS.USERS.NAME,
         `${MorUser.columnLetter('userId')}${index + MorUser.START_ROW}`,
-        `${MorUser.columnLetter('pfpLink')}${index + MorUser.START_ROW}`,
+        `${MorUser.columnLetter('autotrack')}${index + MorUser.START_ROW}`,
         'FORMATTED_VALUE',
         'ROWS'
       )
@@ -222,6 +223,24 @@ export default class MorFacade {
     } else {
       throw new NotFoundError(`${MorConfig.SHEETS.SPREADSHEET.NAME} sheet search returned no results! username=${username}`)
     }
+  }
+
+  /**
+   * Retrieves user's sheet rank from the mor3 sheet; makes up to 1 Google API request
+   * @param {string} username username of the user 
+   * @throws {@link NotFoundError} if user could not be found
+   * @return {Promise<number>} sheet rank of the user
+   * @example
+   *  const mor = await MorFacade.build()
+   *  const rank = await mor.getSheetUserRank('spreadnuts')
+   *  console.log(rank)
+   */
+  async getSheetUserRank (username) {
+    console.info(`MorFacade::getSheetUserRank (${username})`) // TODO: replace
+    const usernames = await this.getSheetUsernames()
+    const index = usernames.map(u => u.toLowerCase()).indexOf(username.toLowerCase())
+    if (index === -1) throw new NotFoundError(`${MorConfig.SHEETS.SPREADSHEET.NAME} sheet search returned no results! username=${username}`)
+    else return index + 1
   }
 
   /**
@@ -238,7 +257,7 @@ export default class MorFacade {
       MorConfig.SHEETS.SPREADSHEET.ID,
       MorConfig.SHEETS.USERS.NAME,
       MorUser.columnLetter('userId'),
-      MorUser.columnLetter('pfpLink'),
+      MorUser.columnLetter('autotrack'),
       'FORMATTED_VALUE',
       'ROWS'
     )
@@ -354,6 +373,8 @@ export default class MorFacade {
   /**
    * Inserts user into the mor3 sheet (sorted by pp); makes up to 1 osu!API request and up to 3 Google API requests
    * @param {string} username username of the user
+   * @param {bool} autotrack whether or not the user's tops/firsts will be automatically tracked
+   * @throws {@link TypeError} if parameters are invalid
    * @throws {@link AlreadyExistsError} if user was already added
    * @return {Promise<MorUser>} MorUser object for the added user
    * @example
@@ -366,16 +387,18 @@ export default class MorFacade {
    *    else throw error
    *  }
    */
-  async addSheetUser (username) {
-    console.info(`MorFacade::addSheetUser (${username})`) // TODO: replace
+  async addSheetUser (username, autotrack) {
+    console.info(`MorFacade::addSheetUser (${username}, ${autotrack})`) // TODO: replace
+    if (!MorUtils.isBooleanString(autotrack)) throw new TypeError(`autotrack must either be TRUE or FALSE! Val=${autotrack}`)
     const [user, sheetUsers] = await Promise.all([this.getOsuUser(username), this.getSheetUsers()])
+    user.autotrack = autotrack
     if (sheetUsers.map(u => u.userId).includes(user.userId)) throw new AlreadyExistsError(`${MorConfig.SHEETS.SPREADSHEET.NAME} sheet already contains that user! username=${username}`)
     const ppVals = sheetUsers.map(u => u.pp)
     ppVals.push(user.pp)
     ppVals.sort((a, b) => { return parseInt(b) - parseInt(a) })
     const userIndex = ppVals.indexOf(user.pp)
     // Append instead of assert if user is to be added to the end of sheet
-    if (user.pp === '0' || userIndex + 1 === ppVals.length) {
+    if (user.pp === '0' || userIndex + 1 === ppVals.length || user.autotrack === 'FALSE' ) {
       await this.#SHEETS.appendRange(
         MorConfig.SHEETS.SPREADSHEET.ID,
         [user.toArray()],
@@ -396,7 +419,7 @@ export default class MorFacade {
         [user.toArray()],
         MorConfig.SHEETS.USERS.NAME,
         `${MorUser.columnLetter('userId')}${userIndex + 2}`,
-        `${MorUser.columnLetter('pfpLink')}${userIndex + 2}`, 'RAW'
+        `${MorUser.columnLetter('autotrack')}${userIndex + 2}`, 'RAW'
       )
     }
     return user
@@ -453,6 +476,7 @@ export default class MorFacade {
     const ssIndex = submittedScores.map(ss => { return ss.scoreId }).indexOf(scoreId)
     if (ssIndex !== -1) throw new AlreadyExistsError(`${MorConfig.SHEETS.SS.NAME} sheet already contains that score! scoreId=${scoreId}`)
     const score = await this.getOsuScore(scoreId)
+    await this.getSheetUserRank(score.username)
     await this.#SHEETS.appendRange(
       MorConfig.SHEETS.SPREADSHEET.ID,
       [score.toArray()],

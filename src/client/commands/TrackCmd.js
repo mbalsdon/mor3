@@ -13,19 +13,22 @@ import { EmbedBuilder } from 'discord.js'
  */
 export default async function trackCmd (facade, interaction) {
   const username = interaction.options.getString('username')
+  const at = interaction.options.getBoolean('autotrack')
   console.info(`Bot::trackCmd (${username})`) // TODO: replace
   try {
-    const user = await facade.addSheetUser(username)
+    const autotrack = at ? 'TRUE' : 'FALSE'
+    const user = await facade.addSheetUser(username, autotrack)
     const embed = new EmbedBuilder()
       .setColor(MorConfig.BOT_EMBED_COLOR)
-      .setAuthor({ name: `MOR3 now tracking: ${user.username}`, iconURL: user.pfpLink, url: `https://osu.ppy.sh/users/${user.userId}` })
+      .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} now tracking: ${user.username}`, iconURL: user.pfpLink, url: `https://osu.ppy.sh/users/${user.userId}` })
       .setDescription(
         `▸ **:video_game: Playstyle:** ${user.playstyle}\n` +
         `▸ **:globe_with_meridians: Global Rank:** #${user.globalRank}\n` +
         `▸ **:map: Country Rank:** #${user.countryRank}\n` +
         `▸ **:farmer: PP:** ${user.pp}pp\n` +
         `▸ **:dart: Profile Accuracy:** ${user.accuracy}%\n` +
-        `▸ **:desktop: Total Playtime:** ${user.playtime} hours`
+        `▸ **:desktop: Total Playtime:** ${user.playtime} hours\n` +
+        (user.autotrack === 'TRUE' ? '' : `\n**:warning: NOTE:** This user's plays are not being automatically tracked!`)
       )
       .setThumbnail(user.pfpLink)
       .setFooter({ text: `owobot: >track add "${user.username}" | Bathbot: <track "${user.username}"` })
