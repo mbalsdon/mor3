@@ -214,7 +214,7 @@ export default class MorFacade {
         MorConfig.SHEETS.SPREADSHEET.ID,
         MorConfig.SHEETS.USERS.NAME,
         `${MorUser.columnLetter('userId')}${index + MorUser.START_ROW}`,
-        `${MorUser.columnLetter('tracking')}${index + MorUser.START_ROW}`,
+        `${MorUser.columnLetter('autotrack')}${index + MorUser.START_ROW}`,
         'FORMATTED_VALUE',
         'ROWS'
       )
@@ -257,7 +257,7 @@ export default class MorFacade {
       MorConfig.SHEETS.SPREADSHEET.ID,
       MorConfig.SHEETS.USERS.NAME,
       MorUser.columnLetter('userId'),
-      MorUser.columnLetter('tracking'),
+      MorUser.columnLetter('autotrack'),
       'FORMATTED_VALUE',
       'ROWS'
     )
@@ -373,7 +373,7 @@ export default class MorFacade {
   /**
    * Inserts user into the mor3 sheet (sorted by pp); makes up to 1 osu!API request and up to 3 Google API requests
    * @param {string} username username of the user
-   * @param {tracking} bool whether or not the user's tops/firsts will be automatically tracked
+   * @param {bool} autotrack whether or not the user's tops/firsts will be automatically tracked
    * @throws {@link TypeError} if parameters are invalid
    * @throws {@link AlreadyExistsError} if user was already added
    * @return {Promise<MorUser>} MorUser object for the added user
@@ -387,18 +387,18 @@ export default class MorFacade {
    *    else throw error
    *  }
    */
-  async addSheetUser (username, tracking) {
-    console.info(`MorFacade::addSheetUser (${username})`) // TODO: replace
-    if (!MorUtils.isBooleanString(tracking)) throw new TypeError(`tracking must either be TRUE or FALSE! Val=${tracking}`)
+  async addSheetUser (username, autotrack) {
+    console.info(`MorFacade::addSheetUser (${username}, ${autotrack})`) // TODO: replace
+    if (!MorUtils.isBooleanString(autotrack)) throw new TypeError(`autotrack must either be TRUE or FALSE! Val=${autotrack}`)
     const [user, sheetUsers] = await Promise.all([this.getOsuUser(username), this.getSheetUsers()])
-    user.tracking = tracking
+    user.autotrack = autotrack
     if (sheetUsers.map(u => u.userId).includes(user.userId)) throw new AlreadyExistsError(`${MorConfig.SHEETS.SPREADSHEET.NAME} sheet already contains that user! username=${username}`)
     const ppVals = sheetUsers.map(u => u.pp)
     ppVals.push(user.pp)
     ppVals.sort((a, b) => { return parseInt(b) - parseInt(a) })
     const userIndex = ppVals.indexOf(user.pp)
     // Append instead of assert if user is to be added to the end of sheet
-    if (user.pp === '0' || userIndex + 1 === ppVals.length || user.tracking === 'FALSE' ) {
+    if (user.pp === '0' || userIndex + 1 === ppVals.length || user.autotrack === 'FALSE' ) {
       await this.#SHEETS.appendRange(
         MorConfig.SHEETS.SPREADSHEET.ID,
         [user.toArray()],
@@ -419,7 +419,7 @@ export default class MorFacade {
         [user.toArray()],
         MorConfig.SHEETS.USERS.NAME,
         `${MorUser.columnLetter('userId')}${userIndex + 2}`,
-        `${MorUser.columnLetter('tracking')}${userIndex + 2}`, 'RAW'
+        `${MorUser.columnLetter('autotrack')}${userIndex + 2}`, 'RAW'
       )
     }
     return user

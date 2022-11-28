@@ -39,8 +39,8 @@ export default async function scrapeTopPlays () {
   // Key: mods; Value: MorScore array
   const dict = {}
   for (const user of users) {
-    if (user.tracking === 'FALSE') {
-      console.info(`::scrapeTopPlays () >> Tracking for ${user.username} is ${user.tracking}, skipping...`) // TODO: replace
+    if (user.autotrack === 'FALSE') {
+      console.info(`::scrapeTopPlays () >> Tracking for ${user.username} is ${user.autotrack}, skipping...`) // TODO: replace
       continue
     }
     try {
