@@ -23,7 +23,7 @@ export default async function runScheduledJobs () {
   await updateUsers()
   console.info('::runScheduledJobs () >> Running the calcModTopLBPlays script...') // TODO: replace
   await calcModTopLBPlays()
-  console.info('::runScheduledJobs () >> Archiving the spreadsheet and updating the "last updated" tag...') // TODO: replace
+  console.info('::runScheduledJobs () >> Updating the "last updated" tag...') // TODO: replace
   const mor = await MorFacade.build()
   let dateString = new Date(Date.now()).toISOString()
   dateString = dateString.slice(0, dateString.length - 5) + '+00:00'
