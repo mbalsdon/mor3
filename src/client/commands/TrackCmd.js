@@ -20,7 +20,7 @@ export default async function trackCmd (facade, interaction) {
     const user = await facade.addSheetUser(username, autotrack)
     const embed = new EmbedBuilder()
       .setColor(MorConfig.BOT_EMBED_COLOR)
-      .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} now tracking: ${user.username}`, iconURL: user.pfpLink, url: `https://osu.ppy.sh/users/${user.userId}` })
+      .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} now tracking: ${user.username}`, iconURL: MorConfig.SERVER_ICON_URL, url: `https://osu.ppy.sh/users/${user.userId}` })
       .setDescription(
         `▸ **:video_game: Playstyle:** ${user.playstyle}\n` +
         `▸ **:globe_with_meridians: Global Rank:** #${user.globalRank}\n` +

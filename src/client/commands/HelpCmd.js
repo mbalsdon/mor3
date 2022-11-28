@@ -14,7 +14,7 @@ export default async function helpCmd (interaction) {
   try {
     const embed = new EmbedBuilder()
       .setColor(MorConfig.BOT_EMBED_COLOR)
-      .setAuthor({ name: 'mor3 commands', iconURL: 'https://spreadnuts.s-ul.eu/MdfvA3q5', url: 'https://github.com/mbalsdon/mor3' })
+      .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} commands`, iconURL: MorConfig.SERVER_ICON_URL, url: 'https://github.com/mbalsdon/mor3' })
       .setDescription('`help` - Documentation on the bot\'s commands\n' +
             '`ping` - Checks if the bot is alive\n' +
             '`metadata` - Displays mor3 sheet metadata\n' +

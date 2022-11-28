@@ -46,7 +46,7 @@ export default async function usersCmd (facade, client, interaction) {
       const pfpLink = users[perPage * (page - 1)].pfpLink
       const embed = new EmbedBuilder()
         .setColor(MorConfig.BOT_EMBED_COLOR)
-        .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} User Leaderboard`, iconURL: `${pfpLink}`, url: `https://docs.google.com/spreadsheets/d/${MorConfig.SHEETS.SPREADSHEET.ID}/edit#gid=${MorConfig.SHEETS.USERS.ID}` })
+        .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} User Leaderboard`, iconURL: MorConfig.SERVER_ICON_URL, url: `https://docs.google.com/spreadsheets/d/${MorConfig.SHEETS.SPREADSHEET.ID}/edit#gid=${MorConfig.SHEETS.USERS.ID}` })
         .setThumbnail(`${pfpLink}`)
         .setDescription(desc)
         .setFooter({ text: `Last update: ${lastUpdated}` })

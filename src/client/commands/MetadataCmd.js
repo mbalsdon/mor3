@@ -13,15 +13,14 @@ import { EmbedBuilder } from '@discordjs/builders'
 export default async function metadataCmd (facade, interaction) {
   console.info('Bot::metadataCmd ()') // TODO: replace
   try {
-    const lastUpdated = await facade.getSheetLastUpdated()
-    const metadata = await facade.getSheetMetadata()
+    const [lastUpdated, metadata] = await Promise.all([facade.getSheetLastUpdated(), facade.getSheetMetadata()])
     let ret = ''
     for (const sheet of metadata.sheets.slice(1)) {
       ret = ret + `**${sheet.properties.title}:** ${sheet.properties.gridProperties.rowCount - 1} ${sheet.properties.gridProperties.rowCount - 1 === 1 ? 'entry' : 'entries'}\n`
     }
     const embed = new EmbedBuilder()
       .setColor(MorConfig.BOT_EMBED_COLOR)
-      .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} metadata`, iconURL: 'https://spreadnuts.s-ul.eu/MdfvA3q5', url: 'https://docs.google.com/spreadsheets/d/1hduRLLIFjVwLGjXyt7ph3301xfXS6qjSnYCm18YP4iA/edit#gid=0' })
+      .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} metadata`, iconURL: MorConfig.SERVER_ICON_URL, url: 'https://docs.google.com/spreadsheets/d/1hduRLLIFjVwLGjXyt7ph3301xfXS6qjSnYCm18YP4iA/edit#gid=0' })
       .setDescription(ret)
       .setFooter({ text: `Last update: ${lastUpdated}` })
     await interaction.editReply({ embeds: [embed] })

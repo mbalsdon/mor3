@@ -25,27 +25,27 @@ export default async function updateUsers () {
     await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
   }
   console.info('::updateUsers () >> Retrieving user IDs from sheet...') // TODO: replace
-  const userIds = await mor.getSheetUserIds()
+  const users = await mor.getSheetUsers()
   await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
-  console.info(`::updateUsers () >> Refreshing data for ${userIds.length} users...`) // TODO: replace
+  console.info(`::updateUsers () >> Refreshing data for ${users.length} users...`) // TODO: replace
   const updatedUsers = []
-  for (const userId of userIds) {
-    let user
-    console.info(`::updateUsers () >> Grabbing osu!API data for user ${userId}...`) // TODO: replace
-    try { user = await mor.getOsuUser(userId, 'id') } catch (error) {
+  for (const user of users) {
+    let updatedUser
+    console.info(`::updateUsers () >> Grabbing osu!API data for user ${user.username}...`) // TODO: replace
+    try { updatedUser = await mor.getOsuUser(user.userId, 'id') } catch (error) {
       if (error instanceof NotFoundError) {
-        console.info(`::updateUsers () >> Couldn't find user ${userId}, skipping...`) // TODO: replace
+        console.info(`::updateUsers () >> Couldn't find user ${user.username}, skipping...`) // TODO: replace
         continue
       } else throw error
     }
     await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
-    console.info(`::updateUsers () >> Counting top25s for user ${userId}...`) // TODO: replace
+    console.info(`::updateUsers () >> Counting top25s for user ${user.username}...`) // TODO: replace
     let [top1s, top2s, top3s, top5s, top10s, top25s] = [0, 0, 0, 0, 0, 0]
     for (const key of Object.keys(dict)) {
       const scores = dict[key]
       const len = (scores.length < 25) ? scores.length : 25
       for (let i = 0; i < len; i++) {
-        if (userId !== scores[i].userId) continue
+        if (user.userId !== scores[i].userId) continue
         else if (i === 0) top1s++
         else if (i === 1) top2s++
         else if (i === 2) top3s++
@@ -56,26 +56,31 @@ export default async function updateUsers () {
       }
     }
     updatedUsers.push(new MorUser([
-      user.userId,
-      user.username,
-      user.playstyle,
-      user.globalRank,
-      user.countryRank,
-      user.pp,
-      user.accuracy,
-      user.playtime,
+      updatedUser.userId,
+      updatedUser.username,
+      updatedUser.playstyle,
+      updatedUser.globalRank,
+      updatedUser.countryRank,
+      updatedUser.pp,
+      updatedUser.accuracy,
+      updatedUser.playtime,
       top1s.toString(),
       top2s.toString(),
       top3s.toString(),
       top5s.toString(),
       top10s.toString(),
       top25s.toString(),
-      user.pfpLink,
+      updatedUser.pfpLink,
       user.autotrack
     ]))
   }
   console.info('::updateUsers () >> Updating the sheet...') // TODO: replace
   updatedUsers.sort((a, b) => { return parseInt(b.pp) - parseInt(a.pp) })
+  updatedUsers.sort((a, b) => {
+    if (a.autotrack === 'FALSE' && b.autotrack === 'TRUE') return 1
+    else if (a.autotrack === 'TRUE' && b.autotrack === 'FALSE') return -1
+    else return 0
+  })
   await mor.replaceSheetUsers(updatedUsers)
   await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 9)
   const dateString = new Date(Date.now()).toISOString()

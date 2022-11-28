@@ -19,10 +19,9 @@ export default async function scoresCmd (facade, client, interaction) {
   try {
     let currentPage = 1
     const perPage = 5
-    const scores = await facade.getSheetScores(inputMods)
+    const [lastUpdated, scores] = await Promise.all([facade.getSheetLastUpdated(), facade.getSheetScores(inputMods)])
     const numPages = Math.ceil(scores.length / perPage)
     if (numPages === 0) throw new SheetEmptyError(`The ${MorConfig.SHEETS[inputMods].NAME} sheet is empty!`)
-    const lastUpdated = await facade.getSheetLastUpdated()
 
     /**
      * Builds a scores embed for the given page
@@ -48,7 +47,7 @@ export default async function scoresCmd (facade, client, interaction) {
       const beatmapImgLink = scores[perPage * (page - 1)].beatmapImgLink
       const embed = new EmbedBuilder()
         .setColor(MorConfig.BOT_EMBED_COLOR)
-        .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} ${inputMods} Score Leaderboard`, iconURL: `${beatmapImgLink}`, url: `https://docs.google.com/spreadsheets/d/${MorConfig.SHEETS.SPREADSHEET.ID}/edit#gid=${MorConfig.SHEETS[inputMods].ID}` })
+        .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} ${inputMods} Score Leaderboard`, iconURL: MorConfig.SERVER_ICON_URL, url: `https://docs.google.com/spreadsheets/d/${MorConfig.SHEETS.SPREADSHEET.ID}/edit#gid=${MorConfig.SHEETS[inputMods].ID}` })
         .setThumbnail(`${beatmapImgLink}`)
         .setDescription(desc)
         .setFooter({ text: `Last update: ${lastUpdated}` })
