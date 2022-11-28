@@ -19,10 +19,9 @@ export default async function scoresCmd (facade, client, interaction) {
   try {
     let currentPage = 1
     const perPage = 5
-    const scores = await facade.getSheetScores(inputMods)
+    const [lastUpdated, scores] = await Promise.all([facade.getSheetLastUpdated(), facade.getSheetScores(inputMods)])
     const numPages = Math.ceil(scores.length / perPage)
     if (numPages === 0) throw new SheetEmptyError(`The ${MorConfig.SHEETS[inputMods].NAME} sheet is empty!`)
-    const lastUpdated = await facade.getSheetLastUpdated()
 
     /**
      * Builds a scores embed for the given page

@@ -15,8 +15,7 @@ export default async function unsubmitCmd (facade, interaction) {
   const scoreId = interaction.options.getString('id')
   console.info(`Bot::unsubmitCmd (${scoreId})`) // TODO: replace
   try {
-    const lastUpdated = await facade.getSheetLastUpdated()
-    const score = await facade.deleteSubmittedScore(scoreId)
+    const [lastUpdated, score] = await Promise.all([facade.getSheetLastUpdated(), facade.deleteSubmittedScore(scoreId)])
     const embed = new EmbedBuilder()
       .setColor(MorConfig.BOT_EMBED_COLOR)
       .setAuthor({ name: `Successfully removed score from ${MorConfig.SHEETS.SPREADSHEET.NAME}:` })
