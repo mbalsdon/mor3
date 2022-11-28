@@ -20,7 +20,7 @@ export default async function userCmd (facade, interaction) {
       .setColor(MorConfig.BOT_EMBED_COLOR)
       .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} profile for ${user.username}`, iconURL: MorConfig.SERVER_ICON_URL, url: `https://osu.ppy.sh/users/${user.id}` })
       .setDescription(
-        `▸ **:trophy: ${MorConfig.SHEETS.SPREADSHEET.NAME} Rank:** #${sheetRank}\n` +
+        (user.autotrack === 'TRUE' ? `▸ **:trophy: ${MorConfig.SHEETS.SPREADSHEET.NAME} Rank:** #${sheetRank}\n` : '\n') +
         `▸ **:map: Country Rank:** #${user.countryRank}\n` +
         `▸ **:globe_with_meridians: Global Rank:** #${user.globalRank}\n` +
         `▸ **:video_game: Playstyle:** ${user.playstyle}\n` +
