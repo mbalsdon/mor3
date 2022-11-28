@@ -20,6 +20,7 @@ export default class MorUser {
   top10s
   top25s
   pfpLink
+  tracking
 
   /**
    * Constructs a MOR User object
@@ -54,6 +55,8 @@ export default class MorUser {
    *    values[13] - top25s (string): number of user's MOR sheet top 25s
    *
    *    values[14] - pfpLink (string): profile picture URL of the user
+   * 
+   *    values[15] - tracking (string): TRUE if user's plays are being tracked, FALSE if not
    *
    * @example
    *  const myUser = new MorUser([
@@ -66,7 +69,8 @@ export default class MorUser {
    *    '98.95',
    *    '1470',
    *    '1', '2', '1', '1', '5', '13',
-   *    'https://a.ppy.sh/6385683?1660441648.jpeg'
+   *    'https://a.ppy.sh/6385683?1660441648.jpeg',
+   *    'TRUE'
    *  ])
    */
   constructor (values) {
@@ -85,6 +89,7 @@ export default class MorUser {
     else if (!MorUtils.isNumericString(values[12])) throw new TypeError(`top10s must be a number string! Val=${values[12]}`)
     else if (!MorUtils.isNumericString(values[13])) throw new TypeError(`top25s must be a number string! Val=${values[13]}`)
     else if (!MorUtils.isValidHttpUrl(values[14])) throw new TypeError(`pfpLink must be a valid HTTP URL string! Val=${values[14]}`)
+    else if (!MorUtils.isBooleanString(values[15])) throw new TypeError(`tracking must either be TRUE or FALSE! Val=${values[15]}`)
     else {
       this.userId = values[0]
       this.username = values[1]
@@ -101,6 +106,7 @@ export default class MorUser {
       this.top10s = values[12]
       this.top25s = values[13]
       this.pfpLink = values[14]
+      this.tracking = values[15]
     }
   }
 
@@ -126,6 +132,7 @@ export default class MorUser {
     else if (columnName === 'top10s') return 'M'
     else if (columnName === 'top25s') return 'N'
     else if (columnName === 'pfpLink') return 'O'
+    else if (columnName === 'tracking') return 'P'
     else throw new TypeError(`columnName is not valid! Val=${columnName}`)
   }
 

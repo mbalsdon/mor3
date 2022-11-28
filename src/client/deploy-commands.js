@@ -49,6 +49,10 @@ const commands = [
       option.setName('username')
         .setDescription('Username of the player you want to track')
         .setRequired(true))
+    .addBooleanOption(option => 
+      option.setName('track_plays')
+        .setDescription('Whether or not to automatically track the user\'s tops and firsts')
+        .setRequired(true))
     .setDMPermission(false)
     .setDefaultMemberPermissions(moderatorPermFlags),
 

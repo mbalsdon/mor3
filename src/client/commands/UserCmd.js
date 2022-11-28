@@ -35,7 +35,8 @@ export default async function userCmd (facade, interaction) {
         `▸ **:third_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #3s:** ${user.top3s}\n` +
         `▸ **:medal: ${MorConfig.SHEETS.SPREADSHEET.NAME} Top 5s:** ${user.top5s}\n` +
         `▸ **:military_medal: ${MorConfig.SHEETS.SPREADSHEET.NAME} Top 10s:** ${user.top10s}\n` +
-        `▸ **:small_orange_diamond: ${MorConfig.SHEETS.SPREADSHEET.NAME} Top 25s:** ${user.top25s}\n`
+        `▸ **:small_orange_diamond: ${MorConfig.SHEETS.SPREADSHEET.NAME} Top 25s:** ${user.top25s}\n` +
+        (user.tracking === 'TRUE' ? '' : `\n**:warning: NOTE:** This user's plays are not being automatically tracked!`)
       )
       .setThumbnail(user.pfpLink)
       // .addFields(

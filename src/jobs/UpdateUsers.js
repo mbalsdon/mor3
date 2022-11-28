@@ -70,7 +70,8 @@ export default async function updateUsers () {
       top5s.toString(),
       top10s.toString(),
       top25s.toString(),
-      user.pfpLink
+      user.pfpLink,
+      user.tracking
     ]))
   }
   console.info('::updateUsers () >> Updating the sheet...') // TODO: replace

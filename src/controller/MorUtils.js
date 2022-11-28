@@ -58,6 +58,15 @@ export default class MorUtils {
   }
 
   /**
+   * Returns true if input is either 'TRUE' or 'FALSE'
+   * @param {*} v
+   * @return {boolean}
+   */
+  static isBooleanString (v) {
+    return (this.isString(v) && (v === 'TRUE' || v === 'FALSE'))
+  }
+
+  /**
    * Returns true if input is a valid HTTP URL
    * @param {*} v
    * @return {boolean}
