@@ -129,6 +129,7 @@ export default async function scoresCmd (facade, client, interaction) {
     setTimeout(function () {
       console.info('Bot::scoresCmd >> no longer listening for button presses')
       client.off('interactionCreate', pageButtons)
+      interaction.editReply({ embeds: [embed], components: [] })
     }, 60000)
     await interaction.editReply({ embeds: [embed], components: [buttons] })
   } catch (error) {
