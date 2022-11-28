@@ -57,7 +57,7 @@ export default class Bot {
   }
 
   /**
-   * Initializes and starts the bot
+   * Initializes and starts the bot after a cooldown period
    * @return {Promise<void>}
    * @example
    * await Bot.restart()
