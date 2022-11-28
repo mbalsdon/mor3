@@ -28,7 +28,7 @@ export default async function trackCmd (facade, interaction) {
         `▸ **:farmer: PP:** ${user.pp}pp\n` +
         `▸ **:dart: Profile Accuracy:** ${user.accuracy}%\n` +
         `▸ **:desktop: Total Playtime:** ${user.playtime} hours\n` +
-        (user.autotrack === 'TRUE' ? '' : `\n**:warning: NOTE:** This user's plays are not being automatically tracked!`)
+        (user.autotrack === 'TRUE' ? '' : '\n**:warning: NOTE:** This user\'s plays are not being automatically tracked!')
       )
       .setThumbnail(user.pfpLink)
       .setFooter({ text: `owobot: >track add "${user.username}" | Bathbot: <track "${user.username}"` })
