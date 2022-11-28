@@ -17,13 +17,15 @@ export default async function userCmd (facade, interaction) {
   try {
     const lastUpdated = await facade.getSheetLastUpdated()
     const user = await facade.getSheetUser(username)
+    const sheetRank = await facade.getSheetUserRank(username)
     const embed = new EmbedBuilder()
       .setColor(MorConfig.BOT_EMBED_COLOR)
-      .setAuthor({ name: `MOR3 profile for ${user.username}`, iconURL: `${user.pfpLink}`, url: `https://osu.ppy.sh/users/${user.id}` })
+      .setAuthor({ name: `TODO profile for ${user.username}`, iconURL: `${user.pfpLink}`, url: `https://osu.ppy.sh/users/${user.id}` })
       .setDescription(
         `▸ **:video_game: Playstyle:** ${user.playstyle}\n` +
         `▸ **:globe_with_meridians: Global Rank:** #${user.globalRank}\n` +
         `▸ **:map: Country Rank:** #${user.countryRank}\n` +
+        `▸ **:trophy: TODO Rank:** #${sheetRank}\n` +
         `▸ **:farmer: PP:** ${user.pp}pp\n` +
         `▸ **:dart: Profile Accuracy:** ${user.accuracy}%\n` +
         `▸ **:desktop: Total Playtime:** ${user.playtime} hours\n\n` +

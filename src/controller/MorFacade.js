@@ -225,6 +225,24 @@ export default class MorFacade {
   }
 
   /**
+   * Retrieves user's sheet rank from the mor3 sheet; makes up to 1 Google API request
+   * @param {string} username username of the user 
+   * @throws {@link NotFoundError} if user could not be found
+   * @return {Promise<number>} sheet rank of the user
+   * @example
+   *  const mor = await MorFacade.build()
+   *  const rank = await mor.getSheetUserRank('spreadnuts')
+   *  console.log(rank)
+   */
+  async getSheetUserRank (username) {
+    console.info(`MorFacade::getSheetUserRank (${username})`) // TODO: replace
+    const usernames = await this.getSheetUsernames()
+    const index = usernames.map(u => u.toLowerCase()).indexOf(username.toLowerCase())
+    if (index === -1) throw new NotFoundError(`${MorConfig.SHEETS.SPREADSHEET.NAME} sheet search returned no results! username=${username}`)
+    else return index + 1
+  }
+
+  /**
    * Retrieves list of users from mor3 sheet; makes up to 1 Google API request
    * @return {Promise<MorUser[]>} array of MorUser objects
    * @example
