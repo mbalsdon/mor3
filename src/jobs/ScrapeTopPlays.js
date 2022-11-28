@@ -32,7 +32,6 @@ export default async function scrapeTopPlays () {
   console.info('::scrapeTopPlays () >> Scraping user top 100s and #1s... This may take a while!') // TODO: replace
   const mor = await MorFacade.build()
   console.info('::scrapeTopPlays () >> Getting user IDs of tracked players...') // TODO: replace
-  // const userIds = await mor.getSheetUserIds()
   const users = await mor.getSheetUsers()
   await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
   console.info(`::scrapeTopPlays () >> Grabbing tops/firsts from ${users.length} users...`) // TODO: replace
@@ -44,6 +43,7 @@ export default async function scrapeTopPlays () {
       continue
     }
     try {
+      console.info(`::scrapeTopPlays() >> Grabbing tops/firsts for user ${user.username}...`) // TODO: replace
       const userTops = await mor.getOsuUserScores(user.userId, 'best')
       await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
       const userFirsts = await mor.getOsuUserScores(user.userId, 'firsts')
