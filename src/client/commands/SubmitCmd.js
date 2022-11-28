@@ -15,8 +15,8 @@ export default async function submitCmd (facade, interaction) {
   const scoreId = interaction.options.getString('id')
   console.info(`Bot::submitCmd (${scoreId})`) // TODO: replace
   try {
-    const lastUpdated = await facade.getSheetLastUpdated()
     const score = await facade.addSubmittedScore(scoreId)
+    const lastUpdated = await facade.getSheetLastUpdated()
     const embed = new EmbedBuilder()
       .setColor(MorConfig.BOT_EMBED_COLOR)
       .setAuthor({ name: `Successfully added score to ${MorConfig.SHEETS.SPREADSHEET.NAME}:` })
@@ -39,9 +39,16 @@ export default async function submitCmd (facade, interaction) {
                                          `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
         ephemeral: true
       })
-    } else if (error instanceof NotFoundError) {
+    } else if (error instanceof NotFoundError && error.message.includes('scoreId')) {
       await interaction.editReply({
         content: `\`\`\`Could not find score with ID "${scoreId}"!\n\n` +
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
+        ephemeral: true
+      })
+    } else if (error instanceof NotFoundError && error.message.includes('username')) {
+      const username = error.message.slice(error.message.indexOf('=') + 1, error.message.length)
+      await interaction.editReply({
+        content: `\`\`\`User ${username} could not be found in the ${MorConfig.SHEETS.SPREADSHEET.NAME} sheet! You may only submit scores set by added users.\n\n` +
                                          `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
         ephemeral: true
       })

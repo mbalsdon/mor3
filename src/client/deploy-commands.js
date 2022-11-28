@@ -76,7 +76,7 @@ const commands = [
         .setDescription('Score ID of the score you want to submit')
         .setRequired(true))
     .setDMPermission(false)
-    .setDefaultMemberPermissions(moderatorPermFlags),
+    .setDefaultMemberPermissions(userPermFlags),
 
   new SlashCommandBuilder()
     .setName('unsubmit')

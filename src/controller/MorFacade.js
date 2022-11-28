@@ -471,6 +471,7 @@ export default class MorFacade {
     const ssIndex = submittedScores.map(ss => { return ss.scoreId }).indexOf(scoreId)
     if (ssIndex !== -1) throw new AlreadyExistsError(`${MorConfig.SHEETS.SS.NAME} sheet already contains that score! scoreId=${scoreId}`)
     const score = await this.getOsuScore(scoreId)
+    await this.getSheetUserRank(score.username)
     await this.#SHEETS.appendRange(
       MorConfig.SHEETS.SPREADSHEET.ID,
       [score.toArray()],
