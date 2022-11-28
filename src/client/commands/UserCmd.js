@@ -18,7 +18,7 @@ export default async function userCmd (facade, interaction) {
     const [lastUpdated, user, sheetRank] = await Promise.all([facade.getSheetLastUpdated(), facade.getSheetUser(username), facade.getSheetUserRank(username)])
     const embed = new EmbedBuilder()
       .setColor(MorConfig.BOT_EMBED_COLOR)
-      .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} profile for ${user.username}`, iconURL: `${user.pfpLink}`, url: `https://osu.ppy.sh/users/${user.id}` })
+      .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} profile for ${user.username}`, iconURL: MorConfig.SERVER_ICON_URL, url: `https://osu.ppy.sh/users/${user.id}` })
       .setDescription(
         `▸ **:trophy: ${MorConfig.SHEETS.SPREADSHEET.NAME} Rank:** #${sheetRank}\n` +
         `▸ **:map: Country Rank:** #${user.countryRank}\n` +

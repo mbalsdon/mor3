@@ -18,7 +18,7 @@ export default async function submitCmd (facade, interaction) {
     const [lastUpdated, score] = await Promise.all([facade.getSheetLastUpdated(), facade.addSubmittedScore(scoreId)])
     const embed = new EmbedBuilder()
       .setColor(MorConfig.BOT_EMBED_COLOR)
-      .setAuthor({ name: `Successfully added score to ${MorConfig.SHEETS.SPREADSHEET.NAME}:` })
+      .setAuthor({ name: `Successfully added score to ${MorConfig.SHEETS.SPREADSHEET.NAME}:`, iconURL: MorConfig.SERVER_ICON_URL })
       .setThumbnail(`${score.beatmapImgLink}`)
       .setDescription(`**[${score.beatmap}](https://osu.ppy.sh/scores/osu/${score.scoreId}) +${score.mods}** [${score.starRating}★]\n` +
               `▸ :farmer: **${score.pp}pp** ▸ ${score.accuracy}%\n` +

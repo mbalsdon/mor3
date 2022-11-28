@@ -20,7 +20,7 @@ export default async function metadataCmd (facade, interaction) {
     }
     const embed = new EmbedBuilder()
       .setColor(MorConfig.BOT_EMBED_COLOR)
-      .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} metadata`, iconURL: 'https://spreadnuts.s-ul.eu/MdfvA3q5', url: 'https://docs.google.com/spreadsheets/d/1hduRLLIFjVwLGjXyt7ph3301xfXS6qjSnYCm18YP4iA/edit#gid=0' })
+      .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} metadata`, iconURL: MorConfig.SERVER_ICON_URL, url: 'https://docs.google.com/spreadsheets/d/1hduRLLIFjVwLGjXyt7ph3301xfXS6qjSnYCm18YP4iA/edit#gid=0' })
       .setDescription(ret)
       .setFooter({ text: `Last update: ${lastUpdated}` })
     await interaction.editReply({ embeds: [embed] })

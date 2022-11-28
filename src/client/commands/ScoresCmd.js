@@ -47,7 +47,7 @@ export default async function scoresCmd (facade, client, interaction) {
       const beatmapImgLink = scores[perPage * (page - 1)].beatmapImgLink
       const embed = new EmbedBuilder()
         .setColor(MorConfig.BOT_EMBED_COLOR)
-        .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} ${inputMods} Score Leaderboard`, iconURL: `${beatmapImgLink}`, url: `https://docs.google.com/spreadsheets/d/${MorConfig.SHEETS.SPREADSHEET.ID}/edit#gid=${MorConfig.SHEETS[inputMods].ID}` })
+        .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} ${inputMods} Score Leaderboard`, iconURL: MorConfig.SERVER_ICON_URL, url: `https://docs.google.com/spreadsheets/d/${MorConfig.SHEETS.SPREADSHEET.ID}/edit#gid=${MorConfig.SHEETS[inputMods].ID}` })
         .setThumbnail(`${beatmapImgLink}`)
         .setDescription(desc)
         .setFooter({ text: `Last update: ${lastUpdated}` })
