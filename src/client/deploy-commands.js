@@ -106,6 +106,7 @@ const commands = [
 
 const rest = new REST({ version: '10' }).setToken(token)
 
+console.info(`Started refreshing ${commands.length} application (/) commands.`)
 rest.put(Routes.applicationCommands(clientId), { body: commands })
-  .then(() => console.info('Successfully registered application commands.'))
-  .catch(console.error)
+  .then((data) => console.info(`Successfully reloaded ${data.length} application (/) commands.`))
+  .catch((error) => console.error(error))
