@@ -68,6 +68,7 @@ export default class MorFacade {
       response.id.toString(),
       response.username,
       response.playstyle === null ? 'null' : response.playstyle.map(p => { return p[0].toUpperCase() + p.substring(1) }).join(', '),
+      response.country.code,
       String(response.statistics.global_rank),
       String(response.statistics.country_rank),
       response.statistics.pp === null ? '0' : response.statistics.pp.toFixed(3),

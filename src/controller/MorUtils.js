@@ -121,6 +121,18 @@ export default class MorUtils {
   }
 
   /**
+   * Returns true if input is a valid country code
+   * @param {*} v 
+   * @return {boolean}
+   */
+  static isValidCountryCode (v) {
+    if (!this.isString(v)) return false
+    // Two capital letters
+    const regex = /[A-Z]{2}/
+    return regex.test(v)
+  }
+
+  /**
    * Returns true if input is a valid Google Sheets cell
    * @param {*} v
    * @return {boolean}

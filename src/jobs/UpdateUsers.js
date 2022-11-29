@@ -14,7 +14,7 @@ import MorUtils from '../controller/MorUtils.js'
  */
 export default async function updateUsers () {
   console.time('::updateUsers () >> Time elapsed') // TODO: replace
-  console.info('::updateUsers () >> Updating user rank and PP data... This may take a while') // TODO: replace
+  console.info('::updateUsers () >> Updating user data... This may take a while') // TODO: replace
   const mor = await MorFacade.build()
   // Key: mods; Value: array of 25 highest pp plays
   const dict = {}
@@ -59,6 +59,7 @@ export default async function updateUsers () {
       updatedUser.userId,
       updatedUser.username,
       updatedUser.playstyle,
+      updatedUser.countryCode,
       updatedUser.globalRank,
       updatedUser.countryRank,
       updatedUser.pp,

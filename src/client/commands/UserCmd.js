@@ -21,7 +21,7 @@ export default async function userCmd (facade, interaction) {
       .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} profile for ${user.username}`, iconURL: MorConfig.SERVER_ICON_URL, url: `https://osu.ppy.sh/users/${user.id}` })
       .setDescription(
         (user.autotrack === 'TRUE' ? `▸ **:trophy: ${MorConfig.SHEETS.SPREADSHEET.NAME} Rank:** #${sheetRank}\n` : '\n') +
-        `▸ **:map: Country Rank:** #${user.countryRank}\n` +
+        `▸ **:flag_${user.countryCode.toLowerCase()}: Country Rank:** #${user.countryRank}\n` +
         `▸ **:globe_with_meridians: Global Rank:** #${user.globalRank}\n` +
         `▸ **:video_game: Playstyle:** ${user.playstyle}\n` +
         `▸ **:farmer: PP:** ${user.pp}pp\n` +

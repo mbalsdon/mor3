@@ -24,7 +24,7 @@ export default async function trackCmd (facade, interaction) {
       .setDescription(
         `▸ **:video_game: Playstyle:** ${user.playstyle}\n` +
         `▸ **:globe_with_meridians: Global Rank:** #${user.globalRank}\n` +
-        `▸ **:map: Country Rank:** #${user.countryRank}\n` +
+        `▸ **:flag_${user.countryCode.toLowerCase()}: Country Rank:** #${user.countryRank}\n` +
         `▸ **:farmer: PP:** ${user.pp}pp\n` +
         `▸ **:dart: Profile Accuracy:** ${user.accuracy}%\n` +
         `▸ **:desktop: Total Playtime:** ${user.playtime} hours\n` +
