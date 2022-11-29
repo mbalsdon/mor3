@@ -55,7 +55,7 @@ export default class MorUser {
    *    values[13] - top25s (string): number of user's MOR sheet top 25s
    *
    *    values[14] - pfpLink (string): profile picture URL of the user
-   * 
+   *
    *    values[15] - autotrack (string): TRUE if user's plays are being tracked, FALSE if not
    *
    * @example

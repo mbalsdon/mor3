@@ -20,7 +20,7 @@ export default async function userCmd (facade, interaction) {
       .setColor(MorConfig.BOT_EMBED_COLOR)
       .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} profile for ${user.username}`, iconURL: MorConfig.SERVER_ICON_URL, url: `https://osu.ppy.sh/users/${user.id}` })
       .setDescription(
-        `▸ **:trophy: ${MorConfig.SHEETS.SPREADSHEET.NAME} Rank:** #${sheetRank}\n` +
+        (user.autotrack === 'TRUE' ? `▸ **:trophy: ${MorConfig.SHEETS.SPREADSHEET.NAME} Rank:** #${sheetRank}\n` : '\n') +
         `▸ **:map: Country Rank:** #${user.countryRank}\n` +
         `▸ **:globe_with_meridians: Global Rank:** #${user.globalRank}\n` +
         `▸ **:video_game: Playstyle:** ${user.playstyle}\n` +
@@ -34,7 +34,7 @@ export default async function userCmd (facade, interaction) {
         `▸ **:medal: ${MorConfig.SHEETS.SPREADSHEET.NAME} Top 5s:** ${user.top5s}\n` +
         `▸ **:military_medal: ${MorConfig.SHEETS.SPREADSHEET.NAME} Top 10s:** ${user.top10s}\n` +
         `▸ **:small_orange_diamond: ${MorConfig.SHEETS.SPREADSHEET.NAME} Top 25s:** ${user.top25s}\n` +
-        (user.autotrack === 'TRUE' ? '' : `\n**:warning: NOTE:** This user's plays are not being automatically tracked!`)
+        (user.autotrack === 'TRUE' ? '' : '\n**:warning: NOTE:** This user\'s plays are not being automatically tracked!')
       )
       .setThumbnail(user.pfpLink)
       // .addFields(
@@ -48,14 +48,12 @@ export default async function userCmd (facade, interaction) {
     if (error instanceof NotFoundError) {
       await interaction.editReply({
         content: `\`\`\`Could not find user "${username}"!\n\n` +
-                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-        ephemeral: true
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
     } else {
       await interaction.editReply({
         content: `\`\`\`${error.name}: ${error.message}\n\n` +
-                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-        ephemeral: true
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
       throw error
     }

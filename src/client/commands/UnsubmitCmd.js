@@ -18,7 +18,7 @@ export default async function unsubmitCmd (facade, interaction) {
     const [lastUpdated, score] = await Promise.all([facade.getSheetLastUpdated(), facade.deleteSubmittedScore(scoreId)])
     const embed = new EmbedBuilder()
       .setColor(MorConfig.BOT_EMBED_COLOR)
-      .setAuthor({ name: `Successfully removed score from ${MorConfig.SHEETS.SPREADSHEET.NAME}:`, iconURL: MorConfig.SERVER_ICON_URL })
+      .setAuthor({ name: `Successfully removed score from ${MorConfig.SHEETS.SPREADSHEET.NAME}:`, iconURL: MorConfig.SERVER_ICON_UR })
       .setThumbnail(`${score.beatmapImgLink}`)
       .setDescription(`**[${score.beatmap}](https://osu.ppy.sh/scores/osu/${score.scoreId}) +${score.mods}** [${score.starRating}★]\n` +
               `▸ :farmer: **${score.pp}pp** ▸ ${score.accuracy}%\n` +
@@ -29,20 +29,17 @@ export default async function unsubmitCmd (facade, interaction) {
     if (error instanceof NotFoundError) {
       await interaction.editReply({
         content: `\`\`\`Could not find score with ID "${scoreId}"!\n\n` +
-                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-        ephemeral: true
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
     } else if (error instanceof TypeError) {
       await interaction.editReply({
         content: `\`\`\`Score ID must be a positive number! Your input: "${scoreId}"\n\n` +
-                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-        ephemeral: true
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
     } else {
       await interaction.editReply({
         content: `\`\`\`${error.name}: ${error.message}\n\n` +
-                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-        ephemeral: true
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
       throw error
     }

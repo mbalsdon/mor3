@@ -38,9 +38,9 @@ export default async function usersCmd (facade, client, interaction) {
         const pageIndex = perPage * (page - 1) + i
         const u = users[pageIndex]
         const userStr = `**${pageIndex + 1}. [${u.username}](https://osu.ppy.sh/users/${u.userId}) (Global #${u.globalRank} | ${u.pp}pp | ${u.accuracy}% | ${u.playtime} hours)**\n` +
-              `▸ :first_place: Mod leaderboard #1s: ${u.top1s}\n` +
-              `▸ :second_place: Mod leaderboard #2s: ${u.top2s}\n` +
-              `▸ :third_place: Mod leaderboard #3s: ${u.top3s}\n`
+              `▸ :first_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #1s: ${u.top1s}\n` +
+              `▸ :second_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #2s: ${u.top2s}\n` +
+              `▸ :third_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #3s: ${u.top3s}\n`
         desc = desc + userStr
       }
       const pfpLink = users[perPage * (page - 1)].pfpLink
@@ -134,14 +134,12 @@ export default async function usersCmd (facade, client, interaction) {
     if (error instanceof SheetEmptyError) {
       await interaction.editReply({
         content: `\`\`\`The "${MorConfig.SHEETS.USERS.NAME}" sheet is empty!\n\n` +
-                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-        ephemeral: true
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
     } else {
       await interaction.editReply({
         content: `\`\`\`${error.name}: ${error.message}\n\n` +
-                                       `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-        ephemeral: true
+                                       `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
       throw error
     }

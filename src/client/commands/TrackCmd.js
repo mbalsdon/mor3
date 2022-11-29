@@ -28,7 +28,7 @@ export default async function trackCmd (facade, interaction) {
         `▸ **:farmer: PP:** ${user.pp}pp\n` +
         `▸ **:dart: Profile Accuracy:** ${user.accuracy}%\n` +
         `▸ **:desktop: Total Playtime:** ${user.playtime} hours\n` +
-        (user.autotrack === 'TRUE' ? '' : `\n**:warning: NOTE:** This user's plays are not being automatically tracked!`)
+        (user.autotrack === 'TRUE' ? '' : '\n**:warning: NOTE:** This user\'s plays are not being automatically tracked!')
       )
       .setThumbnail(user.pfpLink)
       .setFooter({ text: `owobot: >track add "${user.username}" | Bathbot: <track "${user.username}"` })
@@ -37,20 +37,17 @@ export default async function trackCmd (facade, interaction) {
     if (error instanceof AlreadyExistsError) {
       await interaction.editReply({
         content: `\`\`\`User "${username}" has already been added!\n\n` +
-                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-        ephemeral: true
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
     } else if (error instanceof NotFoundError) {
       await interaction.editReply({
         content: `\`\`\`User "${username}" could not be found!\n\n` +
-                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-        ephemeral: true
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
     } else {
       await interaction.editReply({
         content: `\`\`\`${error.name}: ${error.message}\n\n` +
-                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-        ephemeral: true
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
       throw error
     }

@@ -227,7 +227,7 @@ export default class MorFacade {
 
   /**
    * Retrieves user's sheet rank from the mor3 sheet; makes up to 1 Google API request
-   * @param {string} username username of the user 
+   * @param {string} username username of the user
    * @throws {@link NotFoundError} if user could not be found
    * @return {Promise<number>} sheet rank of the user
    * @example
@@ -398,7 +398,7 @@ export default class MorFacade {
     ppVals.sort((a, b) => { return parseInt(b) - parseInt(a) })
     const userIndex = ppVals.indexOf(user.pp)
     // Append instead of assert if user is to be added to the end of sheet
-    if (user.pp === '0' || userIndex + 1 === ppVals.length || user.autotrack === 'FALSE' ) {
+    if (user.pp === '0' || userIndex + 1 === ppVals.length || user.autotrack === 'FALSE') {
       await this.#SHEETS.appendRange(
         MorConfig.SHEETS.SPREADSHEET.ID,
         [user.toArray()],
