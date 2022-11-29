@@ -13,14 +13,19 @@ import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'disc
  * @return {Promise<void>}
  */
 export default async function usersCmd (facade, client, interaction) {
-  console.info('Bot::usersCmd ()') // TODO: replace
+  const sortFlag = interaction.options.getString('sort') === null ? 'pp' : interaction.options.getString('sort')
+  console.info(`Bot::usersCmd (${sortFlag})`) // TODO: replace
   try {
     let currentPage = 1
     const perPage = 5
-    const users = await facade.getSheetUsers()
+    const [lastUpdated, users] = await Promise.all([facade.getSheetLastUpdated(), facade.getSheetUsers()])
+    if (sortFlag === 'accuracy') users.sort((a, b) => { return parseFloat(b.accuracy) - parseFloat(a.accuracy) })
+    else if (sortFlag === 'playtime') users.sort((a, b) => { return parseInt(b.playtime) - parseInt(a.playtime) })
+    else if (sortFlag === 'top1s') users.sort((a, b) => { return parseInt(b.top1s) - parseInt(a.top1s) })
+    else if (sortFlag === 'top2s') users.sort((a, b) => { return parseInt(b.top2s) - parseInt(a.top2s) })
+    else if (sortFlag === 'top3s') users.sort((a, b) => { return parseInt(b.top3s) - parseInt(a.top3s) })
     const numPages = Math.ceil(users.length / perPage)
     if (numPages === 0) throw new SheetEmptyError(`The ${MorConfig.SHEETS.USERS.NAME} sheet is empty!`)
-    const lastUpdated = await facade.getSheetLastUpdated()
 
     /**
      * Builds a users embed for the given page
@@ -33,7 +38,7 @@ export default async function usersCmd (facade, client, interaction) {
       // Avoid OOB errors (may have to display less than 'perPage' users if you're on the last page)
       const lim = (page === numPages && users.length % perPage !== 0) ? users.length % perPage : perPage
       // Build and concatenate player strings
-      let desc = ''
+      let desc = `\`SORT BY: ${sortFlag}\`\n\n`
       for (let i = 0; i < lim; i++) {
         const pageIndex = perPage * (page - 1) + i
         const u = users[pageIndex]

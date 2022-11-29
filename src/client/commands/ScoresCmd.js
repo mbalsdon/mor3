@@ -15,11 +15,15 @@ import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'disc
  */
 export default async function scoresCmd (facade, client, interaction) {
   const inputMods = interaction.options.getString('mods').toUpperCase()
-  console.info(`Bot::scoresCmd (${inputMods})`) // TODO: replace
+  const sortFlag = interaction.options.getString('sort') === null ? 'pp' : interaction.options.getString('sort')
+  console.info(`Bot::scoresCmd (${inputMods}, ${sortFlag})`) // TODO: replace
   try {
     let currentPage = 1
     const perPage = 5
     const [lastUpdated, scores] = await Promise.all([facade.getSheetLastUpdated(), facade.getSheetScores(inputMods)])
+    if (sortFlag === 'accuracy') scores.sort((a, b) => { return parseFloat(b.accuracy) - parseFloat(a.accuracy) })
+    else if (sortFlag === 'star_rating') scores.sort((a, b) => { return parseFloat(b.starRating) - parseFloat(a.starRating) })
+    else if (sortFlag === 'date_set') scores.sort((a, b) => { return Date.parse(b.date) - Date.parse(a.date) })
     const numPages = Math.ceil(scores.length / perPage)
     if (numPages === 0) throw new SheetEmptyError(`The ${MorConfig.SHEETS[inputMods].NAME} sheet is empty!`)
 
@@ -34,7 +38,7 @@ export default async function scoresCmd (facade, client, interaction) {
       // Avoid OOB errors (may have to display less than 'perPage' users if you're on the last page)
       const lim = (page === numPages && scores.length % perPage !== 0) ? scores.length % perPage : perPage
       // Build and concatenate score strings
-      let desc = ''
+      let desc = `\`SORT BY: ${sortFlag}\`\n\n`
       for (let i = 0; i < lim; i++) {
         const pageIndex = perPage * (page - 1) + i
         const s = scores[pageIndex]

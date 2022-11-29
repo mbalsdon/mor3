@@ -28,7 +28,19 @@ const commands = [
 
   new SlashCommandBuilder()
     .setName('users')
-    .setDescription('Displays list of tracked users, sorted by PP')
+    .setDescription('Displays list of tracked users (sorts by PP by default)')
+    .addStringOption(option =>
+      option.setName('sort')
+        .setDescription('The data to sort the users by')
+        .setRequired(false)
+        .addChoices(
+          { name: 'pp', value: 'pp' },
+          { name: 'accuracy', value: 'accuracy' },
+          { name: 'playtime', value: 'playtime' },
+          { name: 'top1s', value: 'top1s' },
+          { name: 'top2s', value: 'top2s' },
+          { name: 'top3s', value: 'top3s' }
+        ))
     .setDMPermission(true)
     .setDefaultMemberPermissions(userPermFlags),
 
@@ -94,11 +106,21 @@ const commands = [
 
   new SlashCommandBuilder()
     .setName('scores')
-    .setDescription('Displays list of scores for a given mod combo, sorted by PP')
+    .setDescription('Displays list of scores for a given mod combo (sorts by PP by default)')
     .addStringOption(option =>
       option.setName('mods')
         .setDescription('Mod combo of the leaderboard you want to look at')
         .setRequired(true))
+    .addStringOption(option =>
+      option.setName('sort')
+        .setDescription('The data to sort the scores by')
+        .setRequired(false)
+        .addChoices(
+          { name: 'accuracy', value: 'accuracy' },
+          { name: 'pp', value: 'pp' },
+          { name: 'star_rating', value: 'star_rating' },
+          { name: 'date_set', value: 'date_set' }
+        ))
     .setDMPermission(true)
     .setDefaultMemberPermissions(userPermFlags)
 ]
