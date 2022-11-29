@@ -394,12 +394,16 @@ export default class MorFacade {
     const [user, sheetUsers] = await Promise.all([this.getOsuUser(username), this.getSheetUsers()])
     user.autotrack = autotrack
     if (sheetUsers.map(u => u.userId).includes(user.userId)) throw new AlreadyExistsError(`${MorConfig.SHEETS.SPREADSHEET.NAME} sheet already contains that user! username=${username}`)
-    const ppVals = sheetUsers.map(u => u.pp)
-    ppVals.push(user.pp)
-    ppVals.sort((a, b) => { return parseInt(b) - parseInt(a) })
-    const userIndex = ppVals.indexOf(user.pp)
+    sheetUsers.push(user)
+    sheetUsers.sort((a, b) => { return parseInt(b.pp) - parseInt(a.pp) })
+    sheetUsers.sort((a, b) => {
+      if (a.autotrack === 'FALSE' && b.autotrack === 'TRUE') return 1
+    else if (a.autotrack === 'TRUE' && b.autotrack === 'FALSE') return -1
+    else return 0
+    })
+    const userIndex = sheetUsers.map(u => u.userId).indexOf(user.userId)
     // Append instead of assert if user is to be added to the end of sheet
-    if (user.pp === '0' || userIndex + 1 === ppVals.length || user.autotrack === 'FALSE') {
+    if (user.pp === '0' || userIndex + 1 === sheetUsers.length || user.autotrack === 'FALSE') {
       await this.#SHEETS.appendRange(
         MorConfig.SHEETS.SPREADSHEET.ID,
         [user.toArray()],
