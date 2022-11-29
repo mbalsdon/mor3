@@ -23,8 +23,7 @@ export default async function tracklistCmd (facade, interaction) {
   } catch (error) {
     await interaction.editReply({
       content: `\`\`\`${error.name}: ${error.message}\n\n` +
-                                       `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-      ephemeral: true
+                                       `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
     })
     throw error
   }

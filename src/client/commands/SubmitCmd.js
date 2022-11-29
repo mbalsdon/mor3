@@ -29,33 +29,28 @@ export default async function submitCmd (facade, interaction) {
     if (error instanceof AlreadyExistsError) {
       await interaction.editReply({
         content: `\`\`\`Score with ID "${scoreId}" has already been added!\n\n` +
-                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-        ephemeral: true
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
     } else if (error instanceof TypeError) {
       await interaction.editReply({
         content: `\`\`\`Score ID must be a positive number! Your input: "${scoreId}".\n\n` +
-                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-        ephemeral: true
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
     } else if (error instanceof NotFoundError && error.message.includes('scoreId')) {
       await interaction.editReply({
         content: `\`\`\`Could not find score with ID "${scoreId}"!\n\n` +
-                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-        ephemeral: true
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
     } else if (error instanceof NotFoundError && error.message.includes('username')) {
       const username = error.message.slice(error.message.indexOf('=') + 1, error.message.length)
       await interaction.editReply({
-        content: `\`\`\`User ${username} could not be found in the ${MorConfig.SHEETS.SPREADSHEET.NAME} sheet! You may only submit scores set by added users.\n\n` +
-                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-        ephemeral: true
+        content: `\`\`\`User "${username}" could not be found in the ${MorConfig.SHEETS.SPREADSHEET.NAME} sheet! You may only submit scores set by added users.\n\n` +
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
     } else {
       await interaction.editReply({
         content: `\`\`\`${error.name}: ${error.message}\n\n` +
-                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-        ephemeral: true
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
       throw error
     }

@@ -37,20 +37,17 @@ export default async function trackCmd (facade, interaction) {
     if (error instanceof AlreadyExistsError) {
       await interaction.editReply({
         content: `\`\`\`User "${username}" has already been added!\n\n` +
-                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-        ephemeral: true
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
     } else if (error instanceof NotFoundError) {
       await interaction.editReply({
         content: `\`\`\`User "${username}" could not be found!\n\n` +
-                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-        ephemeral: true
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
     } else {
       await interaction.editReply({
         content: `\`\`\`${error.name}: ${error.message}\n\n` +
-                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-        ephemeral: true
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
       throw error
     }

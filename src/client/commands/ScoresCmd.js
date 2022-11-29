@@ -136,20 +136,17 @@ export default async function scoresCmd (facade, client, interaction) {
       await interaction.editReply({
         content: `\`\`\`"${inputMods}" is not a valid mod combo!\n` +
                                          `Valid mod combos: ${Mods.validModStrings().join(' ')}\n\n` +
-                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-        ephemeral: true
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
     } else if (error instanceof SheetEmptyError) {
       await interaction.editReply({
         content: `\`\`\`The "${inputMods}" sheet is empty!\n\n` +
-                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-        ephemeral: true
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
     } else {
       await interaction.editReply({
         content: `\`\`\`${error.name}: ${error.message}\n\n` +
-                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``,
-        ephemeral: true
+                                         `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
       throw error
     }
