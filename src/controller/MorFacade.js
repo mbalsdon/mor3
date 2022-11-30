@@ -397,13 +397,11 @@ export default class MorFacade {
     sheetUsers.push(user)
     sheetUsers.sort((a, b) => { return parseInt(b.pp) - parseInt(a.pp) })
     sheetUsers.sort((a, b) => {
-      if (a.autotrack === 'FALSE' && b.autotrack === 'TRUE') return 1
-    else if (a.autotrack === 'TRUE' && b.autotrack === 'FALSE') return -1
-    else return 0
+      return ((a.autotrack === b.autotrack) ? 0 : ((b.autotrack === 'FALSE') ? -1 : 1))
     })
     const userIndex = sheetUsers.map(u => u.userId).indexOf(user.userId)
     // Append instead of assert if user is to be added to the end of sheet
-    if (user.pp === '0' || userIndex + 1 === sheetUsers.length || user.autotrack === 'FALSE') {
+    if (user.pp === '0' || userIndex + 1 === sheetUsers.length) {
       await this.#SHEETS.appendRange(
         MorConfig.SHEETS.SPREADSHEET.ID,
         [user.toArray()],

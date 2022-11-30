@@ -78,9 +78,7 @@ export default async function updateUsers () {
   console.info('::updateUsers () >> Updating the sheet...') // TODO: replace
   updatedUsers.sort((a, b) => { return parseInt(b.pp) - parseInt(a.pp) })
   updatedUsers.sort((a, b) => {
-    if (a.autotrack === 'FALSE' && b.autotrack === 'TRUE') return 1
-    else if (a.autotrack === 'TRUE' && b.autotrack === 'FALSE') return -1
-    else return 0
+    return ((a.autotrack === b.autotrack) ? 0 : ((b.autotrack === 'FALSE') ? -1 : 1))
   })
   await mor.replaceSheetUsers(updatedUsers)
   await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 9)
