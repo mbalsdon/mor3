@@ -29,12 +29,12 @@ export default async function scrapeTopPlays () {
   }
 
   console.time('::scrapeTopPlays () >> Time elapsed') // TODO: replace
-  console.info('::scrapeTopPlays () >> Scraping user top 100s and #1s... This may take a while!') // TODO: replace
+  console.info('::scrapeTopPlays () >> Scraping user tops, firsts, and recents... This may take a while!') // TODO: replace
   const mor = await MorFacade.build()
   console.info('::scrapeTopPlays () >> Getting user IDs of tracked players...') // TODO: replace
   const users = await mor.getSheetUsers()
   await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
-  console.info(`::scrapeTopPlays () >> Grabbing tops/firsts from ${users.length} users...`) // TODO: replace
+  console.info(`::scrapeTopPlays () >> Grabbing tops/firsts/recents from ${users.length} users...`) // TODO: replace
   // Key: mods; Value: MorScore array
   const dict = {}
   for (const user of users) {
@@ -43,12 +43,14 @@ export default async function scrapeTopPlays () {
       continue
     }
     try {
-      console.info(`::scrapeTopPlays() >> Grabbing tops/firsts for user ${user.username}...`) // TODO: replace
+      console.info(`::scrapeTopPlays() >> Grabbing tops/firsts/recents for user ${user.username}...`) // TODO: replace
       const userTops = await mor.getOsuUserScores(user.userId, 'best')
       await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
       const userFirsts = await mor.getOsuUserScores(user.userId, 'firsts')
       await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
-      populateDict(dict, userTops.concat(userFirsts))
+      const userRecents = await mor.getOsuUserScores(user.userId, 'recent')
+      populateDict(dict, userTops.concat(userFirsts).concat(userRecents))
+      await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
     } catch (error) {
       if (error instanceof NotFoundError) {
         console.info(`::scrapeTopPlays () >> Couldn't find user ${user.username}, skipping...`) // TODO: replace
@@ -57,11 +59,12 @@ export default async function scrapeTopPlays () {
     }
   }
   console.info('::scrapeTopPlays () >> Retrieving submitted scores...') // TODO: replace
-  const submittedScores = await mor.getSheetScores(Mods.SS)
+  const submittedScores = await mor.getSheetScores(Mods.SUBMITTED)
   await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
   populateDict(dict, submittedScores)
   console.info('::scrapeTopPlays () >> Collecting data from the sheet and inserting any new scores...') // TODO: replace
   let numInserted = 0
+  let combinedScores = []
   for (const key of Object.keys(dict)) {
     const sheetScores = await mor.getSheetScores(key)
     await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
@@ -72,11 +75,16 @@ export default async function scrapeTopPlays () {
         numInserted++
       }
     }
+    combinedScores = combinedScores.concat(sheetScores)
     console.info(`::scrapeTopPlays () >> Updating the ${key} sheet...`) // TODO: replace
     sheetScores.sort((a, b) => { return parseInt(b.pp) - parseInt(a.pp) })
     await mor.replaceSheetScores(key, sheetScores)
     await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 9)
   }
+  console.info(`::scrapeTopPlays () >> Updating the ${MorConfig.SHEETS.COMBINED.NAME} sheet...`) // TODO: replace
+  combinedScores.sort((a, b) => { return parseInt(b.pp) - parseInt(a.pp) })
+  await mor.replaceSheetScores(Mods.COMBINED, combinedScores)
+  await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 9)
   const dateString = new Date(Date.now()).toISOString()
   console.info(`::scrapeTopPlays () >> Job completed at ${dateString}, inserted ${numInserted} new plays.`) // TODO: replace
   console.timeEnd('::scrapeTopPlays () >> Time elapsed') // TODO: replace

@@ -1,49 +1,52 @@
+import MorConfig from './MorConfig.js'
 import MorUtils from './MorUtils.js'
 
 /** Enumerates valid MOR mod strings and provides some useful functions for them */
 export default class Mods {
+  /** Combined Scores - This is not an osu! mod but the MorFacade client uses it to interface with the Combined Scores sheet */
+  static COMBINED = MorConfig.SHEETS.COMBINED.NAME
   /** Submitted Scores - This is not an osu! mod but the MorFacade client uses it to interface with the Submitted Scores sheet */
-  static SS = 'SS'
+  static SUBMITTED = MorConfig.SHEETS.SUBMITTED.NAME
 
-  static NM = 'NM'
-  static DT = 'DT'
-  static HR = 'HR'
-  static HD = 'HD'
-  static EZ = 'EZ'
-  static HT = 'HT'
-  static FL = 'FL'
+  static NM = MorConfig.SHEETS.NM.NAME
+  static DT = MorConfig.SHEETS.DT.NAME
+  static HR = MorConfig.SHEETS.HR.NAME
+  static HD = MorConfig.SHEETS.HD.NAME
+  static EZ = MorConfig.SHEETS.EZ.NAME
+  static HT = MorConfig.SHEETS.HT.NAME
+  static FL = MorConfig.SHEETS.FL.NAME
 
-  static HDDT = 'HDDT'
-  static HRDT = 'HRDT'
-  static EZDT = 'EZDT'
-  static DTFL = 'DTFL'
-  static EZHT = 'EZHT'
-  static HDHR = 'HDHR'
-  static HDHT = 'HDHT'
-  static EZHD = 'EZHD'
-  static HRHT = 'HRHT'
-  static EZFL = 'EZFL'
-  static HRFL = 'HRFL'
-  static HTFL = 'HTFL'
-  static HDFL = 'HDFL'
+  static HDDT = MorConfig.SHEETS.HDDT.NAME
+  static HRDT = MorConfig.SHEETS.HRDT.NAME
+  static EZDT = MorConfig.SHEETS.EZDT.NAME
+  static DTFL = MorConfig.SHEETS.DTFL.NAME
+  static EZHT = MorConfig.SHEETS.EZHT.NAME
+  static HDHR = MorConfig.SHEETS.HDHR.NAME
+  static HDHT = MorConfig.SHEETS.HDHT.NAME
+  static EZHD = MorConfig.SHEETS.EZHD.NAME
+  static HRHT = MorConfig.SHEETS.HRHT.NAME
+  static EZFL = MorConfig.SHEETS.EZFL.NAME
+  static HRFL = MorConfig.SHEETS.HRFL.NAME
+  static HTFL = MorConfig.SHEETS.HTFL.NAME
+  static HDFL = MorConfig.SHEETS.HDFL.NAME
 
-  static HDHRDT = 'HDHRDT'
-  static HDDTFL = 'HDDTFL'
-  static EZHDDT = 'EZHDDT'
-  static HRDTFL = 'HRDTFL'
-  static EZDTFL = 'EZDTFL'
-  static HDHTFL = 'HDHTFL'
-  static HDHRHT = 'HDHRHT'
-  static HRHTFL = 'HRHTFL'
-  static EZHDHT = 'EZHDHT'
-  static EZHTFL = 'EZHTFL'
-  static EZHDFL = 'EZHDFL'
-  static HDHRFL = 'HDHRFL'
+  static HDHRDT = MorConfig.SHEETS.HDHRDT.NAME
+  static HDDTFL = MorConfig.SHEETS.HDDTFL.NAME
+  static EZHDDT = MorConfig.SHEETS.EZHDDT.NAME
+  static HRDTFL = MorConfig.SHEETS.HRDTFL.NAME
+  static EZDTFL = MorConfig.SHEETS.EZDTFL.NAME
+  static HDHTFL = MorConfig.SHEETS.HDHTFL.NAME
+  static HDHRHT = MorConfig.SHEETS.HDHRHT.NAME
+  static HRHTFL = MorConfig.SHEETS.HRHTFL.NAME
+  static EZHDHT = MorConfig.SHEETS.EZHDHT.NAME
+  static EZHTFL = MorConfig.SHEETS.EZHTFL.NAME
+  static EZHDFL = MorConfig.SHEETS.EZHDFL.NAME
+  static HDHRFL = MorConfig.SHEETS.HDHRFL.NAME
 
-  static HDHRDTFL = 'HDHRDTFL'
-  static EZHDDTFL = 'EZHDDTFL'
-  static EZHDHTFL = 'EZHDHTFL'
-  static HDHRHTFL = 'HDHRHTFL'
+  static HDHRDTFL = MorConfig.SHEETS.HDHRDTFL.NAME
+  static EZHDDTFL = MorConfig.SHEETS.EZHDDTFL.NAME
+  static EZHDHTFL = MorConfig.SHEETS.EZHDHTFL.NAME
+  static HDHRHTFL = MorConfig.SHEETS.HDHRHTFL.NAME
 
   /**
      * Returns array of all valid MOR mod strings
@@ -94,7 +97,6 @@ export default class Mods {
     pMods = pMods.replace('SD', '')
     pMods = pMods.replace('PF', '')
     pMods = (pMods === '') ? Mods.NM : pMods
-    pMods = (mods === 'SS') ? Mods.SS : pMods
     return pMods
   }
 }
