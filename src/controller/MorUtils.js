@@ -122,7 +122,7 @@ export default class MorUtils {
 
   /**
    * Returns true if input is a valid country code
-   * @param {*} v 
+   * @param {*} v
    * @return {boolean}
    */
   static isValidCountryCode (v) {

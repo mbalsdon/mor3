@@ -1,5 +1,3 @@
-import Mods from '../controller/Mods.js'
-
 import 'dotenv/config'
 import { SlashCommandBuilder, Routes, PermissionFlagsBits } from 'discord.js'
 import { REST } from '@discordjs/rest'

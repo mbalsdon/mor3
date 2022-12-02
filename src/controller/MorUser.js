@@ -32,7 +32,7 @@ export default class MorUser {
    *    values[1] - username (string): username of the user
    *
    *    values[2] - playstyle (string): profile playstyle of the user
-   * 
+   *
    *    values[3] - countryCode (string): country code of the user's country
    *
    *    values[4] - globalRank (string): global rank of the user
