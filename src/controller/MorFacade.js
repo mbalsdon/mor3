@@ -475,7 +475,7 @@ export default class MorFacade {
    */
   async addSubmittedScore (scoreId) {
     console.info(`MorFacade::addSubmittedScore (${scoreId})`) // TODO: replace
-    const submittedScores = await this.getSheetScores(Mods.SS)
+    const submittedScores = await this.getSheetScores(Mods.SUBMITTED)
     const ssIndex = submittedScores.map(ss => { return ss.scoreId }).indexOf(scoreId)
     if (ssIndex !== -1) throw new AlreadyExistsError(`${MorConfig.SHEETS.SS.NAME} sheet already contains that score! scoreId=${scoreId}`)
     const score = await this.getOsuScore(scoreId)
@@ -509,7 +509,7 @@ export default class MorFacade {
   async deleteSubmittedScore (scoreId) {
     console.info(`MorFacade::deleteScore (${scoreId})`) // TODO: replace
     if (!MorUtils.isPositiveNumericString(scoreId)) throw new TypeError(`scoreId must be a positive number string! Val=${scoreId}`)
-    const submittedScores = await this.getSheetScores(Mods.SS)
+    const submittedScores = await this.getSheetScores(Mods.SUBMITTED)
     const ssIndex = submittedScores.map(ss => { return ss.scoreId }).indexOf(scoreId)
     if (ssIndex === -1) throw new NotFoundError(`${MorConfig.SHEETS.SPREADSHEET.NAME} sheet returned no results! scoreId=${scoreId}`)
     const mods = Mods.parseModKey(submittedScores[ssIndex].mods)

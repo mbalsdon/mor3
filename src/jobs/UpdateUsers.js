@@ -20,7 +20,7 @@ export default async function updateUsers () {
   const dict = {}
   console.info('::updateUsers () >> Grabbing score data from sheets...') // TODO: replace
   for (const mods of Mods.validModStrings()) {
-    if (mods === Mods.SS) continue
+    if (mods === Mods.SUBMITTED) continue
     dict[mods] = await mor.getSheetScores(mods)
     await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
   }

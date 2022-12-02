@@ -19,7 +19,7 @@ export default async function updateScores () {
   const mor = await MorFacade.build()
   console.info('::updateScores () >> Creating cache (if it doesn\'t exist)...') // TODO: replace
   if (!fs.existsSync(MorConfig.JOBS_CACHE)) fs.mkdirSync(MorConfig.JOBS_CACHE)
-  if (!fs.existsSync(MorConfig.UPDATE_SCORES_CACHE)) fs.writeFileSync(MorConfig.UPDATE_SCORES_CACHE, JSON.stringify({ currentModSheet: Mods.SS, scores: [] }))
+  if (!fs.existsSync(MorConfig.UPDATE_SCORES_CACHE)) fs.writeFileSync(MorConfig.UPDATE_SCORES_CACHE, JSON.stringify({ currentModSheet: Mods.COMBINED, scores: [] }))
   console.info('::updateScores () >> Reading cache...') // TODO: replace
   const saveData = JSON.parse(fs.readFileSync(MorConfig.UPDATE_SCORES_CACHE))
   // Remove modsheets that have already been updated
@@ -64,12 +64,12 @@ export default async function updateScores () {
     const updatedScores = updatedCache.scores.map(s => {
       return new MorScore([s.scoreId, s.userId, s.username, s.beatmap, s.mods, s.accuracy, s.pp, s.starRating, s.date, s.beatmapImgLink])
     })
-    if (mods !== Mods.SS) updatedScores.sort((a, b) => { return parseInt(b.pp) - parseInt(a.pp) })
+    if (mods !== Mods.SUBMITTED) updatedScores.sort((a, b) => { return parseInt(b.pp) - parseInt(a.pp) })
     console.info('::updateScores() >> Updating sheet and resetting cache...') // TODO: replace
     if (updatedScores.length === 0) await mor.wipeSheet(mods)
     else await mor.replaceSheetScores(mods, updatedScores)
     await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
-    fs.writeFileSync(MorConfig.UPDATE_SCORES_CACHE, JSON.stringify({ currentModSheet: Mods.SS, scores: [] }))
+    fs.writeFileSync(MorConfig.UPDATE_SCORES_CACHE, JSON.stringify({ currentModSheet: Mods.COMBINED, scores: [] }))
   }
   let dateString = new Date(Date.now()).toISOString()
   dateString = dateString.slice(0, dateString.length - 5) + '+00:00'

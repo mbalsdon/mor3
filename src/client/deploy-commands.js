@@ -1,3 +1,5 @@
+import Mods from '../controller/Mods.js'
+
 import 'dotenv/config'
 import { SlashCommandBuilder, Routes, PermissionFlagsBits } from 'discord.js'
 import { REST } from '@discordjs/rest'
@@ -28,10 +30,10 @@ const commands = [
 
   new SlashCommandBuilder()
     .setName('users')
-    .setDescription('Displays list of tracked users (sorts by PP by default)')
+    .setDescription('Displays list of tracked users')
     .addStringOption(option =>
       option.setName('sort')
-        .setDescription('The data to sort the users by')
+        .setDescription('The data to sort the users by (defaults to pp)')
         .setRequired(false)
         .addChoices(
           { name: 'pp', value: 'pp' },
@@ -106,14 +108,14 @@ const commands = [
 
   new SlashCommandBuilder()
     .setName('scores')
-    .setDescription('Displays list of scores for a given mod combo (sorts by PP by default)')
+    .setDescription('Displays list of scores')
     .addStringOption(option =>
       option.setName('mods')
-        .setDescription('Mod combo of the leaderboard you want to look at')
-        .setRequired(true))
+        .setDescription('Mod combo of the leaderboard you want to look at (defaults to COMBINED)')
+        .setRequired(false))
     .addStringOption(option =>
       option.setName('sort')
-        .setDescription('The data to sort the scores by')
+        .setDescription('The data to sort the scores by (defaults to pp)')
         .setRequired(false)
         .addChoices(
           { name: 'accuracy', value: 'accuracy' },
