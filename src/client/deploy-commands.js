@@ -11,19 +11,19 @@ const commands = [
   new SlashCommandBuilder()
     .setName('help')
     .setDescription('Documentation on the bot\'s commands')
-    .setDMPermission(true)
+    .setDMPermission(false)
     .setDefaultMemberPermissions(userPermFlags),
 
   new SlashCommandBuilder()
     .setName('ping')
     .setDescription('Checks if the bot is alive')
-    .setDMPermission(true)
+    .setDMPermission(false)
     .setDefaultMemberPermissions(userPermFlags),
 
   new SlashCommandBuilder()
     .setName('metadata')
     .setDescription('Displays the number of entries in each sheet')
-    .setDMPermission(true)
+    .setDMPermission(false)
     .setDefaultMemberPermissions(userPermFlags),
 
   new SlashCommandBuilder()
@@ -41,7 +41,7 @@ const commands = [
           { name: 'top2s', value: 'top2s' },
           { name: 'top3s', value: 'top3s' }
         ))
-    .setDMPermission(true)
+    .setDMPermission(false)
     .setDefaultMemberPermissions(userPermFlags),
 
   new SlashCommandBuilder()
@@ -51,7 +51,7 @@ const commands = [
       option.setName('username')
         .setDescription('Username of the player you want to view')
         .setRequired(true))
-    .setDMPermission(true)
+    .setDMPermission(false)
     .setDefaultMemberPermissions(userPermFlags),
 
   new SlashCommandBuilder()
@@ -81,7 +81,7 @@ const commands = [
   new SlashCommandBuilder()
     .setName('tracklist')
     .setDescription('Lists all tracked users in a .txt file')
-    .setDMPermission(true)
+    .setDMPermission(false)
     .setDefaultMemberPermissions(userPermFlags),
 
   new SlashCommandBuilder()
@@ -121,7 +121,7 @@ const commands = [
           { name: 'star_rating', value: 'star_rating' },
           { name: 'date_set', value: 'date_set' }
         ))
-    .setDMPermission(true)
+    .setDMPermission(false)
     .setDefaultMemberPermissions(userPermFlags)
 ]
   .map(command => command.toJSON())
