@@ -39,7 +39,8 @@ export default async function scoresCmd (facade, client, interaction) {
       // Avoid OOB errors (may have to display less than 'perPage' users if you're on the last page)
       const lim = (page === numPages && scores.length % perPage !== 0) ? scores.length % perPage : perPage
       // Build and concatenate score strings
-      let desc = `\`SORT BY: ${sortFlag}\`\n\n`
+      let desc = `\`MODS: ${inputMods}\`\n`
+      desc = desc + `\`SORT BY: ${sortFlag}\`\n\n`
       for (let i = 0; i < lim; i++) {
         const pageIndex = perPage * (page - 1) + i
         const s = scores[pageIndex]
