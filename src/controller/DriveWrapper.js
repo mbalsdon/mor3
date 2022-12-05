@@ -67,7 +67,7 @@ export default class DriveWrapper {
     if (!MorUtils.isString(folderId)) throw new TypeError(`folderId must be a string! Val=${folderId}`)
     if (!MorUtils.isNonNegativeNumber(googleApiCooldown)) throw new TypeError(`googleApiCooldown must be a positive number! Val=${googleApiCooldown}`)
 
-    const [response] = Promise.all([await this.#DRIVE_CLIENT.files.copy({
+    const [response] = await Promise.all([this.#DRIVE_CLIENT.files.copy({
       auth: DriveWrapper.#AUTH,
       fileId,
       resource: {
