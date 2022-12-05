@@ -1,12 +1,12 @@
-import MorConfig from './MorConfig.js'
 import DriveWrapper from './DriveWrapper.js'
-import { AlreadyExistsError, ConstructorError, InvalidModsError, NotFoundError } from './MorErrors.js'
 import Mods from './Mods.js'
-import OsuWrapper from './OsuWrapper.js'
+import MorConfig from './MorConfig.js'
+import { AlreadyExistsError, ConstructorError, InvalidModsError, NotFoundError } from './MorErrors.js'
 import MorScore from './MorScore.js'
-import SheetsWrapper from './SheetsWrapper.js'
 import MorUser from './MorUser.js'
 import MorUtils from './MorUtils.js'
+import OsuWrapper from './OsuWrapper.js'
+import SheetsWrapper from './SheetsWrapper.js'
 
 import 'dotenv/config'
 
@@ -81,33 +81,42 @@ export default class MorFacade {
   }
 
   /**
-   * Retrieves osu! score; makes up to 1 osu!API request
+   * Retrieves osu! score; makes up to 2 osu!API requests
    * @param {string} scoreId ID of the score
    * @return {Promise<MorScore>} MorScore object
    * @example
    *  const mor = await MorFacade.build()
-   *  const score = await osu.getScore('4083979228')
+   *  const score = await osu.getOsuScore('4083979228')
    *  console.log(score.mods)
    */
   async getOsuScore (scoreId) {
     console.info(`MorFacade::getOsuScore (${scoreId})`) // TODO: replace
     const data = await this.#OSU.getScore(scoreId)
+    const modString = Mods.parseModKey(data.mods)
+    let starRating = data.beatmap.difficulty_rating.toFixed(2)
+    if (Mods.affectsStarRating(modString)) {
+      const beatmapId = data.beatmap.id.toString()
+      const modArray = Mods.toArray(modString)
+      const difficultyAttributes = await this.#OSU.getDifficultyAttributes(beatmapId, modArray)
+      starRating = difficultyAttributes.attributes.star_rating.toFixed(2)
+    }
     return new MorScore([
       data.id.toString(),
       data.user.id.toString(),
       data.user.username,
           `${data.beatmapset.artist} - ${data.beatmapset.title} [${data.beatmap.version}]`,
-          Mods.parseModKey(data.mods),
+          modString,
           (data.accuracy * 100).toFixed(2),
           data.pp === null ? '0' : data.pp.toFixed(3),
-          data.beatmap.difficulty_rating.toFixed(2),
+          starRating,
           data.created_at.replace('Z', '+00:00'),
           data.beatmapset.covers['list@2x']
     ])
   }
 
   /**
-   * Retrieves osu! user's top plays/firsts from osu!API v2; makes up to 1 osu!API request
+   * Retrieves osu! user's top plays/firsts from osu!API v2;
+   * CAN MAKE AN ARBITRARILY LARGE AMOUNT OF OSU! API V2 REQUESTS
    * @param {string} userId user's ID
    * @param {('best'|'firsts'|'recent')} type whether to fetch the user's top plays, firsts, or recents
    * @return {Promise<MorScore[]>} array of MorScore objects
@@ -121,15 +130,23 @@ export default class MorFacade {
     const scores = await this.#OSU.getUserPlays(userId, type)
     const ret = []
     for (const score of scores) {
+      const modString = Mods.parseModKey(score.mods)
+      let starRating = score.beatmap.difficulty_rating.toFixed(2)
+      if (Mods.affectsStarRating(modString)) {
+        const beatmapId = score.beatmap.id.toString()
+        const modArray = Mods.toArray(Mods.parseModKey(score.mods))
+        const difficultyAttributes = await this.#OSU.getDifficultyAttributes(beatmapId, modArray)
+        starRating = difficultyAttributes.attributes.star_rating.toFixed(2)
+      }
       ret.push(new MorScore([
         score.id.toString(),
         score.user.id.toString(),
         score.user.username,
         `${score.beatmapset.artist} - ${score.beatmapset.title} [${score.beatmap.version}]`,
-        Mods.parseModKey(score.mods),
+        modString,
         (score.accuracy * 100).toFixed(2),
         score.pp === null ? '0' : score.pp.toFixed(3),
-        score.beatmap.difficulty_rating.toFixed(2),
+        starRating,
         score.created_at.replace('Z', '+00:00'),
         score.beatmapset.covers['list@2x']
       ]))
@@ -459,7 +476,7 @@ export default class MorFacade {
   }
 
   /**
-   * Adds an osu! score to the mor3 sheet; makes up to 1 Google API request
+   * Adds an osu! score to the mor3 sheet; makes up to 2 Google API requests and up to 2 osu!API v2 requests
    * @param {string} scoreId ID of the score
    * @throws {@link AlreadyExistsError} if score already exists in the sheet
    * @return {Promise<MorScore>} MorScore object for the added score
@@ -479,7 +496,6 @@ export default class MorFacade {
     const ssIndex = submittedScores.map(ss => { return ss.scoreId }).indexOf(scoreId)
     if (ssIndex !== -1) throw new AlreadyExistsError(`${MorConfig.SHEETS.SUBMITTED.NAME} sheet already contains that score! scoreId=${scoreId}`)
     const score = await this.getOsuScore(scoreId)
-    await this.getSheetUserRank(score.username)
     await this.#SHEETS.appendRange(
       MorConfig.SHEETS.SPREADSHEET.ID,
       [score.toArray()],

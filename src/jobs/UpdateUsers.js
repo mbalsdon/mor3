@@ -1,9 +1,7 @@
 import Mods from '../controller/Mods.js'
-import MorConfig from '../controller/MorConfig.js'
 import { NotFoundError } from '../controller/MorErrors.js'
 import MorFacade from '../controller/MorFacade.js'
 import MorUser from '../controller/MorUser.js'
-import MorUtils from '../controller/MorUtils.js'
 
 /**
  * Takes every user in the MOR sheet and refreshes their stats.
@@ -22,11 +20,9 @@ export default async function updateUsers () {
   for (const mods of Mods.validModStrings()) {
     if (mods === Mods.SUBMITTED || mods === Mods.COMBINED) continue
     dict[mods] = await mor.getSheetScores(mods)
-    await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
   }
   console.info('::updateUsers () >> Retrieving user IDs from sheet...') // TODO: replace
   const users = await mor.getSheetUsers()
-  await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
   console.info(`::updateUsers () >> Refreshing data for ${users.length} users...`) // TODO: replace
   const updatedUsers = []
   for (const user of users) {
@@ -38,7 +34,6 @@ export default async function updateUsers () {
         continue
       } else throw error
     }
-    await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
     console.info(`::updateUsers () >> Counting top25s for user ${user.username}...`) // TODO: replace
     let [top1s, top2s, top3s, top5s, top10s, top25s] = [0, 0, 0, 0, 0, 0]
     for (const key of Object.keys(dict)) {
@@ -81,7 +76,6 @@ export default async function updateUsers () {
     return ((a.autotrack === b.autotrack) ? 0 : ((b.autotrack === 'FALSE') ? -1 : 1))
   })
   await mor.replaceSheetUsers(updatedUsers)
-  await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 9)
   const dateString = new Date(Date.now()).toISOString()
   console.info(`::updateUsers () >> Job completed at ${dateString}, updated ${updatedUsers.length} users`) // TODO: replace
   console.timeEnd('::updateUsers () >> Time elapsed') // TODO: replace

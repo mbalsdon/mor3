@@ -62,7 +62,7 @@ export default class MorScore {
     else if (!MorUtils.isString(values[4])) throw new TypeError(`mods must be a string! Val=${values[4]}`)
     else if (!MorUtils.isValidAccuracyString(values[5])) throw new TypeError(`accuracy must be a valid accuracy string! Val=${values[5]}`)
     else if (!MorUtils.isNonNegativeNumericString(values[6])) throw new TypeError(`pp must be a a non-negative number string! Val=${values[6]}`)
-    else if (!MorUtils.isPositiveNumericString(values[7])) throw new TypeError(`starRating must be a positive number string! Val=${values[7]}`)
+    else if (!MorUtils.isNumericString(values[7])) throw new TypeError(`starRating must be a number string! Val=${values[7]}`)
     else if (!MorUtils.isValidDate(values[8])) throw new TypeError(`date must be a valid date string! Val=${values[8]}`)
     else if (!MorUtils.isValidHttpUrl(values[9])) throw new TypeError(`beatmapImgLink must be a valid HTTP URL string! Val=${values[9]}`)
     else {

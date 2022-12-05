@@ -20,7 +20,8 @@ export default async function scoresCmd (facade, client, interaction) {
   try {
     let currentPage = 1
     const perPage = 5
-    const [lastUpdated, scores] = await Promise.all([facade.getSheetLastUpdated(), facade.getSheetScores(inputMods)])
+    const lastUpdated = await facade.getSheetLastUpdated()
+    const scores = await facade.getSheetScores(inputMods)
     if (sortFlag === 'pp') scores.sort((a, b) => { return parseFloat(b.pp) - parseFloat(a.pp) })
     else if (sortFlag === 'accuracy') scores.sort((a, b) => { return parseFloat(b.accuracy) - parseFloat(a.accuracy) })
     else if (sortFlag === 'star_rating') scores.sort((a, b) => { return parseFloat(b.starRating) - parseFloat(a.starRating) })
@@ -39,14 +40,15 @@ export default async function scoresCmd (facade, client, interaction) {
       // Avoid OOB errors (may have to display less than 'perPage' users if you're on the last page)
       const lim = (page === numPages && scores.length % perPage !== 0) ? scores.length % perPage : perPage
       // Build and concatenate score strings
-      let desc = `\`SORT BY: ${sortFlag}\`\n\n`
+      let desc = `\`MODS: ${inputMods}\`\n`
+      desc = desc + `\`SORT BY: ${sortFlag}\`\n\n`
       for (let i = 0; i < lim; i++) {
         const pageIndex = perPage * (page - 1) + i
         const s = scores[pageIndex]
         const medalEmoji = MorUtils.medalEmoji(pageIndex)
         const scoreStr = `**${pageIndex + 1}. [${s.beatmap}](https://osu.ppy.sh/scores/osu/${s.scoreId}) +${s.mods}** [${s.starRating}★]\n` +
               `▸ ${medalEmoji} ▸ **${s.pp}pp** ▸ ${s.accuracy}%\n` +
-              `▸ Set by [${s.username}](https://osu.ppy.sh/users/${s.userId}) on ${s.date}\n`
+              `▸ Set by [${s.username}](https://osu.ppy.sh/users/${s.userId}) on ${MorUtils.prettifyDate(s.date)}\n`
         desc = desc + scoreStr
       }
       const beatmapImgLink = scores[perPage * (page - 1)].beatmapImgLink
@@ -55,7 +57,7 @@ export default async function scoresCmd (facade, client, interaction) {
         .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} ${inputMods} Score Leaderboard`, iconURL: MorConfig.SERVER_ICON_URL, url: `https://docs.google.com/spreadsheets/d/${MorConfig.SHEETS.SPREADSHEET.ID}/edit#gid=${MorConfig.SHEETS[inputMods].ID}` })
         .setThumbnail(`${beatmapImgLink}`)
         .setDescription(desc)
-        .setFooter({ text: `Last update: ${lastUpdated}` })
+        .setFooter({ text: `Last update: ${MorUtils.prettifyDate(lastUpdated)}` })
       return embed
     }
 

@@ -50,7 +50,6 @@ export default class Mods {
 
   /**
      * Returns array of all valid MOR mod strings
-     * @see {@link MorFacade.getSheetScores}
      * @return {string[]} array of valid mod strings
      */
   static validModStrings () {
@@ -59,12 +58,39 @@ export default class Mods {
 
   /**
    * Returns true if the input mod string is valid, false if not
-   * @see {@link MorFacade.getSheetScores}
    * @param {string} modString MOR mod string
    * @return {boolean} whether the mod string is valid or not
    */
   static isValidModString (modString) {
     return Object.keys(Mods).includes(modString)
+  }
+
+  static isValidModArray (modArray) {
+    if (modArray.length === 0) return true
+    else return (MorUtils.isStringArray(modArray) && modArray.every(m => Mods.isValidModString(m)))
+  }
+
+  /**
+   * Returns true if the input mod string affects SR, false if not
+   * @param {string} modString MOR mod string
+   * @return {boolean} whether the mod string affects SR or not
+   */
+  static affectsStarRating (modString) {
+    return (modString.includes(Mods.DT) ||
+            modString.includes(Mods.HR) ||
+            modString.includes(Mods.EZ) ||
+            modString.includes(Mods.HT) ||
+            modString.includes(Mods.FL))
+  }
+
+  /**
+   * Returns array form of input mod string
+   * @param {string} modString MOR mod string
+   * @return {string[]} array of mods
+   */
+  static toArray (modString) {
+    if (modString === Mods.NM) return []
+    else return modString.match(/.{1,2}/g)
   }
 
   /**

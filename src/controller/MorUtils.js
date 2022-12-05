@@ -22,6 +22,15 @@ export default class MorUtils {
   }
 
   /**
+   * Returns true if input is a non-negative number
+   * @param {*} v
+   * @return {boolean}
+   */
+  static isNonNegativeNumber (v) {
+    return (this.isNumber(v) && v >= 0)
+  }
+
+  /**
    * Returns true if input is a string
    * @param {*} v
    * @return {boolean}
@@ -215,6 +224,61 @@ export default class MorUtils {
     if (v.length === 0) return false
     if (!v.every(a => Array.isArray(a))) return false
     return true
+  }
+
+  /**
+   * Turns an ISO-8601 date into a readable format
+   * @param {string} dateString ISO-8601 date string
+   * @throws {@link TypeError} if parameters are invalid
+   * @return {string}
+   */
+  static prettifyDate (dateString) {
+    if (!MorUtils.isValidDate(dateString)) throw new TypeError(`dateString is not a valid date! Val=${dateString}`)
+    const d = new Date(dateString)
+    const date = ('0' + (d.getDate() + 1)).slice(-2)
+    let month = ''
+    switch (d.getMonth() + 1) {
+      case 1:
+        month = 'January'
+        break
+      case 2:
+        month = 'February'
+        break
+      case 3:
+        month = 'March'
+        break
+      case 4:
+        month = 'April'
+        break
+      case 5:
+        month = 'May'
+        break
+      case 6:
+        month = 'June'
+        break
+      case 7:
+        month = 'July'
+        break
+      case 8:
+        month = 'August'
+        break
+      case 9:
+        month = 'September'
+        break
+      case 10:
+        month = 'October'
+        break
+      case 11:
+        month = 'November'
+        break
+      case 12:
+        month = 'December'
+    }
+    const year = d.getFullYear()
+    const hours = ('0' + (d.getUTCHours() + 1)).slice(-2)
+    const minutes = ('0' + (d.getUTCMinutes() + 1)).slice(-2)
+    const pwetty = `${date} ${month} ${year} at ${hours}:${minutes}`
+    return pwetty
   }
 
   /**
