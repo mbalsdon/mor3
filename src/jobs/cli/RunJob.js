@@ -8,7 +8,7 @@ import wipeScores from '../WipeScores.js'
 /*
  * Basic command handler script for MOR jobs
  * Example:
- * $ node src/jobs/cli/JobHandler.js updateScores
+ * $ node src/jobs/cli/RunJob.js updateScores
  */
 
 const commands = {
@@ -21,7 +21,7 @@ const commands = {
 }
 
 const args = process.argv.slice(2)
-console.info(`::JobHandler.js (${args})`) // TODO: replace
+console.info(`::RunJob.js (${args})`) // TODO: replace
 
 if (args.length !== 1) throw new Error(`${args} is not a valid input! Valid jobs: ${Object.keys(commands)}`)
 
