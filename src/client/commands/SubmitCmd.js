@@ -24,7 +24,7 @@ export default async function submitCmd (facade, interaction) {
       .setDescription(`**[${score.beatmap}](https://osu.ppy.sh/scores/osu/${score.scoreId}) +${score.mods}** [${score.starRating}★]\n` +
               `▸ :farmer: **${score.pp}pp** ▸ ${score.accuracy}%\n` +
               `▸ :calendar_spiral: Set by [${score.username}](https://osu.ppy.sh/users/${score.userId}) on ${score.date}\n`)
-      .setFooter({ text: `Last update: ${lastUpdated}` })
+      .setFooter({ text: `Last update: ${MorUtils.prettifyDate(lastUpdated)}` })
     await interaction.editReply({ embeds: [embed] })
   } catch (error) {
     if (error instanceof AlreadyExistsError) {

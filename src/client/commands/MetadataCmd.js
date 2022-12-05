@@ -23,7 +23,7 @@ export default async function metadataCmd (facade, interaction) {
       .setColor(MorConfig.BOT_EMBED_COLOR)
       .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} metadata`, iconURL: MorConfig.SERVER_ICON_URL, url: 'https://docs.google.com/spreadsheets/d/1hduRLLIFjVwLGjXyt7ph3301xfXS6qjSnYCm18YP4iA/edit#gid=0' })
       .setDescription(ret)
-      .setFooter({ text: `Last update: ${lastUpdated}` })
+      .setFooter({ text: `Last update: ${MorUtils.prettifyDate(lastUpdated)}` })
     await interaction.editReply({ embeds: [embed] })
   } catch (error) {
     await interaction.editReply({

@@ -48,7 +48,7 @@ export default async function scoresCmd (facade, client, interaction) {
         const medalEmoji = MorUtils.medalEmoji(pageIndex)
         const scoreStr = `**${pageIndex + 1}. [${s.beatmap}](https://osu.ppy.sh/scores/osu/${s.scoreId}) +${s.mods}** [${s.starRating}★]\n` +
               `▸ ${medalEmoji} ▸ **${s.pp}pp** ▸ ${s.accuracy}%\n` +
-              `▸ Set by [${s.username}](https://osu.ppy.sh/users/${s.userId}) on ${s.date}\n`
+              `▸ Set by [${s.username}](https://osu.ppy.sh/users/${s.userId}) on ${MorUtils.prettifyDate(s.date)}\n`
         desc = desc + scoreStr
       }
       const beatmapImgLink = scores[perPage * (page - 1)].beatmapImgLink
@@ -57,7 +57,7 @@ export default async function scoresCmd (facade, client, interaction) {
         .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} ${inputMods} Score Leaderboard`, iconURL: MorConfig.SERVER_ICON_URL, url: `https://docs.google.com/spreadsheets/d/${MorConfig.SHEETS.SPREADSHEET.ID}/edit#gid=${MorConfig.SHEETS[inputMods].ID}` })
         .setThumbnail(`${beatmapImgLink}`)
         .setDescription(desc)
-        .setFooter({ text: `Last update: ${lastUpdated}` })
+        .setFooter({ text: `Last update: ${MorUtils.prettifyDate(lastUpdated)}` })
       return embed
     }
 

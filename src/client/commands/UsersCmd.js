@@ -55,7 +55,7 @@ export default async function usersCmd (facade, client, interaction) {
         .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} User Leaderboard`, iconURL: MorConfig.SERVER_ICON_URL, url: `https://docs.google.com/spreadsheets/d/${MorConfig.SHEETS.SPREADSHEET.ID}/edit#gid=${MorConfig.SHEETS.USERS.ID}` })
         .setThumbnail(`${pfpLink}`)
         .setDescription(desc)
-        .setFooter({ text: `Last update: ${lastUpdated}` })
+        .setFooter({ text: `Last update: ${MorUtils.prettifyDate(lastUpdated)}` })
       return embed
     }
 
