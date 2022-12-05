@@ -160,7 +160,7 @@ export default class MorUtils {
    */
   static isValidDate (v) {
     if (!this.isString(v)) return false
-    const regex = /\d{4}[-]\d{2}[-]\d{2}[T]\d{2}[:]\d{2}[:]\d{2}\+00:00/
+    const regex = /\d{4}[-](0[1-9]|1[0-2])[-](0[1-9]|[12][0-9]|3[01])[T](0[0-9]|1[0-9]|2[0-3])[:](0[0-9]|[1-5][0-9])[:](0[0-9]|[1-5][0-9])\+00:00/
     return regex.test(v)
   }
 
