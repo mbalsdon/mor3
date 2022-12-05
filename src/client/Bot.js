@@ -90,7 +90,6 @@ export default class Bot {
       const { commandName } = interaction
       console.info(`Bot >> received command "${commandName}"`) // TODO: replace
 
-      console.time('time')
       if (commandName === 'help') await helpCmd(interaction)
       else if (commandName === 'ping') await pingCmd(interaction)
       else if (commandName === 'metadata') await metadataCmd(this.#FACADE, interaction)
@@ -102,7 +101,6 @@ export default class Bot {
       else if (commandName === 'submit') await submitCmd(this.#FACADE, interaction)
       else if (commandName === 'unsubmit') await unsubmitCmd(this.#FACADE, interaction)
       else if (commandName === 'scores') await scoresCmd(this.#FACADE, this.#DISCORD, interaction)
-      console.timeEnd('time')
     })
 
     // Attempt to restart the bot on error
