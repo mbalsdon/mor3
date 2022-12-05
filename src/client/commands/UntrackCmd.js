@@ -14,8 +14,10 @@ import { EmbedBuilder } from 'discord.js'
 export default async function untrackCmd (facade, interaction) {
   const username = interaction.options.getString('username')
   console.info(`Bot::untrackCmd (${username})`) // TODO: replace
+
   try {
     const user = await facade.deleteSheetUser(username)
+
     const embed = new EmbedBuilder()
       .setColor(MorConfig.BOT_EMBED_COLOR)
       .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} no longer tracking: ${user.username}`, iconURL: MorConfig.SERVER_ICON_URL, url: `https://osu.ppy.sh/users/${user.userId}` })
@@ -29,6 +31,7 @@ export default async function untrackCmd (facade, interaction) {
       )
       .setThumbnail(user.pfpLink)
       .setFooter({ text: `owobot: >track remove "${user.username}" | Bathbot: <untrack "${user.username}"` })
+
     await interaction.editReply({ embeds: [embed] })
   } catch (error) {
     if (error instanceof NotFoundError) {
@@ -41,6 +44,7 @@ export default async function untrackCmd (facade, interaction) {
         content: `\`\`\`${error.name}: ${error.message}\n\n` +
                                          `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
+
       throw error
     }
   }

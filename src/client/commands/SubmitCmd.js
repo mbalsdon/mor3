@@ -14,9 +14,11 @@ import { EmbedBuilder } from 'discord.js'
 export default async function submitCmd (facade, interaction) {
   const scoreId = interaction.options.getString('id')
   console.info(`Bot::submitCmd (${scoreId})`) // TODO: replace
+
   try {
     const lastUpdated = await facade.getSheetLastUpdated()
     const score = await facade.addSubmittedScore(scoreId)
+
     const embed = new EmbedBuilder()
       .setColor(MorConfig.BOT_EMBED_COLOR)
       .setAuthor({ name: `Successfully added score to ${MorConfig.SHEETS.SPREADSHEET.NAME}:`, iconURL: MorConfig.SERVER_ICON_URL })
@@ -25,6 +27,7 @@ export default async function submitCmd (facade, interaction) {
               `▸ :farmer: **${score.pp}pp** ▸ ${score.accuracy}%\n` +
               `▸ :calendar_spiral: Set by [${score.username}](https://osu.ppy.sh/users/${score.userId}) on ${score.date}\n`)
       .setFooter({ text: `Last update: ${MorUtils.prettifyDate(lastUpdated)}` })
+
     await interaction.editReply({ embeds: [embed] })
   } catch (error) {
     if (error instanceof AlreadyExistsError) {
@@ -53,6 +56,7 @@ export default async function submitCmd (facade, interaction) {
         content: `\`\`\`${error.name}: ${error.message}\n\n` +
                                          `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
+
       throw error
     }
   }

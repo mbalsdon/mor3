@@ -28,6 +28,7 @@ export default class SheetsWrapper {
     if (typeof sheetsClient === 'undefined') throw new ConstructorError('sheetsClient is undefined! NOTE: Constructor cannot be called directly.')
     if (!Object.prototype.hasOwnProperty.call(sheetsClient, 'context')) throw new ConstructorError('sheetsClient does not have property context! NOTE: Constructor cannot be called directly.')
     if (!Object.prototype.hasOwnProperty.call(sheetsClient, 'spreadsheets')) throw new ConstructorError('sheetsClient does not have property spreadsheets! NOTE: Constructor cannot be called directly.')
+
     this.#SHEETS_CLIENT = sheetsClient
   }
 
@@ -39,8 +40,10 @@ export default class SheetsWrapper {
    */
   static async build () {
     console.info('SheetsWrapper::build ()') // TODO: replace
+
     const authClient = await SheetsWrapper.#AUTH.getClient()
     const sheetsClient = google.sheets({ version: 'v4', auth: authClient })
+
     return new SheetsWrapper(sheetsClient)
   }
 
@@ -60,7 +63,9 @@ export default class SheetsWrapper {
     console.info(`SheetsWrapper::getMetadata (${spreadsheetId}, ${googleApiCooldown})`) // TODO: replace
     if (!MorUtils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
     if (!MorUtils.isNonNegativeNumber(googleApiCooldown)) throw new TypeError(`googleApiCooldown must be a positive number! Val=${googleApiCooldown}`)
+
     const [response] = await Promise.all([this.#SHEETS_CLIENT.spreadsheets.get({ auth: SheetsWrapper.#AUTH, spreadsheetId }), MorUtils.sleep(googleApiCooldown)])
+
     return response.data
   }
 
@@ -97,6 +102,7 @@ export default class SheetsWrapper {
     if (valueRenderOption !== 'UNFORMATTED_VALUE' && valueRenderOption !== 'FORMATTED_VALUE' && valueRenderOption !== 'FORMULA') throw new TypeError(`valueRenderOption must be one of 'UNFORMATTED_VALUE', 'FORMATTED_VALUE', or 'FORMULA'! Val=${valueRenderOption}`)
     if (majorDimension !== 'ROWS' && majorDimension !== 'COLUMNS') throw new TypeError(`majorDimension must be one of 'ROWS' or 'COLUMNS'! Val=${majorDimension}`)
     if (!MorUtils.isNonNegativeNumber(googleApiCooldown)) throw new TypeError(`googleApiCooldown must be a positive number! Val=${googleApiCooldown}`)
+
     const [response] = await Promise.all([this.#SHEETS_CLIENT.spreadsheets.values.get({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId,
@@ -104,6 +110,7 @@ export default class SheetsWrapper {
       majorDimension,
       valueRenderOption
     }), MorUtils.sleep(googleApiCooldown)])
+
     return response.data
   }
 
@@ -136,6 +143,7 @@ export default class SheetsWrapper {
     if (valueInputOption !== 'RAW' && valueInputOption !== 'USER_ENTERED') throw new TypeError(`valueInputOption must be one of 'RAW' or 'USER_ENTERED'! Val=${valueInputOption}`)
     if (insertDataOption !== 'OVERWRITE' && insertDataOption !== 'INSERT_ROWS') throw new TypeError(`insertDataOption must be one of 'OVERWRITE' or 'INSERT_ROWS'! Val=${insertDataOption}`)
     if (!MorUtils.isNonNegativeNumber(googleApiCooldown)) throw new TypeError(`googleApiCooldown must be a positive number! Val=${googleApiCooldown}`)
+
     const [response] = await Promise.all([this.#SHEETS_CLIENT.spreadsheets.values.append({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId,
@@ -146,6 +154,7 @@ export default class SheetsWrapper {
         values
       }
     }), MorUtils.sleep(googleApiCooldown)])
+
     return response.data
   }
 
@@ -181,6 +190,7 @@ export default class SheetsWrapper {
     if (!MorUtils.isValidCell(endCell)) throw new TypeError(`endCell must be a valid cell! Val=${endCell}`)
     if (valueInputOption !== 'RAW' && valueInputOption !== 'USER_ENTERED') throw new TypeError(`valueInputOption must be one of 'RAW' or 'USER_ENTERED'! Val=${valueInputOption}`)
     if (!MorUtils.isNonNegativeNumber(googleApiCooldown)) throw new TypeError(`googleApiCooldown must be a positive number! Val=${googleApiCooldown}`)
+
     const [response] = await Promise.all([this.#SHEETS_CLIENT.spreadsheets.values.update({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId,
@@ -190,6 +200,7 @@ export default class SheetsWrapper {
         values
       }
     }), MorUtils.sleep(googleApiCooldown)])
+
     return response.data
   }
 
@@ -222,6 +233,7 @@ export default class SheetsWrapper {
     if (!MorUtils.isNumber(startIndex)) throw new TypeError(`startIndex must be a number! Val=${startIndex}`)
     if (!MorUtils.isNumber(endIndex)) throw new TypeError(`endIndex must be a number! Val=${endIndex}`)
     if (!MorUtils.isNonNegativeNumber(googleApiCooldown)) throw new TypeError(`googleApiCooldown must be a positive number! Val=${googleApiCooldown}`)
+
     const resource = {
       requests: [{
         insertDimension: {
@@ -229,11 +241,13 @@ export default class SheetsWrapper {
         }
       }]
     }
+
     const [response] = await Promise.all([this.#SHEETS_CLIENT.spreadsheets.batchUpdate({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId,
       resource
     }), MorUtils.sleep(googleApiCooldown)])
+
     return response.data
   }
 
@@ -268,6 +282,7 @@ export default class SheetsWrapper {
     if (dimension === 'COLUMNS' && startIndex === -1) startIndex = MorUtils.SHEETS_MAX_COLS
     if (dimension === 'ROWS' && endIndex === -1) endIndex = MorUtils.SHEETS_MAX_ROWS
     if (!MorUtils.isNonNegativeNumber(googleApiCooldown)) throw new TypeError(`googleApiCooldown must be a positive number! Val=${googleApiCooldown}`)
+
     const resource = {
       requests: [{
         deleteDimension: {
@@ -275,11 +290,13 @@ export default class SheetsWrapper {
         }
       }]
     }
+
     const [response] = await Promise.all([this.#SHEETS_CLIENT.spreadsheets.batchUpdate({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId,
       resource
     }), MorUtils.sleep(googleApiCooldown)])
+
     return response.data
   }
 
@@ -313,6 +330,7 @@ export default class SheetsWrapper {
     if (!MorUtils.isNumberArray(endIndices)) throw new TypeError(`endIndices must be an array of numbers! Val=${endIndices}`)
     if (dimensions.length !== sheetIds.length || startIndices.length !== sheetIds.length || endIndices.length !== sheetIds.length) throw new RangeError(`Input arrays must be of the same length! Lengths=${sheetIds.length},${dimensions.length},${startIndices.length},${endIndices.length}`)
     if (!MorUtils.isNonNegativeNumber(googleApiCooldown)) throw new TypeError(`googleApiCooldown must be a positive number! Val=${googleApiCooldown}`)
+
     const requests = []
     for (let i = 0; i < sheetIds.length; i++) {
       requests.push({
@@ -321,12 +339,14 @@ export default class SheetsWrapper {
         }
       })
     }
+
     const resource = { requests }
     const [response] = await Promise.all([this.#SHEETS_CLIENT.spreadsheets.batchUpdate({
       auth: SheetsWrapper.#AUTH,
       spreadsheetId,
       resource
     }), MorUtils.sleep(googleApiCooldown)])
+
     return response.data
   }
 }

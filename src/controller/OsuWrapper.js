@@ -39,6 +39,7 @@ export default class OsuWrapper {
     if (!Object.prototype.hasOwnProperty.call(token, 'token_type')) throw new ConstructorError('token does not have property token_type! NOTE: Constructor cannot be called directly.')
     if (!Object.prototype.hasOwnProperty.call(token, 'expires_in')) throw new ConstructorError('token does not have property expires_in! NOTE: Constructor cannot be called directly.')
     if (!Object.prototype.hasOwnProperty.call(token, 'access_token')) throw new ConstructorError('token does not have property access_token! NOTE: Constructor cannot be called directly.')
+
     this.#TOKEN = token.access_token
   }
 
@@ -50,22 +51,27 @@ export default class OsuWrapper {
    */
   static async build () {
     console.info('OsuWrapper::build ()') // TODO: replace
+
     const headers = {
       Accept: 'application/json',
       'Content-Type': 'application/json'
     }
+
     const data = {
       client_id: process.env.OSU_API_CLIENT_ID,
       client_secret: process.env.OSU_API_CLIENT_SECRET,
       grant_type: 'client_credentials',
       scope: 'public'
     }
+
     const response = await fetch(OsuWrapper.#TOKEN_URL, {
       method: 'POST',
       headers,
       body: JSON.stringify(data)
     })
+
     const token = await response.json()
+
     return new OsuWrapper(token)
   }
 
@@ -88,13 +94,17 @@ export default class OsuWrapper {
     if (!MorUtils.isString(user)) throw new TypeError(`user must be a string! Val=${user}`)
     if (searchParam !== 'username' && searchParam !== 'id') throw new TypeError(`searchParam must be one of 'id' or 'username'! Val=${searchParam}`)
     if (!MorUtils.isNonNegativeNumber(osuApiCooldown)) throw new TypeError(`osuApiCooldown must be a positive number! Val=${osuApiCooldown}`)
+
     const url = new URL(`${OsuWrapper.#API_URL}/users/${user}/osu`)
     const params = { key: searchParam }
     Object.keys(params).forEach((key) => url.searchParams.append(key, params[key]))
+
     const headers = this.#buildHeaders()
+
     const [response] = await Promise.all([fetch(url, { method: 'GET', headers }), MorUtils.sleep(osuApiCooldown)])
     if (response.status === 404) throw new NotFoundError(`osu!API user search returned no results! user=${user}, searchParam=${searchParam}`)
     const data = await response.json()
+
     return data
   }
 
@@ -115,13 +125,17 @@ export default class OsuWrapper {
     console.info(`OsuWrapper::getScore (${scoreId}, ${osuApiCooldown})`) // TODO: replace
     if (!MorUtils.isPositiveNumericString(scoreId)) throw new TypeError(`scoreId must be a positive number string! Val=${scoreId}`)
     if (!MorUtils.isNonNegativeNumber(osuApiCooldown)) throw new TypeError(`osuApiCooldown must be a positive number! Val=${osuApiCooldown}`)
+
     const url = new URL(`${OsuWrapper.#API_URL}/scores/osu/${scoreId}`)
     const params = { key: 'id' }
     Object.keys(params).forEach((key) => url.searchParams.append(key, params[key]))
+
     const headers = this.#buildHeaders()
+
     const [response] = await Promise.all([fetch(url, { method: 'GET', headers }), MorUtils.sleep(osuApiCooldown)])
     if (response.status === 404) throw new NotFoundError(`osu!API score search returned no results! scoreId=${scoreId}`)
     const data = await response.json()
+
     return data
   }
 
@@ -144,16 +158,20 @@ export default class OsuWrapper {
     if (!MorUtils.isPositiveNumericString(userId)) throw new TypeError(`userId must be a positive number string! Val=${userId}`)
     if (type !== 'best' && type !== 'firsts' && type !== 'recent') throw new TypeError(`type must be one of 'best' or 'firsts'! Val=${type}`)
     if (!MorUtils.isNonNegativeNumber(osuApiCooldown)) throw new TypeError(`osuApiCooldown must be a positive number! Val=${osuApiCooldown}`)
+
     const url = new URL(`${OsuWrapper.#API_URL}/users/${userId}/scores/${type}`)
     const params = {
       mode: 'osu',
       limit: 100
     }
     Object.keys(params).forEach((key) => url.searchParams.append(key, params[key]))
+
     const headers = this.#buildHeaders()
+
     const [response] = await Promise.all([fetch(url, { method: 'GET', headers }), MorUtils.sleep(osuApiCooldown)])
     if (response.status === 404) throw new NotFoundError(`osu!API search returned no results! userId=${userId}, type=${type}`)
     const data = await response.json()
+
     return data
   }
 
@@ -177,12 +195,15 @@ export default class OsuWrapper {
     if (!MorUtils.isPositiveNumericString(beatmapId)) throw new TypeError(`beatmapId must be a positive number string! Val=${beatmapId}`)
     if (!Mods.isValidModArray(modArray)) throw new InvalidModsError(`modArray must be a valid mod array! Val=[${modArray}]`)
     if (!MorUtils.isNonNegativeNumber(osuApiCooldown)) throw new TypeError(`osuApiCooldown must be a positive number! Val=${osuApiCooldown}`)
+
     const url = new URL(`${OsuWrapper.#API_URL}/beatmaps/${beatmapId}/attributes`)
     const headers = this.#buildHeaders()
     const body = { mods: modArray, ruleset: 'osu' }
+
     const [response] = await Promise.all([fetch(url, { method: 'POST', headers, body: JSON.stringify(body) }), MorUtils.sleep(osuApiCooldown)])
     if (response.status === 404) throw new NotFoundError(`osu!API search returned no results! beatmapId=${beatmapId}, modArray=[${modArray}]`)
     const data = response.json()
+
     return data
   }
 }

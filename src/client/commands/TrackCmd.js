@@ -15,9 +15,11 @@ export default async function trackCmd (facade, interaction) {
   const username = interaction.options.getString('username')
   const at = interaction.options.getBoolean('autotrack')
   console.info(`Bot::trackCmd (${username})`) // TODO: replace
+
   try {
     const autotrack = at ? 'TRUE' : 'FALSE'
     const user = await facade.addSheetUser(username, autotrack)
+
     const embed = new EmbedBuilder()
       .setColor(MorConfig.BOT_EMBED_COLOR)
       .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} now tracking: ${user.username}`, iconURL: MorConfig.SERVER_ICON_URL, url: `https://osu.ppy.sh/users/${user.userId}` })
@@ -32,6 +34,7 @@ export default async function trackCmd (facade, interaction) {
       )
       .setThumbnail(user.pfpLink)
       .setFooter({ text: `owobot: >track add "${user.username}" | Bathbot: <track "${user.username}"` })
+
     await interaction.editReply({ embeds: [embed] })
   } catch (error) {
     if (error instanceof AlreadyExistsError) {
@@ -49,6 +52,7 @@ export default async function trackCmd (facade, interaction) {
         content: `\`\`\`${error.name}: ${error.message}\n\n` +
                                          `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
+
       throw error
     }
   }

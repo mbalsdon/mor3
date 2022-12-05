@@ -8,6 +8,7 @@ import MorUtils from '../../controller/MorUtils.js'
  */
 export default async function pingCmd (interaction) {
   console.info('Bot::pingCmd ()') // TODO: replace
+
   try {
     await interaction.editReply('pong!')
   } catch (error) {
@@ -15,6 +16,7 @@ export default async function pingCmd (interaction) {
       content: `\`\`\`${error.name}: ${error.message}\n\n` +
                                        `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
     })
+
     throw error
   }
 }

@@ -18,7 +18,7 @@ export default class MorUtils {
    * @return {boolean}
    */
   static isNumber (v) {
-    return (typeof v === 'number' && !Number.isNaN(v))
+    return ((typeof v === 'number') && (!Number.isNaN(v)))
   }
 
   /**
@@ -27,7 +27,7 @@ export default class MorUtils {
    * @return {boolean}
    */
   static isNonNegativeNumber (v) {
-    return (this.isNumber(v) && v >= 0)
+    return ((this.isNumber(v)) && (v >= 0))
   }
 
   /**
@@ -54,7 +54,7 @@ export default class MorUtils {
    * @return {boolean}
    */
   static isPositiveNumericString (v) {
-    return (this.isNumericString(v) && parseInt(v) > 0)
+    return ((this.isNumericString(v)) && (parseInt(v) > 0))
   }
 
   /**
@@ -63,7 +63,7 @@ export default class MorUtils {
    * @return {boolean}
    */
   static isNonNegativeNumericString (v) {
-    return (this.isNumericString(v) && (parseInt(v) >= 0))
+    return ((this.isNumericString(v)) && ((parseInt(v) >= 0)))
   }
 
   /**
@@ -72,7 +72,7 @@ export default class MorUtils {
    * @return {boolean}
    */
   static isBooleanString (v) {
-    return (this.isString(v) && (v === 'TRUE' || v === 'FALSE'))
+    return ((this.isString(v)) && ((v === 'TRUE') || (v === 'FALSE')))
   }
 
   /**
@@ -84,7 +84,7 @@ export default class MorUtils {
     if (!this.isString(v)) return false
     let url
     try { url = new URL(v) } catch (_) { return false }
-    return url.protocol === 'http:' || url.protocol === 'https:'
+    return ((url.protocol === 'http:') || (url.protocol === 'https:'))
   }
 
   /**
@@ -93,7 +93,7 @@ export default class MorUtils {
    * @return {boolean}
    */
   static isValidRank (v) {
-    return (this.isPositiveNumericString(v) || v === 'null')
+    return ((this.isPositiveNumericString(v)) || (v === 'null'))
   }
 
   /**
@@ -102,7 +102,7 @@ export default class MorUtils {
    * @return {boolean}
    */
   static isValidAccuracyString (v) {
-    return (this.isNumericString(v) && parseInt(v) >= 0 && parseInt(v) <= 100)
+    return ((this.isNumericString(v)) && (parseInt(v) >= 0) && (parseInt(v) <= 100))
   }
 
   /**
@@ -124,31 +124,32 @@ export default class MorUtils {
    */
   static isValidBeatmapString (v) {
     if (!this.isString(v)) return false
+
     // Looks for ' - ' and '[]'
     const regex = /.* - .* \[.*\]/
     return regex.test(v)
   }
 
   /**
-   * Returns true if input is a valid country code
+   * Returns true if input is a valid country code (two capital letters)
    * @param {*} v
    * @return {boolean}
    */
   static isValidCountryCode (v) {
     if (!this.isString(v)) return false
-    // Two capital letters
+
     const regex = /[A-Z]{2}/
     return regex.test(v)
   }
 
   /**
-   * Returns true if input is a valid Google Sheets cell
+   * Returns true if input is a valid Google Sheets cell (up to 3 letters for columns, up to 5,000,000 cells)
    * @param {*} v
    * @return {boolean}
    */
   static isValidCell (v) {
     if (!this.isString(v)) return false
-    // Up to 3 letters for columns, up to 5,000,000 cells
+
     const regex = /[A-Z]{1,3}\d{0,7}/
     return regex.test(v)
   }
@@ -160,6 +161,7 @@ export default class MorUtils {
    */
   static isValidDate (v) {
     if (!this.isString(v)) return false
+
     const regex = /\d{4}[-](0[1-9]|1[0-2])[-](0[1-9]|[12][0-9]|3[01])[T](0[0-9]|1[0-9]|2[0-3])[:](0[0-9]|[1-5][0-9])[:](0[0-9]|[1-5][0-9])\+00:00/
     return regex.test(v)
   }
@@ -234,7 +236,9 @@ export default class MorUtils {
    */
   static prettifyDate (dateString) {
     if (!MorUtils.isValidDate(dateString)) throw new TypeError(`dateString is not a valid date! Val=${dateString}`)
+
     const d = new Date(dateString)
+
     const date = ('0' + (d.getDate() + 1)).slice(-2)
     let month = ''
     switch (d.getMonth() + 1) {
@@ -277,6 +281,7 @@ export default class MorUtils {
     const year = d.getFullYear()
     const hours = ('0' + (d.getUTCHours() + 1)).slice(-2)
     const minutes = ('0' + (d.getUTCMinutes() + 1)).slice(-2)
+
     const pwetty = `${date} ${month} ${year} at ${hours}:${minutes}`
     return pwetty
   }
@@ -294,6 +299,7 @@ export default class MorUtils {
     if (rank === 2) medalEmoji = ':third_place:'
     if (rank === 1) medalEmoji = ':second_place:'
     if (rank === 0) medalEmoji = ':first_place:'
+
     return medalEmoji
   }
 

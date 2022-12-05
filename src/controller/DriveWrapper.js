@@ -28,6 +28,7 @@ export default class DriveWrapper {
     if (typeof driveClient === 'undefined') throw new ConstructorError('driveClient is undefined! NOTE: Constructor cannot be called directly.')
     if (!Object.prototype.hasOwnProperty.call(driveClient, 'context')) throw new ConstructorError('driveClient does not have property context! NOTE: Constructor cannot be called directly.')
     if (!Object.prototype.hasOwnProperty.call(driveClient, 'drives')) throw new ConstructorError('driveClient does not have property drives! NOTE: Constructor cannot be called directly.')
+
     this.#DRIVE_CLIENT = driveClient
   }
 
@@ -39,8 +40,10 @@ export default class DriveWrapper {
    */
   static async build () {
     console.info('DriveWrapper::build ()') // TODO: replace
+
     const authClient = await DriveWrapper.#AUTH.getClient()
     const driveClient = google.drive({ version: 'v3', auth: authClient })
+
     return new DriveWrapper(driveClient)
   }
 
@@ -63,6 +66,7 @@ export default class DriveWrapper {
     if (!MorUtils.isString(name)) throw new TypeError(`name must be a string! Val=${name}`)
     if (!MorUtils.isString(folderId)) throw new TypeError(`folderId must be a string! Val=${folderId}`)
     if (!MorUtils.isNonNegativeNumber(googleApiCooldown)) throw new TypeError(`googleApiCooldown must be a positive number! Val=${googleApiCooldown}`)
+
     const [response] = Promise.all([await this.#DRIVE_CLIENT.files.copy({
       auth: DriveWrapper.#AUTH,
       fileId,
@@ -71,6 +75,7 @@ export default class DriveWrapper {
         parents: [folderId]
       }
     }), MorUtils.sleep(googleApiCooldown)])
+
     return response.data
   }
 }

@@ -13,7 +13,9 @@ import MorUser from '../controller/MorUser.js'
 export default async function updateUsers () {
   console.time('::updateUsers () >> Time elapsed') // TODO: replace
   console.info('::updateUsers () >> Updating user data... This may take a while') // TODO: replace
+
   const mor = await MorFacade.build()
+
   // Key: mods; Value: array of 25 highest pp plays
   const dict = {}
   console.info('::updateUsers () >> Grabbing score data from sheets...') // TODO: replace
@@ -21,8 +23,10 @@ export default async function updateUsers () {
     if (mods === Mods.SUBMITTED || mods === Mods.COMBINED) continue
     dict[mods] = await mor.getSheetScores(mods)
   }
+
   console.info('::updateUsers () >> Retrieving user IDs from sheet...') // TODO: replace
   const users = await mor.getSheetUsers()
+
   console.info(`::updateUsers () >> Refreshing data for ${users.length} users...`) // TODO: replace
   const updatedUsers = []
   for (const user of users) {
@@ -34,11 +38,13 @@ export default async function updateUsers () {
         continue
       } else throw error
     }
+
     console.info(`::updateUsers () >> Counting top25s for user ${user.username}...`) // TODO: replace
     let [top1s, top2s, top3s, top5s, top10s, top25s] = [0, 0, 0, 0, 0, 0]
     for (const key of Object.keys(dict)) {
       const scores = dict[key]
       const len = (scores.length < 25) ? scores.length : 25
+
       for (let i = 0; i < len; i++) {
         if (user.userId !== scores[i].userId) continue
         else if (i === 0) top1s++
@@ -50,6 +56,7 @@ export default async function updateUsers () {
         else throw new RangeError(`i = ${i} - This should never happen!`)
       }
     }
+
     updatedUsers.push(new MorUser([
       updatedUser.userId,
       updatedUser.username,
@@ -70,12 +77,15 @@ export default async function updateUsers () {
       user.autotrack
     ]))
   }
+
   console.info('::updateUsers () >> Updating the sheet...') // TODO: replace
   updatedUsers.sort((a, b) => { return parseInt(b.pp) - parseInt(a.pp) })
   updatedUsers.sort((a, b) => {
     return ((a.autotrack === b.autotrack) ? 0 : ((b.autotrack === 'FALSE') ? -1 : 1))
   })
+
   await mor.replaceSheetUsers(updatedUsers)
+
   const dateString = new Date(Date.now()).toISOString()
   console.info(`::updateUsers () >> Job completed at ${dateString}, updated ${updatedUsers.length} users`) // TODO: replace
   console.timeEnd('::updateUsers () >> Time elapsed') // TODO: replace

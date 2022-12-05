@@ -11,12 +11,15 @@ import * as fs from 'fs'
  */
 export default async function tracklistCmd (facade, interaction) {
   console.info('Bot::tracklistCmd ()') // TODO: replace
+
   try {
     const users = await facade.getSheetUsers()
+
     let ret = 'userID,username\n'
     for (const user of users) {
       ret = ret + `${user.userId},${user.username}\n`
     }
+
     fs.writeFileSync('./tracklist.txt', ret)
     await interaction.editReply({ files: ['./tracklist.txt'] })
     fs.unlinkSync('./tracklist.txt')
@@ -25,6 +28,7 @@ export default async function tracklistCmd (facade, interaction) {
       content: `\`\`\`${error.name}: ${error.message}\n\n` +
                                        `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
     })
+
     throw error
   }
 }

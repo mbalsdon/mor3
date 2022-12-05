@@ -38,6 +38,7 @@ export default class Bot {
   constructor (morFacade, botClient) {
     if (morFacade === 'undefined') throw new ConstructorError('morFacade is undefined! NOTE: Constructor cannot be called directly.')
     if (botClient === 'undefined') throw new ConstructorError('botClient is undefined! NOTE: Constructor cannot be called directly.')
+
     this.#FACADE = morFacade
     this.#DISCORD = botClient
   }
@@ -50,8 +51,10 @@ export default class Bot {
    */
   static async build () {
     console.info('Bot::build ()') // TODO: replace
+
     const morFacade = await MorFacade.build()
     const botClient = new Client({ intents: [GatewayIntentBits.Guilds] })
+
     return new Bot(morFacade, botClient)
   }
 
@@ -63,6 +66,7 @@ export default class Bot {
    */
   static async restart () {
     console.info('Bot::restart ()') // TODO: replace
+
     await MorUtils.sleep(60000)
     const bot = await Bot.build()
     await bot.start()
@@ -105,6 +109,7 @@ export default class Bot {
     // Attempt to restart the bot on error
     this.#DISCORD.on('error', error => {
       console.info(`Bot >> RECEIEVED ERROR "${error.name}: ${error.message}"`) // TODO: replace
+
       this.#DISCORD.removeAllListeners()
       Bot.restart()
     })

@@ -11,6 +11,7 @@ import { EmbedBuilder } from 'discord.js'
  */
 export default async function helpCmd (interaction) {
   console.info('Bot::helpCmd ()') // TODO: replace
+
   try {
     const embed = new EmbedBuilder()
       .setColor(MorConfig.BOT_EMBED_COLOR)
@@ -27,12 +28,14 @@ export default async function helpCmd (interaction) {
             '`unsubmit` - Removes a submitted score from the database [MODERATORS ONLY]\n' +
             '`scores` - Displays list of scores for a given mod combo, sorted by PP\n')
       .setFooter({ text: 'https://github.com/mbalsdon/mor3' })
+
     await interaction.editReply({ embeds: [embed] })
   } catch (error) {
     await interaction.editReply({
       content: `\`\`\`${error.name}: ${error.message}\n\n` +
                                        `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
     })
+
     throw error
   }
 }

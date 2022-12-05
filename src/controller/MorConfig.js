@@ -16,6 +16,7 @@ import * as fs from 'fs'
  */
 export default class MorConfig {
   static #cfg = JSON.parse(fs.readFileSync('./mor_config.json'))
+
   static BOT_EMBED_COLOR = this.#cfg.BOT_EMBED_COLOR
   static LAST_UPDATE_CELL = this.#cfg.LAST_UPDATE_CELL
   static JOBS_CACHE = this.#cfg.JOBS_CACHE
