@@ -79,14 +79,14 @@ export default async function scrapeTopPlays () {
     }
 
     console.info(`::scrapeTopPlays () >> Updating the ${key} sheet...`) // TODO: replace
-    sheetScores.sort((a, b) => { return parseInt(b.pp) - parseInt(a.pp) })
+    sheetScores.sort((a, b) => { return parseFloat(b.pp) - parseFloat(a.pp) })
     await mor.replaceSheetScores(key, sheetScores)
 
     combinedScores = combinedScores.concat(sheetScores)
   }
 
   console.info(`::scrapeTopPlays () >> Updating the ${MorConfig.SHEETS.COMBINED.NAME} sheet...`) // TODO: replace
-  combinedScores.sort((a, b) => { return parseInt(b.pp) - parseInt(a.pp) })
+  combinedScores.sort((a, b) => { return parseFloat(b.pp) - parseFloat(a.pp) })
   await mor.replaceSheetScores(Mods.COMBINED, combinedScores)
 
   const dateString = new Date(Date.now()).toISOString()

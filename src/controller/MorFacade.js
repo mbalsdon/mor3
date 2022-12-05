@@ -447,7 +447,7 @@ export default class MorFacade {
     if (sheetUsers.map(u => u.userId).includes(user.userId)) throw new AlreadyExistsError(`${MorConfig.SHEETS.SPREADSHEET.NAME} sheet already contains that user! username=${username}`)
 
     sheetUsers.push(user)
-    sheetUsers.sort((a, b) => { return parseInt(b.pp) - parseInt(a.pp) })
+    sheetUsers.sort((a, b) => { return parseFloat(b.pp) - parseFloat(a.pp) })
     sheetUsers.sort((a, b) => { return ((a.autotrack === b.autotrack) ? 0 : ((b.autotrack === 'FALSE') ? -1 : 1)) })
 
     // Append instead of assert if user is to be added to the end of sheet

@@ -72,11 +72,12 @@ export default async function updateScores () {
       return new MorScore([s.scoreId, s.userId, s.username, s.beatmap, s.mods, s.accuracy, s.pp, s.starRating, s.date, s.beatmapImgLink])
     })
 
-    if (mods !== Mods.SUBMITTED) updatedScores.sort((a, b) => { return parseInt(b.pp) - parseInt(a.pp) })
+    if (mods !== Mods.SUBMITTED) updatedScores.sort((a, b) => { return parseFloat(b.pp) - parseFloat(a.pp) })
 
     console.info(`::updateScores() >> Updating ${mods} sheet and resetting cache...`) // TODO: replace
     if (updatedScores.length === 0) await mor.wipeSheet(mods)
     else await mor.replaceSheetScores(mods, updatedScores)
+
     fs.writeFileSync(MorConfig.UPDATE_SCORES_CACHE, JSON.stringify({ currentModSheet: Mods.SUBMITTED, scores: [] }))
   }
 
@@ -88,7 +89,13 @@ export default async function updateScores () {
     combinedScores = combinedScores.concat(scores)
   }
 
-  combinedScores.sort((a, b) => { return parseInt(b.pp) - parseInt(a.pp) })
+  const seen = {}
+  combinedScores = combinedScores.filter(i => {
+    const k = i.scoreId
+    return seen.hasOwnProperty(k) ? false : (seen[k] = true)
+  })
+
+  combinedScores.sort((a, b) => { return parseFloat(b.pp) - parseFloat(a.pp) })
   await mor.replaceSheetScores(Mods.COMBINED, combinedScores)
 
   let dateString = new Date(Date.now()).toISOString()

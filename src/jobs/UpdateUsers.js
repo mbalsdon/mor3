@@ -79,7 +79,7 @@ export default async function updateUsers () {
   }
 
   console.info('::updateUsers () >> Updating the sheet...') // TODO: replace
-  updatedUsers.sort((a, b) => { return parseInt(b.pp) - parseInt(a.pp) })
+  updatedUsers.sort((a, b) => { return parseFloat(b.pp) - parseFloat(a.pp) })
   updatedUsers.sort((a, b) => {
     return ((a.autotrack === b.autotrack) ? 0 : ((b.autotrack === 'FALSE') ? -1 : 1))
   })
