@@ -17,11 +17,12 @@ export default async function metadataCmd (facade, interaction) {
     const metadata = await facade.getSheetMetadata()
     let ret = ''
     for (const sheet of metadata.sheets.slice(1)) {
-      ret = ret + `**${sheet.properties.title}:** ${sheet.properties.gridProperties.rowCount - 1} ${sheet.properties.gridProperties.rowCount - 1 === 1 ? 'entry' : 'entries'}\n`
+      const rowCount = sheet.properties.gridProperties.rowCount - 1
+      ret = ret + `**${sheet.properties.title}:** ${rowCount === 1 ? '0 or 1' : rowCount} ${rowCount === 1 ? 'entry' : 'entries'}\n`
     }
     const embed = new EmbedBuilder()
       .setColor(MorConfig.BOT_EMBED_COLOR)
-      .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} metadata`, iconURL: MorConfig.SERVER_ICON_URL, url: 'https://docs.google.com/spreadsheets/d/1hduRLLIFjVwLGjXyt7ph3301xfXS6qjSnYCm18YP4iA/edit#gid=0' })
+      .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} Metadata`, iconURL: MorConfig.SERVER_ICON_URL, url: 'https://docs.google.com/spreadsheets/d/1hduRLLIFjVwLGjXyt7ph3301xfXS6qjSnYCm18YP4iA/edit#gid=0' })
       .setDescription(ret)
       .setFooter({ text: `Last update: ${MorUtils.prettifyDate(lastUpdated)}` })
     await interaction.editReply({ embeds: [embed] })
