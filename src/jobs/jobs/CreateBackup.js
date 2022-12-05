@@ -1,5 +1,5 @@
-import MorConfig from '../controller/MorConfig.js'
-import MorFacade from '../controller/MorFacade.js'
+import MorConfig from '../../controller/MorConfig.js'
+import MorFacade from '../../controller/MorFacade.js'
 
 export default async function createBackup () {
   console.time('::createBackup () >> Time elapsed') // TODO: replace

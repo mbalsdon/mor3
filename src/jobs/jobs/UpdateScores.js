@@ -1,8 +1,8 @@
-import Mods from '../controller/Mods.js'
-import MorConfig from '../controller/MorConfig.js'
-import { NotFoundError } from '../controller/MorErrors.js'
-import MorFacade from '../controller/MorFacade.js'
-import MorScore from '../controller/MorScore.js'
+import Mods from '../../controller/Mods.js'
+import MorConfig from '../../controller/MorConfig.js'
+import { NotFoundError } from '../../controller/MorErrors.js'
+import MorFacade from '../../controller/MorFacade.js'
+import MorScore from '../../controller/MorScore.js'
 
 import * as fs from 'fs'
 

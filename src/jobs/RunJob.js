@@ -1,9 +1,9 @@
-import createBackup from '../CreateBackup.js'
-import runScheduledJobs from '../RunScheduledJobs.js'
-import scrapeTopPlays from '../ScrapeTopPlays.js'
-import updateScores from '../UpdateScores.js'
-import updateUsers from '../UpdateUsers.js'
-import wipeScores from '../WipeScores.js'
+import createBackup from './jobs/CreateBackup.js'
+import runScheduledJobs from './jobs/RunScheduledJobs.js'
+import scrapeTopPlays from './jobs/ScrapeTopPlays.js'
+import updateScores from './jobs/UpdateScores.js'
+import updateUsers from './jobs/UpdateUsers.js'
+import wipeScores from './jobs/WipeScores.js'
 
 /*
  * Basic command handler script for MOR jobs

@@ -12,6 +12,23 @@ export default class MorUtils {
   /** Discord bot error tag string */
   static DISCORD_BOT_ERROR_STR = 'DM spreadnuts#1566 on Discord or open an issue at https://github.com/mbalsdon/mor3/issues if you believe that this is a bug.'
 
+  /** Returns true if input is an empty object
+   * @param {*} v
+   * @return {boolean}
+   */
+  static isEmptyObject (v) {
+    return ((v) && (Object.keys(v).length === 0) && (Object.getPrototypeOf(v) === Object.prototype))
+  }
+
+  /**
+   * Returns true if input is a function
+   * @param {*} v 
+   * @return {boolean}
+   */
+  static isFunction (v) {
+    return (typeof v === 'function')
+  }
+
   /**
    * Returns true if input is a number
    * @param {*} v
@@ -167,12 +184,21 @@ export default class MorUtils {
   }
 
   /**
+   * Returns true if input is an array
+   * @param {*} v 
+   * @return {boolean}
+   */
+  static isArray (v) {
+    return Array.isArray(v)
+  }
+
+  /**
    * Returns true if input is an array of numbers
    * @param {*} v
    * @return {boolean}
    */
   static isNumberArray (v) {
-    if (!Array.isArray(v)) return false
+    if (!this.isArray(v)) return false
     if (v.length === 0) return false
     if (!v.every(x => this.isNumber(x))) return false
     return true
@@ -184,7 +210,7 @@ export default class MorUtils {
    * @return {boolean}
    */
   static isStringArray (v) {
-    if (!Array.isArray(v)) return false
+    if (!this.isArray(v)) return false
     if (v.length === 0) return false
     if (!v.every(x => this.isString(x))) return false
     return true
@@ -197,7 +223,7 @@ export default class MorUtils {
    * @return {boolean}
    */
   static isMorScoreArray (v) {
-    if (!Array.isArray(v)) return false
+    if (!this.isArray(v)) return false
     if (v.length === 0) return false
     if (!(v.every(a => a instanceof MorScore))) return false
     return true
@@ -210,7 +236,7 @@ export default class MorUtils {
    * @return {boolean}
    */
   static isMorUserArray (v) {
-    if (!Array.isArray(v)) return false
+    if (!this.isArray(v)) return false
     if (v.length === 0) return false
     if (!(v.every(a => a instanceof MorUser))) return false
     return true
@@ -222,9 +248,9 @@ export default class MorUtils {
    * @return {boolean}
    */
   static is2DArray (v) {
-    if (!Array.isArray(v)) return false
+    if (!this.isArray(v)) return false
     if (v.length === 0) return false
-    if (!v.every(a => Array.isArray(a))) return false
+    if (!v.every(a => this.isArray(a))) return false
     return true
   }
 

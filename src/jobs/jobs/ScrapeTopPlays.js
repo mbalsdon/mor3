@@ -1,7 +1,7 @@
-import Mods from '../controller/Mods.js'
-import MorConfig from '../controller/MorConfig.js'
-import { NotFoundError } from '../controller/MorErrors.js'
-import MorFacade from '../controller/MorFacade.js'
+import Mods from '../../controller/Mods.js'
+import MorConfig from '../../controller/MorConfig.js'
+import { NotFoundError } from '../../controller/MorErrors.js'
+import MorFacade from '../../controller/MorFacade.js'
 
 /**
  * Takes submitted scores and the top 100s and firsts of every user in the MOR sheet and
