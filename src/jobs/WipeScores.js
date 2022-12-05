@@ -1,7 +1,5 @@
 import Mods from '../controller/Mods.js'
-import MorConfig from '../controller/MorConfig.js'
 import MorFacade from '../controller/MorFacade.js'
-import MorUtils from '../controller/MorUtils.js'
 
 /**
  * Deletes all scores in the MOR3 spreadsheet.

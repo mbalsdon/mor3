@@ -16,7 +16,6 @@ import MorFacade from '../controller/MorFacade.js'
 import 'dotenv/config'
 import { Client, GatewayIntentBits } from 'discord.js'
 import MorUtils from '../controller/MorUtils.js'
-import MorConfig from '../controller/MorConfig.js'
 
 /**
  * MOR Discord Bot client - To run the bot, build it and then call start.

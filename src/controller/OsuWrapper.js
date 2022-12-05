@@ -151,7 +151,7 @@ export default class OsuWrapper {
     }
     Object.keys(params).forEach((key) => url.searchParams.append(key, params[key]))
     const headers = this.#buildHeaders()
-    const [response] = await Promise.all([fetch(url, { method: 'GET', headers }), MorUtils.sleep(osuApiCooldown)]) 
+    const [response] = await Promise.all([fetch(url, { method: 'GET', headers }), MorUtils.sleep(osuApiCooldown)])
     if (response.status === 404) throw new NotFoundError(`osu!API search returned no results! userId=${userId}, type=${type}`)
     const data = await response.json()
     return data

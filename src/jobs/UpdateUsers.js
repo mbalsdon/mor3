@@ -1,9 +1,7 @@
 import Mods from '../controller/Mods.js'
-import MorConfig from '../controller/MorConfig.js'
 import { NotFoundError } from '../controller/MorErrors.js'
 import MorFacade from '../controller/MorFacade.js'
 import MorUser from '../controller/MorUser.js'
-import MorUtils from '../controller/MorUtils.js'
 
 /**
  * Takes every user in the MOR sheet and refreshes their stats.
