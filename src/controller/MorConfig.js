@@ -22,6 +22,7 @@ export default class MorConfig {
   static UPDATE_SCORES_CACHE = this.#cfg.UPDATE_SCORES_CACHE
   static API_COOLDOWN_MS = this.#cfg.API_COOLDOWN_MS
   static SERVER_ICON_URL = this.#cfg.SERVER_ICON_URL
+  static NUM_PROCESSORS = this.#cfg.NUM_PROCESSORS
   static SHEETS = this.#cfg.SHEETS
   static DRIVE = this.#cfg.DRIVE
 }

@@ -49,7 +49,6 @@ export default async function updateScores () {
     for (let i = index; i < dict[mods].length; i++) {
       try {
         const score = await mor.getOsuScore(dict[mods][i])
-        await MorUtils.sleep(MorConfig.API_COOLDOWN_MS)
         cache.scores.push(score)
         fs.writeFileSync(MorConfig.UPDATE_SCORES_CACHE, JSON.stringify(cache))
       } catch (error) {

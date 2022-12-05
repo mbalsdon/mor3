@@ -1,4 +1,5 @@
-import { NotFoundError, ConstructorError } from './MorErrors.js'
+import Mods from './Mods.js'
+import { NotFoundError, ConstructorError, InvalidModsError } from './MorErrors.js'
 import MorUtils from './MorUtils.js'
 
 import 'dotenv/config'
@@ -155,6 +156,37 @@ export default class OsuWrapper {
     })
     if (response.status === 404) throw new NotFoundError(`osu!API search returned no results! userId=${userId}, type=${type}`)
     const data = await response.json()
+    return data
+  }
+
+  /**
+   * Retrieves osu! beatmap's difficulty attributes from osu!API v2
+   * @see {@link https://osu.ppy.sh/docs/index.html#beatmapdifficultyattributes} (osu!API v2 BeatmapDifficultyAttributes object)
+   * @throws {@link TypeError} if parameters are invalid
+   * @throws {@link InvalidModsError} if mods are invalid
+   * @throws {@link NotFoundError} if beatmap could not be found
+   * @param {string} beatmapId beatmap's ID
+   * @param {string[]} modArray array of valid MOR mod strings
+   * @return {Promise<*>} Array of osu!API v2 BeatmapDifficultyAttributes objects
+   * @example
+   *  const osu = await OsuWrapper.build()
+   *  const difficultyAttributes = await osu.getDifficultyAttributes('986233', ['HD', 'HR'])
+   *  console.log(difficultyAttributes.attributes.aim_difficulty)
+   */
+  async getDifficultyAttributes (beatmapId, modArray) {
+    console.info(`OsuWrapper::getDifficultyAttributes (${beatmapId}, [${modArray}])`) // TODO: replace
+    if (!MorUtils.isPositiveNumericString(beatmapId)) throw new TypeError(`beatmapId must be a positive number string! Val=${beatmapId}`)
+    if (!Mods.isValidModArray(modArray)) throw new InvalidModsError(`modArray must be a valid mod array! Val=[${modArray}]`)
+    const url = new URL(`${OsuWrapper.#API_URL}/beatmaps/${beatmapId}/attributes`)
+    const headers = this.#buildHeaders()
+    const body = { mods: modArray, ruleset: 'osu' }
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body)
+    })
+    if (response.status === 404) throw new NotFoundError(`osu!API search returned no results! beatmapId=${beatmapId}, modArray=[${modArray}]`)
+    const data = response.json()
     return data
   }
 }

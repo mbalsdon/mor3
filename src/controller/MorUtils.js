@@ -22,6 +22,15 @@ export default class MorUtils {
   }
 
   /**
+   * Returns true if input is a positive number
+   * @param {*} v 
+   * @return {boolean}
+   */
+  static isPositiveNumber (v) {
+    return (this.isNumber(v) && v > 0)
+  }
+
+  /**
    * Returns true if input is a string
    * @param {*} v
    * @return {boolean}

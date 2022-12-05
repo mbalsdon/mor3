@@ -45,12 +45,9 @@ export default async function scrapeTopPlays () {
     try {
       console.info(`::scrapeTopPlays() >> Grabbing tops/firsts/recents for user ${user.username}...`) // TODO: replace
       const userTops = await mor.getOsuUserScores(user.userId, 'best')
-      await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
       const userFirsts = await mor.getOsuUserScores(user.userId, 'firsts')
-      await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
       const userRecents = await mor.getOsuUserScores(user.userId, 'recent')
       populateDict(dict, userTops.concat(userFirsts).concat(userRecents))
-      await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
     } catch (error) {
       if (error instanceof NotFoundError) {
         console.info(`::scrapeTopPlays () >> Couldn't find user ${user.username}, skipping...`) // TODO: replace
