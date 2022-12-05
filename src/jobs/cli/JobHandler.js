@@ -1,4 +1,3 @@
-import calcModTopLBPlays from '../CalcModTopLBPlays.js'
 import createBackup from '../CreateBackup.js'
 import runScheduledJobs from '../RunScheduledJobs.js'
 import scrapeTopPlays from '../ScrapeTopPlays.js'
@@ -16,7 +15,6 @@ const commands = {
   updateUsers,
   scrapeTopPlays,
   updateScores,
-  calcModTopLBPlays,
   runScheduledJobs,
   wipeScores,
   createBackup
