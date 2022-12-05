@@ -20,26 +20,31 @@ export default async function userCmd (facade, interaction) {
     const user = await facade.getSheetUser(username)
     const sheetRank = await facade.getSheetUserRank(username)
 
+    const sheetRankStr = `▸ **:trophy: ${MorConfig.SHEETS.SPREADSHEET.NAME} Rank:** ${(user.autotrack === 'FALSE' ? 'n/a' : `#${sheetRank}`)}\n`
+    const countryRankStr = `▸ **:flag_${user.countryCode.toLowerCase()}: Country Rank:** ${(user.countryRank === 'null' ? 'n/a' : `#${user.countryRank}`)}\n`
+    const globalRankStr = `▸ **:globe_with_meridians: Global Rank:** ${(user.globalRank === 'null' ? 'n/a' : `#${user.globalRank}`)}\n`
+    const playstyleStr = `▸ **:video_game: Playstyle:** ${(user.playstyle === 'null' ? 'n/a' : user.playstyle)}\n`
+    const ppStr = `▸ **:farmer: PP:** ${user.pp}pp\n`
+    const accStr = `▸ **:dart: Profile Accuracy:** ${user.accuracy}%\n`
+    const playtimeStr = `▸ **:desktop: Total Playtime:** ${user.playtime} hours\n\n`
+
+    const top1Str = `▸ **:first_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #1s:** ${(user.top1s === '-1' ? 'n/a' : user.top1s)}\n`
+    const top2Str = `▸ **:second_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #2s:** ${(user.top2s === '-1' ? 'n/a' : user.top2s)}\n`
+    const top3Str = `▸ **:third_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #3s:** ${(user.top3s === '-1' ? 'n/a' : user.top3s)}\n`
+    const top5Str = `▸ **:medal: ${MorConfig.SHEETS.SPREADSHEET.NAME} Top 5s:** ${(user.top5s === '-1' ? 'n/a' : user.top5s)}\n`
+    const top10Str = `▸ **:military_medal: ${MorConfig.SHEETS.SPREADSHEET.NAME} Top 10s:** ${(user.top10s === '-1' ? 'n/a' : user.top10s)}\n`
+    const top25Str = `▸ **:small_orange_diamond: ${MorConfig.SHEETS.SPREADSHEET.NAME} Top 25s:** ${(user.top25s === '-1' ? 'n/a' : user.top25s)}\n`
+
+    const autotrackStr = (user.autotrack === 'TRUE' ? '' : '\n**:warning: NOTE:** This user\'s plays are not being automatically tracked!')
+
+    const descStr = sheetRankStr + countryRankStr + globalRankStr + playstyleStr + ppStr + accStr + playtimeStr +
+                    top1Str + top2Str + top3Str + top5Str + top10Str + top25Str +
+                    autotrackStr
+
     const embed = new EmbedBuilder()
       .setColor(MorConfig.BOT_EMBED_COLOR)
       .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} profile for ${user.username}`, iconURL: MorConfig.SERVER_ICON_URL, url: `https://osu.ppy.sh/users/${user.id}` })
-      .setDescription(
-        (user.autotrack === 'TRUE' ? `▸ **:trophy: ${MorConfig.SHEETS.SPREADSHEET.NAME} Rank:** #${sheetRank}\n` : '\n') +
-        `▸ **:flag_${user.countryCode.toLowerCase()}: Country Rank:** #${user.countryRank}\n` +
-        `▸ **:globe_with_meridians: Global Rank:** #${user.globalRank}\n` +
-        `▸ **:video_game: Playstyle:** ${user.playstyle}\n` +
-        `▸ **:farmer: PP:** ${user.pp}pp\n` +
-        `▸ **:dart: Profile Accuracy:** ${user.accuracy}%\n` +
-        `▸ **:desktop: Total Playtime:** ${user.playtime} hours\n\n` +
-
-        `▸ **:first_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #1s:** ${user.top1s}\n` +
-        `▸ **:second_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #2s:** ${user.top2s}\n` +
-        `▸ **:third_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #3s:** ${user.top3s}\n` +
-        `▸ **:medal: ${MorConfig.SHEETS.SPREADSHEET.NAME} Top 5s:** ${user.top5s}\n` +
-        `▸ **:military_medal: ${MorConfig.SHEETS.SPREADSHEET.NAME} Top 10s:** ${user.top10s}\n` +
-        `▸ **:small_orange_diamond: ${MorConfig.SHEETS.SPREADSHEET.NAME} Top 25s:** ${user.top25s}\n` +
-        (user.autotrack === 'TRUE' ? '' : '\n**:warning: NOTE:** This user\'s plays are not being automatically tracked!')
-      )
+      .setDescription(descStr)
       .setThumbnail(user.pfpLink)
       // .addFields(
       //   { name: '1', value: '1', inline: true},

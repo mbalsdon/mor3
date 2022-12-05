@@ -49,10 +49,19 @@ export default async function usersCmd (facade, client, interaction) {
       for (let i = 0; i < lim; i++) {
         const pageIndex = perPage * (page - 1) + i
         const u = users[pageIndex]
-        const userStr = `**${pageIndex + 1}. [${u.username}](https://osu.ppy.sh/users/${u.userId}) (Global #${u.globalRank} | ${u.pp}pp | ${u.accuracy}% | ${u.playtime} hours)**\n` +
-              `▸ :first_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #1s: ${u.top1s}\n` +
-              `▸ :second_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #2s: ${u.top2s}\n` +
-              `▸ :third_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #3s: ${u.top3s}\n`
+        
+        const usernameStr = `:flag_${u.countryCode.toLowerCase()}: [${u.username}](https://osu.ppy.sh/users/${u.userId})`
+        const globalRankStr = `${(u.globalRank === 'null' ? 'n/a' : `#${u.globalRank}`)}`
+        const ppStr = `${Math.round(parseFloat(u.pp)).toString()}pp`
+        const accStr = `${u.accuracy}%`
+        const playtimeStr = `${u.playtime}hrs`
+
+        const summaryStr = `**${pageIndex + 1}. ${usernameStr} (${globalRankStr} | ${ppStr} | ${accStr} | ${playtimeStr})**\n`
+        const top1Str = `▸ :first_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #1s: ${(u.top1s === '-1' ? 'n/a' : u.top1s)}\n`
+        const top2Str = `▸ :second_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #2s: ${(u.top2s === '-1' ? 'n/a' : u.top2s)}\n`
+        const top3Str = `▸ :third_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #3s: ${(u.top3s === '-1' ? 'n/a' : u.top3s)}\n`
+
+        const userStr =  summaryStr + top1Str + top2Str + top3Str
         desc = desc + userStr
       }
       const pfpLink = users[perPage * (page - 1)].pfpLink
