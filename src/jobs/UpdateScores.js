@@ -89,6 +89,7 @@ export default async function updateScores () {
     combinedScores = combinedScores.concat(scores)
   }
 
+  // Remove duplicate scores
   const seen = {}
   combinedScores = combinedScores.filter(i => {
     const k = i.scoreId
