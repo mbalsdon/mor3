@@ -15,7 +15,9 @@ export default async function userCmd (facade, interaction) {
   const username = interaction.options.getString('username')
   console.info(`Bot::userCmd (${username})`) // TODO: replace
   try {
-    const [lastUpdated, user, sheetRank] = await Promise.all([facade.getSheetLastUpdated(), facade.getSheetUser(username), facade.getSheetUserRank(username)])
+    const lastUpdated = await facade.getSheetLastUpdated()
+    const user = await facade.getSheetUser(username)
+    const sheetRank = await facade.getSheetUserRank(username)
     const embed = new EmbedBuilder()
       .setColor(MorConfig.BOT_EMBED_COLOR)
       .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} profile for ${user.username}`, iconURL: MorConfig.SERVER_ICON_URL, url: `https://osu.ppy.sh/users/${user.id}` })

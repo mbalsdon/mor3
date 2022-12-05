@@ -33,7 +33,6 @@ export default async function scrapeTopPlays () {
   const mor = await MorFacade.build()
   console.info('::scrapeTopPlays () >> Getting user IDs of tracked players...') // TODO: replace
   const users = await mor.getSheetUsers()
-  await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
   console.info(`::scrapeTopPlays () >> Grabbing tops/firsts/recents from ${users.length} users...`) // TODO: replace
   // Key: mods; Value: MorScore array
   const dict = {}
@@ -57,14 +56,12 @@ export default async function scrapeTopPlays () {
   }
   console.info('::scrapeTopPlays () >> Retrieving submitted scores...') // TODO: replace
   const submittedScores = await mor.getSheetScores(Mods.SUBMITTED)
-  await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
   populateDict(dict, submittedScores)
   console.info('::scrapeTopPlays () >> Collecting data from the sheet and inserting any new scores...') // TODO: replace
   let numInserted = 0
   let combinedScores = []
   for (const key of Object.keys(dict)) {
     const sheetScores = await mor.getSheetScores(key)
-    await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 3)
     for (const dictScore of dict[key]) {
       // Check if score already in sheetScores, insert if not
       if (!sheetScores.some(s => s.scoreId === dictScore.scoreId)) {
@@ -76,12 +73,10 @@ export default async function scrapeTopPlays () {
     console.info(`::scrapeTopPlays () >> Updating the ${key} sheet...`) // TODO: replace
     sheetScores.sort((a, b) => { return parseInt(b.pp) - parseInt(a.pp) })
     await mor.replaceSheetScores(key, sheetScores)
-    await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 9)
   }
   console.info(`::scrapeTopPlays () >> Updating the ${MorConfig.SHEETS.COMBINED.NAME} sheet...`) // TODO: replace
   combinedScores.sort((a, b) => { return parseInt(b.pp) - parseInt(a.pp) })
   await mor.replaceSheetScores(Mods.COMBINED, combinedScores)
-  await MorUtils.sleep(MorConfig.API_COOLDOWN_MS * 9)
   const dateString = new Date(Date.now()).toISOString()
   console.info(`::scrapeTopPlays () >> Job completed at ${dateString}, inserted ${numInserted} new plays.`) // TODO: replace
   console.timeEnd('::scrapeTopPlays () >> Time elapsed') // TODO: replace

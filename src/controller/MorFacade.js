@@ -83,24 +83,21 @@ export default class MorFacade {
   /**
    * Retrieves osu! score; makes up to 2 osu!API requests
    * @param {string} scoreId ID of the score
-   * @param {number} apiRequestCooldown minimum time (ms) an API request made by the function should take
-   * @throws {@link TypeError} if parameters are invalid
    * @return {Promise<MorScore>} MorScore object
    * @example
    *  const mor = await MorFacade.build()
    *  const score = await osu.getOsuScore('4083979228')
    *  console.log(score.mods)
    */
-  async getOsuScore (scoreId, apiRequestCooldown = MorConfig.API_COOLDOWN_MS) {
+  async getOsuScore (scoreId) {
     console.info(`MorFacade::getOsuScore (${scoreId})`) // TODO: replace
-    if (!MorUtils.isPositiveNumber(apiRequestCooldown)) throw new TypeError(`apiRequestCooldown must be a positive number! Val=${apiRequestCooldown}`)
-    const [data] = await Promise.all([this.#OSU.getScore(scoreId), MorUtils.sleep(apiRequestCooldown)])
+    const data = await this.#OSU.getScore(scoreId)
     const modString = Mods.parseModKey(data.mods)
     let starRating = data.beatmap.difficulty_rating.toFixed(2)
     if (Mods.affectsStarRating(modString)) {
       const beatmapId = data.beatmap.id.toString()
       const modArray = Mods.toArray(modString)
-      const [difficultyAttributes] = await Promise.all([this.#OSU.getDifficultyAttributes(beatmapId, modArray), MorUtils.sleep(apiRequestCooldown)])
+      const difficultyAttributes = await this.#OSU.getDifficultyAttributes(beatmapId, modArray)
       starRating = difficultyAttributes.attributes.star_rating.toFixed(2)
     }
     return new MorScore([
@@ -118,22 +115,19 @@ export default class MorFacade {
   }
 
   /**
-   * Retrieves osu! user's top plays/firsts from osu!API v2; 
+   * Retrieves osu! user's top plays/firsts from osu!API v2;
    * CAN MAKE AN ARBITRARILY LARGE AMOUNT OF OSU! API V2 REQUESTS
    * @param {string} userId user's ID
    * @param {('best'|'firsts'|'recent')} type whether to fetch the user's top plays, firsts, or recents
-   * @param {number} apiRequestCooldown minimum time (ms) an API request made by the function should take
-   * @throws {@link TypeError} if parameters are invalid
    * @return {Promise<MorScore[]>} array of MorScore objects
    * @example
    *  const mor = await MorFacade.build()
    *  const myFirsts = await mor.getOsuUserScores('6385683', 'firsts')
    *  console.log(myFirsts.map(s => s.scoreId))
    */
-  async getOsuUserScores (userId, type = 'best', apiRequestCooldown = MorConfig.API_COOLDOWN_MS) {
+  async getOsuUserScores (userId, type = 'best') {
     console.info(`MorFacade::getOsuUserScores (${userId}, ${type})`) // TODO: replace
-    if (!MorUtils.isPositiveNumber(apiRequestCooldown)) throw new TypeError(`apiRequestCooldown must be a positive number! Val=${apiRequestCooldown}`)
-    const [scores] = await Promise.all([this.#OSU.getUserPlays(userId, type), MorUtils.sleep(apiRequestCooldown)])
+    const scores = await this.#OSU.getUserPlays(userId, type)
     const ret = []
     for (const score of scores) {
       const modString = Mods.parseModKey(score.mods)
@@ -141,7 +135,7 @@ export default class MorFacade {
       if (Mods.affectsStarRating(modString)) {
         const beatmapId = score.beatmap.id.toString()
         const modArray = Mods.toArray(Mods.parseModKey(score.mods))
-        const [difficultyAttributes] = await Promise.all([this.#OSU.getDifficultyAttributes(beatmapId, modArray), MorUtils.sleep(apiRequestCooldown)])
+        const difficultyAttributes = await this.#OSU.getDifficultyAttributes(beatmapId, modArray)
         starRating = difficultyAttributes.attributes.star_rating.toFixed(2)
       }
       ret.push(new MorScore([

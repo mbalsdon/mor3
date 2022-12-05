@@ -18,7 +18,8 @@ export default async function usersCmd (facade, client, interaction) {
   try {
     let currentPage = 1
     const perPage = 5
-    const [lastUpdated, users] = await Promise.all([facade.getSheetLastUpdated(), facade.getSheetUsers()])
+    const lastUpdated = await facade.getSheetLastUpdated()
+    const users = await facade.getSheetUsers()
     if (sortFlag === 'accuracy') users.sort((a, b) => { return parseFloat(b.accuracy) - parseFloat(a.accuracy) })
     else if (sortFlag === 'playtime') users.sort((a, b) => { return parseInt(b.playtime) - parseInt(a.playtime) })
     else if (sortFlag === 'top1s') users.sort((a, b) => { return parseInt(b.top1s) - parseInt(a.top1s) })

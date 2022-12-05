@@ -20,7 +20,8 @@ export default async function scoresCmd (facade, client, interaction) {
   try {
     let currentPage = 1
     const perPage = 5
-    const [lastUpdated, scores] = await Promise.all([facade.getSheetLastUpdated(), facade.getSheetScores(inputMods)])
+    const lastUpdated = await facade.getSheetLastUpdated()
+    const scores = await facade.getSheetScores(inputMods)
     if (sortFlag === 'pp') scores.sort((a, b) => { return parseFloat(b.pp) - parseFloat(a.pp) })
     else if (sortFlag === 'accuracy') scores.sort((a, b) => { return parseFloat(b.accuracy) - parseFloat(a.accuracy) })
     else if (sortFlag === 'star_rating') scores.sort((a, b) => { return parseFloat(b.starRating) - parseFloat(a.starRating) })

@@ -1,3 +1,4 @@
+import MorConfig from './MorConfig.js'
 import { ConstructorError } from './MorErrors.js'
 import MorUtils from './MorUtils.js'
 
@@ -49,25 +50,27 @@ export default class DriveWrapper {
    * @param {string} fileId the ID of the file to copy
    * @param {string} name the name of the new copied file
    * @param {string} folderId the ID of the folder to copy into
+   * @param {number} googleApiCooldown minimum time Google API calls should take
    * @throws {@link TypeError} if parameters are invalid
    * @return {Promise<*>} Google Drive API v3 Files object
    * @example
    *  const drive = await DriveWrapper.build()
    *  await drive.copyFile('1K3AwhYhTViLFT6PTLzprTykzcLAa1CoumWL7-hSmBQM', 'My Copied File', '1OUK20m4bHM-d_a91YzMnJ71r6uJe6WXi')
    */
-  async copyFile (fileId, name, folderId) {
-    console.info(`DriveWrapper::copyFile (${fileId}, ${name}, ${folderId})`) // TODO: replace
+  async copyFile (fileId, name, folderId, googleApiCooldown = MorConfig.GOOGLE_API_COOLDOWN_MS) {
+    console.info(`DriveWrapper::copyFile (${fileId}, ${name}, ${folderId}, ${googleApiCooldown})`) // TODO: replace
     if (!MorUtils.isString(fileId)) throw new TypeError(`fileId must be a string! Val=${fileId}`)
     if (!MorUtils.isString(name)) throw new TypeError(`name must be a string! Val=${name}`)
     if (!MorUtils.isString(folderId)) throw new TypeError(`folderId must be a string! Val=${folderId}`)
-    const response = await this.#DRIVE_CLIENT.files.copy({
+    if (!MorUtils.isNonNegativeNumber(googleApiCooldown)) throw new TypeError(`googleApiCooldown must be a positive number! Val=${googleApiCooldown}`)
+    const [response] = Promise.all([await this.#DRIVE_CLIENT.files.copy({
       auth: DriveWrapper.#AUTH,
       fileId,
       resource: {
         name,
         parents: [folderId]
       }
-    })
+    }), MorUtils.sleep(googleApiCooldown)])
     return response.data
   }
 }
