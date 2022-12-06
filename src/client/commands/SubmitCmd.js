@@ -23,9 +23,9 @@ export default async function submitCmd (facade, interaction) {
       .setColor(MorConfig.BOT_EMBED_COLOR)
       .setAuthor({ name: `Successfully added score to ${MorConfig.SHEETS.SPREADSHEET.NAME}:`, iconURL: MorConfig.SERVER_ICON_URL })
       .setThumbnail(`${score.beatmapImgLink}`)
-      .setDescription(`**[${score.beatmap}](https://osu.ppy.sh/scores/osu/${score.scoreId}) +${score.mods}** [${score.starRating}★]\n` +
+      .setDescription(`**[${score.beatmap}](https://osu.ppy.sh/scores/osu/${score.scoreId}) +${score.mods}** [${score.starRating}★]\n\n` +
               `▸ :farmer: **${score.pp}pp** ▸ ${score.accuracy}%\n` +
-              `▸ :calendar_spiral: Set by [${score.username}](https://osu.ppy.sh/users/${score.userId}) on ${score.date}\n`)
+              `▸ :calendar_spiral: Set by [${score.username}](https://osu.ppy.sh/users/${score.userId}) on ${MorUtils.prettifyDate(score.date)}\n`)
       .setFooter({ text: `Last update: ${MorUtils.prettifyDate(lastUpdated)}` })
 
     await interaction.editReply({ embeds: [embed] })
