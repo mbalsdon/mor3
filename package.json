@@ -17,8 +17,8 @@
     "discord.js": "^14.0.3",
     "dotenv": "^16.0.1",
     "googleapis": "^100.0.0",
-    "node-cron": "^3.0.2",
     "node-fetch": "^3.2.6",
+    "node-schedule": "^2.1.0",
     "winston": "^3.8.2",
     "winston-daily-rotate-file": "^4.7.1"
   },
