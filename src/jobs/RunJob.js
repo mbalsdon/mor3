@@ -1,29 +1,31 @@
-import calcModTopLBPlays from '../CalcModTopLBPlays.js'
-import createBackup from '../CreateBackup.js'
-import runScheduledJobs from '../RunScheduledJobs.js'
-import scrapeTopPlays from '../ScrapeTopPlays.js'
-import updateScores from '../UpdateScores.js'
-import updateUsers from '../UpdateUsers.js'
-import wipeScores from '../WipeScores.js'
+import createBackup from './jobs/CreateBackup.js'
+import runScheduledJobs from './jobs/RunScheduledJobs.js'
+import scrapeTopPlays from './jobs/ScrapeTopPlays.js'
+import updateScores from './jobs/UpdateScores.js'
+import updateUsers from './jobs/UpdateUsers.js'
+import wipeScores from './jobs/WipeScores.js'
+
+import '../Loggers.js'
+import * as winston from 'winston'
+const logger = winston.loggers.get('jobs')
 
 /*
  * Basic command handler script for MOR jobs
  * Example:
- * $ node src/jobs/cli/JobHandler.js updateScores
+ * $ node src/jobs/cli/RunJob.js updateScores
  */
 
 const commands = {
   updateUsers,
   scrapeTopPlays,
   updateScores,
-  calcModTopLBPlays,
   runScheduledJobs,
   wipeScores,
   createBackup
 }
 
 const args = process.argv.slice(2)
-console.info(`::JobHandler.js (${args})`) // TODO: replace
+logger.info(`Manual call to ${args} job, executing...`)
 
 if (args.length !== 1) throw new Error(`${args} is not a valid input! Valid jobs: ${Object.keys(commands)}`)
 

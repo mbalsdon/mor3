@@ -1,9 +1,13 @@
-import Mods from '../../controller/Mods.js'
-import MorConfig from '../../controller/MorConfig.js'
-import { InvalidModsError, SheetEmptyError } from '../../controller/MorErrors.js'
-import MorUtils from '../../controller/MorUtils.js'
+import Mods from '../../controller/utils/Mods.js'
+import MorConfig from '../../controller/utils/MorConfig.js'
+import { InvalidModsError, SheetEmptyError } from '../../controller/utils/MorErrors.js'
+import MorUtils from '../../controller/utils/MorUtils.js'
 
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js'
+
+import '../../Loggers.js'
+import * as winston from 'winston'
+const logger = winston.loggers.get('bot')
 
 /**
  * Replies with a list of MOR scores
@@ -16,16 +20,20 @@ import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'disc
 export default async function scoresCmd (facade, client, interaction) {
   const inputMods = interaction.options.getString('mods') === null ? Mods.COMBINED : interaction.options.getString('mods').toUpperCase()
   const sortFlag = interaction.options.getString('sort') === null ? 'pp' : interaction.options.getString('sort')
-  console.info(`Bot::scoresCmd (${inputMods}, ${sortFlag})`) // TODO: replace
+  logger.info(`Executing scoresCmd... mods=${inputMods}, sort=${sortFlag}`)
+
   try {
     let currentPage = 1
     const perPage = 5
+
     const lastUpdated = await facade.getSheetLastUpdated()
     const scores = await facade.getSheetScores(inputMods)
+
     if (sortFlag === 'pp') scores.sort((a, b) => { return parseFloat(b.pp) - parseFloat(a.pp) })
     else if (sortFlag === 'accuracy') scores.sort((a, b) => { return parseFloat(b.accuracy) - parseFloat(a.accuracy) })
     else if (sortFlag === 'star_rating') scores.sort((a, b) => { return parseFloat(b.starRating) - parseFloat(a.starRating) })
     else if (sortFlag === 'date_set') scores.sort((a, b) => { return Date.parse(b.date) - Date.parse(a.date) })
+
     const numPages = Math.ceil(scores.length / perPage)
     if (numPages === 0) throw new SheetEmptyError(`The ${MorConfig.SHEETS[inputMods].NAME} sheet is empty!`)
 
@@ -35,10 +43,11 @@ export default async function scoresCmd (facade, client, interaction) {
      * @return {EmbedBuilder}
      */
     const buildEmbed = function (page) {
-      console.info(`Bot::scoresCmd >> buildEmbed (${page})`)
       if (page < 1 || page > numPages) throw new RangeError(`Page must be between 1 and ${numPages} - this should never happen!`)
+
       // Avoid OOB errors (may have to display less than 'perPage' users if you're on the last page)
       const lim = (page === numPages && scores.length % perPage !== 0) ? scores.length % perPage : perPage
+
       // Build and concatenate score strings
       let desc = `\`MODS: ${inputMods}\`\n`
       desc = desc + `\`SORT BY: ${sortFlag}\`\n\n`
@@ -52,18 +61,20 @@ export default async function scoresCmd (facade, client, interaction) {
         desc = desc + scoreStr
       }
       const beatmapImgLink = scores[perPage * (page - 1)].beatmapImgLink
+
       const embed = new EmbedBuilder()
         .setColor(MorConfig.BOT_EMBED_COLOR)
         .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} ${inputMods} Score Leaderboard`, iconURL: MorConfig.SERVER_ICON_URL, url: `https://docs.google.com/spreadsheets/d/${MorConfig.SHEETS.SPREADSHEET.ID}/edit#gid=${MorConfig.SHEETS[inputMods].ID}` })
         .setThumbnail(`${beatmapImgLink}`)
         .setDescription(desc)
         .setFooter({ text: `Last update: ${MorUtils.prettifyDate(lastUpdated)}` })
+
       return embed
     }
 
     let embed = buildEmbed(currentPage)
+
     // Using date as a hash to give every button a unique ID
-    // If /users is called twice without a hash, the two button listeners would both respond to either buttonpress due to non-unique IDs
     const hash = new Date(Date.now()).toISOString()
     const buttons = new ActionRowBuilder()
       .addComponents([
@@ -96,8 +107,10 @@ export default async function scoresCmd (facade, client, interaction) {
      */
     const pageButtons = async function (interaction) {
       if (!interaction.isButton()) return
+
       const buttonId = interaction.customId
-      console.info(`Bot::scoresCmd >> button "${buttonId}" was pressed!`)
+      logger.info(`Button "${buttonId}" was pressed!`)
+
       if (buttonId === `${inputMods}_start_${hash}`) {
         currentPage = 1
         buttons.components[0].setDisabled(true)
@@ -125,18 +138,20 @@ export default async function scoresCmd (facade, client, interaction) {
       } else {
         return
       }
+
       embed = buildEmbed(currentPage)
       await interaction.update({ embeds: [embed], components: [buttons] })
     }
 
     // Listen for buttonpresses for 60 seconds
-    console.info('Bot::scoresCmd >> listening for button presses...')
+    logger.info('Listening for button presses...')
     client.on('interactionCreate', pageButtons)
     setTimeout(function () {
-      console.info('Bot::scoresCmd >> no longer listening for button presses')
+      logger.info('No longer listening for button presses!')
       client.off('interactionCreate', pageButtons)
       interaction.editReply({ embeds: [embed], components: [] })
     }, 60000)
+
     await interaction.editReply({ embeds: [embed], components: [buttons] })
   } catch (error) {
     if (error instanceof InvalidModsError) {
@@ -155,6 +170,7 @@ export default async function scoresCmd (facade, client, interaction) {
         content: `\`\`\`${error.name}: ${error.message}\n\n` +
                                          `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
+
       throw error
     }
   }

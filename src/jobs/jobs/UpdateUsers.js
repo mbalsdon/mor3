@@ -1,7 +1,13 @@
-import Mods from '../controller/Mods.js'
-import { NotFoundError } from '../controller/MorErrors.js'
-import MorFacade from '../controller/MorFacade.js'
-import MorUser from '../controller/MorUser.js'
+import Mods from '../../controller/utils/Mods.js'
+import MorConfig from '../../controller/utils/MorConfig.js'
+import { NotFoundError } from '../../controller/utils/MorErrors.js'
+import MorUser from '../../controller/utils/MorUser.js'
+
+import MorFacade from '../../controller/MorFacade.js'
+
+import '../../Loggers.js'
+import * as winston from 'winston'
+const logger = winston.loggers.get('jobs')
 
 /**
  * Takes every user in the MOR sheet and refreshes their stats.
@@ -11,34 +17,41 @@ import MorUser from '../controller/MorUser.js'
  * @see {@link RunScheduledJobs}
  */
 export default async function updateUsers () {
-  console.time('::updateUsers () >> Time elapsed') // TODO: replace
-  console.info('::updateUsers () >> Updating user data... This may take a while') // TODO: replace
+  const startTimeMs = new Date(Date.now()).getTime()
+  logger.info(`updateUsers job initiated; updating data on the ${MorConfig.SHEETS.USERS.NAME}sheet... This may take a while!`)
+
   const mor = await MorFacade.build()
-  // Key: mods; Value: array of 25 highest pp plays
+
+  // Key: mods; Value: array of MorScores
   const dict = {}
-  console.info('::updateUsers () >> Grabbing score data from sheets...') // TODO: replace
+  logger.info('Grabbing score data from sheets...')
   for (const mods of Mods.validModStrings()) {
     if (mods === Mods.SUBMITTED || mods === Mods.COMBINED) continue
+    logger.info(`Grabbing ${mods} scores...`)
     dict[mods] = await mor.getSheetScores(mods)
   }
-  console.info('::updateUsers () >> Retrieving user IDs from sheet...') // TODO: replace
+
+  logger.info('Retrieving tracked users from sheet...')
   const users = await mor.getSheetUsers()
-  console.info(`::updateUsers () >> Refreshing data for ${users.length} users...`) // TODO: replace
+
+  logger.info(`Refreshing data for ${users.length} users...`)
   const updatedUsers = []
   for (const user of users) {
     let updatedUser
-    console.info(`::updateUsers () >> Grabbing osu!API data for user ${user.username}...`) // TODO: replace
+    logger.info(`Grabbing osu!API data for ${user.username}...`)
     try { updatedUser = await mor.getOsuUser(user.userId, 'id') } catch (error) {
       if (error instanceof NotFoundError) {
-        console.info(`::updateUsers () >> Couldn't find user ${user.username}, skipping...`) // TODO: replace
+        logger.warn(`Couldn't find user ${user.username}, skipping...`)
         continue
       } else throw error
     }
-    console.info(`::updateUsers () >> Counting top25s for user ${user.username}...`) // TODO: replace
+
+    logger.info(`Counting top25s for user ${user.username}...`)
     let [top1s, top2s, top3s, top5s, top10s, top25s] = [0, 0, 0, 0, 0, 0]
     for (const key of Object.keys(dict)) {
       const scores = dict[key]
       const len = (scores.length < 25) ? scores.length : 25
+
       for (let i = 0; i < len; i++) {
         if (user.userId !== scores[i].userId) continue
         else if (i === 0) top1s++
@@ -50,6 +63,7 @@ export default async function updateUsers () {
         else throw new RangeError(`i = ${i} - This should never happen!`)
       }
     }
+
     updatedUsers.push(new MorUser([
       updatedUser.userId,
       updatedUser.username,
@@ -70,13 +84,16 @@ export default async function updateUsers () {
       user.autotrack
     ]))
   }
-  console.info('::updateUsers () >> Updating the sheet...') // TODO: replace
-  updatedUsers.sort((a, b) => { return parseInt(b.pp) - parseInt(a.pp) })
+
+  logger.info(`Updating the ${MorConfig.SHEETS.USERS.NAME} sheet...`)
+  updatedUsers.sort((a, b) => { return parseFloat(b.pp) - parseFloat(a.pp) })
   updatedUsers.sort((a, b) => {
     return ((a.autotrack === b.autotrack) ? 0 : ((b.autotrack === 'FALSE') ? -1 : 1))
   })
+
   await mor.replaceSheetUsers(updatedUsers)
-  const dateString = new Date(Date.now()).toISOString()
-  console.info(`::updateUsers () >> Job completed at ${dateString}, updated ${updatedUsers.length} users`) // TODO: replace
-  console.timeEnd('::updateUsers () >> Time elapsed') // TODO: replace
+
+  const endTimeMs = new Date(Date.now()).getTime()
+  const durationMin = (endTimeMs - startTimeMs) / 6000
+  logger.info(`updateUsers completed! Duration=${durationMin.toFixed(2)}min`)
 }

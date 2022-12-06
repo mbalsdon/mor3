@@ -5,10 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node ./src/client/deploy-commands.js && node index.js",
-    "watch": "node ./src/client/deploy-commands.js && nodemon index.js",
-    "lint": "./node_modules/.bin/eslint src --ext .js",
-    "job": "node src/jobs/cli/JobHandler.js"
+    "start": "node ./src/client/DeployCommands.js && node index.js",
+    "watch": "node ./src/client/DeployCommands.js && nodemon index.js",
+    "job": "node src/jobs/RunJob.js",
+    "lint": "./node_modules/.bin/eslint src --ext .js"
   },
   "author": "spreadnuts",
   "license": "ISC",
@@ -17,8 +17,10 @@
     "discord.js": "^14.0.3",
     "dotenv": "^16.0.1",
     "googleapis": "^100.0.0",
-    "node-cron": "^3.0.2",
-    "node-fetch": "^3.2.6"
+    "node-fetch": "^3.2.6",
+    "node-schedule": "^2.1.0",
+    "winston": "^3.8.2",
+    "winston-daily-rotate-file": "^4.7.1"
   },
   "devDependencies": {
     "eslint": "^8.15.0",

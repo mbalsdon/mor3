@@ -116,6 +116,7 @@ export default class Mods {
   static parseModKey (mods) {
     let pMods = mods
     if (!MorUtils.isString(pMods) && !Array.isArray(pMods)) throw new TypeError(`mods must be either a string or an array! Val=${mods}`)
+
     pMods = (Array.isArray(pMods)) ? pMods.join().replaceAll(',', '') : pMods
     pMods = pMods.replace('NC', Mods.DT)
     pMods = pMods.replace('NF', '')
@@ -123,6 +124,7 @@ export default class Mods {
     pMods = pMods.replace('SD', '')
     pMods = pMods.replace('PF', '')
     pMods = (pMods === '') ? Mods.NM : pMods
+
     return pMods
   }
 }

@@ -1,7 +1,11 @@
-import MorConfig from '../../controller/MorConfig.js'
-import MorUtils from '../../controller/MorUtils.js'
+import MorConfig from '../../controller/utils/MorConfig.js'
+import MorUtils from '../../controller/utils/MorUtils.js'
 
 import { EmbedBuilder } from 'discord.js'
+
+import '../../Loggers.js'
+import * as winston from 'winston'
+const logger = winston.loggers.get('bot')
 
 /**
  * Replies with a list of MOR's bot commands
@@ -10,7 +14,8 @@ import { EmbedBuilder } from 'discord.js'
  * @return {Promise<void>}
  */
 export default async function helpCmd (interaction) {
-  console.info('Bot::helpCmd ()') // TODO: replace
+  logger.info('Executing helpCmd...')
+
   try {
     const embed = new EmbedBuilder()
       .setColor(MorConfig.BOT_EMBED_COLOR)
@@ -27,12 +32,14 @@ export default async function helpCmd (interaction) {
             '`unsubmit` - Removes a submitted score from the database [MODERATORS ONLY]\n' +
             '`scores` - Displays list of scores for a given mod combo, sorted by PP\n')
       .setFooter({ text: 'https://github.com/mbalsdon/mor3' })
+
     await interaction.editReply({ embeds: [embed] })
   } catch (error) {
     await interaction.editReply({
       content: `\`\`\`${error.name}: ${error.message}\n\n` +
                                        `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
     })
+
     throw error
   }
 }

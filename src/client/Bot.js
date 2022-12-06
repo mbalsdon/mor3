@@ -1,21 +1,26 @@
 import helpCmd from './commands/HelpCmd.js'
 import metadataCmd from './commands/MetadataCmd.js'
 import pingCmd from './commands/PingCmd.js'
-import usersCmd from './commands/UsersCmd.js'
-import userCmd from './commands/UserCmd.js'
 import scoresCmd from './commands/ScoresCmd.js'
-import tracklistCmd from './commands/TracklistCmd.js'
-import trackCmd from './commands/TrackCmd.js'
-import untrackCmd from './commands/UntrackCmd.js'
 import submitCmd from './commands/SubmitCmd.js'
+import trackCmd from './commands/TrackCmd.js'
+import tracklistCmd from './commands/TracklistCmd.js'
 import unsubmitCmd from './commands/UnsubmitCmd.js'
+import untrackCmd from './commands/UntrackCmd.js'
+import userCmd from './commands/UserCmd.js'
+import usersCmd from './commands/UsersCmd.js'
 
-import { ConstructorError } from '../controller/MorErrors.js'
+import { ConstructorError } from '../controller/utils/MorErrors.js'
+import MorUtils from '../controller/utils/MorUtils.js'
+
 import MorFacade from '../controller/MorFacade.js'
 
 import 'dotenv/config'
 import { Client, GatewayIntentBits } from 'discord.js'
-import MorUtils from '../controller/MorUtils.js'
+
+import '../Loggers.js'
+import * as winston from 'winston'
+const logger = winston.loggers.get('bot')
 
 /**
  * MOR Discord Bot client - To run the bot, build it and then call start.
@@ -38,6 +43,7 @@ export default class Bot {
   constructor (morFacade, botClient) {
     if (morFacade === 'undefined') throw new ConstructorError('morFacade is undefined! NOTE: Constructor cannot be called directly.')
     if (botClient === 'undefined') throw new ConstructorError('botClient is undefined! NOTE: Constructor cannot be called directly.')
+
     this.#FACADE = morFacade
     this.#DISCORD = botClient
   }
@@ -49,9 +55,11 @@ export default class Bot {
    *  const bot = await Bot.build()
    */
   static async build () {
-    console.info('Bot::build ()') // TODO: replace
+    logger.info('Building Discord bot...')
+
     const morFacade = await MorFacade.build()
     const botClient = new Client({ intents: [GatewayIntentBits.Guilds] })
+
     return new Bot(morFacade, botClient)
   }
 
@@ -62,10 +70,13 @@ export default class Bot {
    * await Bot.restart()
    */
   static async restart () {
-    console.info('Bot::restart ()') // TODO: replace
-    await MorUtils.sleep(60000)
+    const restartTimeMs = 60000
+    logger.warn(`Attempting to restart bot after ${restartTimeMs / 1000} seconds...`)
+
+    await MorUtils.sleep(restartTimeMs)
     const bot = await Bot.build()
     await bot.start()
+    logger.warn('Bot successfully restarted!')
   }
 
   /**
@@ -75,10 +86,10 @@ export default class Bot {
    *  await bot.start()
    */
   async start () {
-    console.info('Bot::start ()') // TODO: replace
+    logger.info('Starting Discord bot...')
 
     this.#DISCORD.once('ready', () => {
-      console.info('Bot >> MOR3 is online!') // TODO: replace
+      logger.info('Discord bot is online!')
     })
 
     // Listen for chat commands
@@ -87,7 +98,7 @@ export default class Bot {
 
       await interaction.deferReply()
       const { commandName } = interaction
-      console.info(`Bot >> received command "${commandName}"`) // TODO: replace
+      logger.info(`Received command "${commandName}"!`)
 
       if (commandName === 'help') await helpCmd(interaction)
       else if (commandName === 'ping') await pingCmd(interaction)
@@ -104,7 +115,8 @@ export default class Bot {
 
     // Attempt to restart the bot on error
     this.#DISCORD.on('error', error => {
-      console.info(`Bot >> RECEIEVED ERROR "${error.name}: ${error.message}"`) // TODO: replace
+      logger.error(`Received error "${error.name}: ${error.message}"`)
+
       this.#DISCORD.removeAllListeners()
       Bot.restart()
     })
