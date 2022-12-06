@@ -2,6 +2,10 @@ import MorUtils from '../../controller/utils/MorUtils.js'
 
 import * as fs from 'fs'
 
+import '../../Loggers.js'
+import * as winston from 'winston'
+const logger = winston.loggers.get('bot')
+
 /**
  * Replies with a .txt file of MOR users
  * @param {MorFacade} facade
@@ -10,7 +14,7 @@ import * as fs from 'fs'
  * @return {Promise<void>}
  */
 export default async function tracklistCmd (facade, interaction) {
-  console.info('Bot::tracklistCmd ()') // TODO: replace
+  logger.info(`Executing tracklistCmd...`)
 
   try {
     const users = await facade.getSheetUsers()

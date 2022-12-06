@@ -4,6 +4,10 @@ import MorUtils from '../../controller/utils/MorUtils.js'
 
 import { EmbedBuilder } from 'discord.js'
 
+import '../../Loggers.js'
+import * as winston from 'winston'
+const logger = winston.loggers.get('bot')
+
 /**
  * Adds a score to the MOR sheet and replies with the score
  * @param {MorFacade} facade
@@ -13,7 +17,7 @@ import { EmbedBuilder } from 'discord.js'
  */
 export default async function submitCmd (facade, interaction) {
   const scoreId = interaction.options.getString('id')
-  console.info(`Bot::submitCmd (${scoreId})`) // TODO: replace
+  logger.info(`Executing submitCmd... id=${scoreId}`)
 
   try {
     const lastUpdated = await facade.getSheetLastUpdated()

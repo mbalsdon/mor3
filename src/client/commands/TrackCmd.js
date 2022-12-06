@@ -4,6 +4,10 @@ import MorUtils from '../../controller/utils/MorUtils.js'
 
 import { EmbedBuilder } from 'discord.js'
 
+import '../../Loggers.js'
+import * as winston from 'winston'
+const logger = winston.loggers.get('bot')
+
 /**
  * Adds a user to the MOR sheet and replies with their profile
  * @param {MorFacade} facade
@@ -14,7 +18,7 @@ import { EmbedBuilder } from 'discord.js'
 export default async function trackCmd (facade, interaction) {
   const username = interaction.options.getString('username')
   const at = interaction.options.getBoolean('autotrack')
-  console.info(`Bot::trackCmd (${username})`) // TODO: replace
+  logger.info(`Executing trackCmd... username=${username}, autotrack=${at}`)
 
   try {
     const autotrack = at ? 'TRUE' : 'FALSE'

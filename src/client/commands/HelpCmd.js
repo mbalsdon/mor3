@@ -3,6 +3,10 @@ import MorUtils from '../../controller/utils/MorUtils.js'
 
 import { EmbedBuilder } from 'discord.js'
 
+import '../../Loggers.js'
+import * as winston from 'winston'
+const logger = winston.loggers.get('bot')
+
 /**
  * Replies with a list of MOR's bot commands
  * @param {ChatInputCommandInteraction<CacheType>} interaction
@@ -10,8 +14,8 @@ import { EmbedBuilder } from 'discord.js'
  * @return {Promise<void>}
  */
 export default async function helpCmd (interaction) {
-  console.info('Bot::helpCmd ()') // TODO: replace
-
+  logger.info('Executing helpCmd...')
+  
   try {
     const embed = new EmbedBuilder()
       .setColor(MorConfig.BOT_EMBED_COLOR)

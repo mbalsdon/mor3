@@ -4,6 +4,10 @@ import MorUtils from '../../controller/utils/MorUtils.js'
 
 import { EmbedBuilder } from 'discord.js'
 
+import '../../Loggers.js'
+import * as winston from 'winston'
+const logger = winston.loggers.get('bot')
+
 /**
  * Removes a score from the MOR sheet and replies with the removed score
  * @param {MorFacade} facade
@@ -13,7 +17,7 @@ import { EmbedBuilder } from 'discord.js'
  */
 export default async function unsubmitCmd (facade, interaction) {
   const scoreId = interaction.options.getString('id')
-  console.info(`Bot::unsubmitCmd (${scoreId})`) // TODO: replace
+  logger.info(`Executing unsubmitCmd... id=${scoreId}`)
 
   try {
     const lastUpdated = await facade.getSheetLastUpdated()

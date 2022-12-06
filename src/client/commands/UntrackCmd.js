@@ -4,6 +4,10 @@ import MorUtils from '../../controller/utils/MorUtils.js'
 
 import { EmbedBuilder } from 'discord.js'
 
+import '../../Loggers.js'
+import * as winston from 'winston'
+const logger = winston.loggers.get('bot')
+
 /**
  * Removes a user from the MOR sheet and replies with their profile
  * @param {MorFacade} facade
@@ -13,7 +17,7 @@ import { EmbedBuilder } from 'discord.js'
  */
 export default async function untrackCmd (facade, interaction) {
   const username = interaction.options.getString('username')
-  console.info(`Bot::untrackCmd (${username})`) // TODO: replace
+  logger.info(`Executing untrackCmd... username=${username}`)
 
   try {
     const user = await facade.deleteSheetUser(username)

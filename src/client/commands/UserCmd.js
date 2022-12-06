@@ -4,6 +4,10 @@ import MorUtils from '../../controller/utils/MorUtils.js'
 
 import { EmbedBuilder } from 'discord.js'
 
+import '../../Loggers.js'
+import * as winston from 'winston'
+const logger = winston.loggers.get('bot')
+
 /**
  * Replies with a MOR user's profile
  * @param {MorFacade} facade
@@ -13,7 +17,7 @@ import { EmbedBuilder } from 'discord.js'
  */
 export default async function userCmd (facade, interaction) {
   const username = interaction.options.getString('username')
-  console.info(`Bot::userCmd (${username})`) // TODO: replace
+  logger.info(`Executing userCmd... username=${username}`)
 
   try {
     const lastUpdated = await facade.getSheetLastUpdated()

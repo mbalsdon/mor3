@@ -18,6 +18,10 @@ import MorFacade from '../controller/MorFacade.js'
 import 'dotenv/config'
 import { Client, GatewayIntentBits } from 'discord.js'
 
+import '../Loggers.js'
+import * as winston from 'winston'
+const logger = winston.loggers.get('bot')
+
 /**
  * MOR Discord Bot client - To run the bot, build it and then call start.
  * @example
@@ -51,7 +55,7 @@ export default class Bot {
    *  const bot = await Bot.build()
    */
   static async build () {
-    console.info('Bot::build ()') // TODO: replace
+    logger.info('Building Discord bot...')
 
     const morFacade = await MorFacade.build()
     const botClient = new Client({ intents: [GatewayIntentBits.Guilds] })
@@ -66,11 +70,13 @@ export default class Bot {
    * await Bot.restart()
    */
   static async restart () {
-    console.info('Bot::restart ()') // TODO: replace
+    const restartTimeMs = 60000
+    logger.warn(`Attempting to restart bot after ${restartTimeMs / 1000} seconds...`)
 
-    await MorUtils.sleep(60000)
+    await MorUtils.sleep(restartTimeMs)
     const bot = await Bot.build()
     await bot.start()
+    logger.warn('Bot successfully restarted!')
   }
 
   /**
@@ -80,10 +86,10 @@ export default class Bot {
    *  await bot.start()
    */
   async start () {
-    console.info('Bot::start ()') // TODO: replace
+    logger.info('Starting Discord bot...')
 
     this.#DISCORD.once('ready', () => {
-      console.info('Bot >> MOR3 is online!') // TODO: replace
+      logger.info('Discord bot is online!')
     })
 
     // Listen for chat commands
@@ -92,7 +98,7 @@ export default class Bot {
 
       await interaction.deferReply()
       const { commandName } = interaction
-      console.info(`Bot >> received command "${commandName}"`) // TODO: replace
+      logger.info(`Received command "${commandName}"!`)
 
       if (commandName === 'help') await helpCmd(interaction)
       else if (commandName === 'ping') await pingCmd(interaction)
@@ -109,7 +115,7 @@ export default class Bot {
 
     // Attempt to restart the bot on error
     this.#DISCORD.on('error', error => {
-      console.info(`Bot >> RECEIEVED ERROR "${error.name}: ${error.message}"`) // TODO: replace
+      logger.error(`Received error "${error.name}: ${error.message}"`)
 
       this.#DISCORD.removeAllListeners()
       Bot.restart()

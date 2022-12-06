@@ -3,6 +3,10 @@ import MorUtils from '../../controller/utils/MorUtils.js'
 
 import { EmbedBuilder } from '@discordjs/builders'
 
+import '../../Loggers.js'
+import * as winston from 'winston'
+const logger = winston.loggers.get('bot')
+
 /**
  * Replies with MOR sheet metadata
  * @param {MorFacade} facade
@@ -11,8 +15,8 @@ import { EmbedBuilder } from '@discordjs/builders'
  * @return {Promise<void>}
  */
 export default async function metadataCmd (facade, interaction) {
-  console.info('Bot::metadataCmd ()') // TODO: replace
-
+  logger.info('Executing metadataCmd...')
+  
   try {
     const lastUpdated = await facade.getSheetLastUpdated()
     const metadata = await facade.getSheetMetadata()

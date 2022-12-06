@@ -2,6 +2,10 @@ import 'dotenv/config'
 import { SlashCommandBuilder, Routes, PermissionFlagsBits } from 'discord.js'
 import { REST } from '@discordjs/rest'
 
+import '../Loggers.js'
+import * as winston from 'winston'
+const logger = winston.loggers.get('bot')
+
 const token = process.env.DISCORD_API_BOT_TOKEN
 const clientId = process.env.DISCORD_API_CLIENT_ID
 const moderatorPermFlags = PermissionFlagsBits.ModerateMembers
@@ -128,7 +132,7 @@ const commands = [
 
 const rest = new REST({ version: '10' }).setToken(token)
 
-console.info(`Started refreshing ${commands.length} application (/) commands.`)
+logger.info(`Refreshing ${commands.length} application slash commands.`)
 rest.put(Routes.applicationCommands(clientId), { body: commands })
-  .then((data) => console.info(`Successfully reloaded ${data.length} application (/) commands.`))
-  .catch((error) => console.error(error))
+  .then((data) => logger.info(`Successfully reloaded ${data.length} application slash commands!`))
+  .catch((error) => logger.error(`Received error "${error.name}: ${error.message}"`))

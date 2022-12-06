@@ -1,5 +1,9 @@
 import MorUtils from '../../controller/utils/MorUtils.js'
 
+import '../../Loggers.js'
+import * as winston from 'winston'
+const logger = winston.loggers.get('bot')
+
 /**
  * Pings the bot and replies when ping is received
  * @param {ChatInputCommandInteraction<CacheType>} interaction
@@ -7,8 +11,8 @@ import MorUtils from '../../controller/utils/MorUtils.js'
  * @return {Promise<void>}
  */
 export default async function pingCmd (interaction) {
-  console.info('Bot::pingCmd ()') // TODO: replace
-
+  logger.info('Executing pingCmd...')
+  
   try {
     await interaction.editReply('pong!')
   } catch (error) {

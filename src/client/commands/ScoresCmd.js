@@ -5,6 +5,10 @@ import MorUtils from '../../controller/utils/MorUtils.js'
 
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js'
 
+import '../../Loggers.js'
+import * as winston from 'winston'
+const logger = winston.loggers.get('bot')
+
 /**
  * Replies with a list of MOR scores
  * @param {MorFacade} facade
@@ -16,7 +20,7 @@ import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'disc
 export default async function scoresCmd (facade, client, interaction) {
   const inputMods = interaction.options.getString('mods') === null ? Mods.COMBINED : interaction.options.getString('mods').toUpperCase()
   const sortFlag = interaction.options.getString('sort') === null ? 'pp' : interaction.options.getString('sort')
-  console.info(`Bot::scoresCmd (${inputMods}, ${sortFlag})`) // TODO: replace
+  logger.info(`Executing scoresCmd... mods=${inputMods}, sort=${sortFlag}`)
 
   try {
     let currentPage = 1
@@ -39,7 +43,6 @@ export default async function scoresCmd (facade, client, interaction) {
      * @return {EmbedBuilder}
      */
     const buildEmbed = function (page) {
-      console.info(`Bot::scoresCmd >> buildEmbed (${page})`)
       if (page < 1 || page > numPages) throw new RangeError(`Page must be between 1 and ${numPages} - this should never happen!`)
 
       // Avoid OOB errors (may have to display less than 'perPage' users if you're on the last page)
@@ -106,7 +109,7 @@ export default async function scoresCmd (facade, client, interaction) {
       if (!interaction.isButton()) return
 
       const buttonId = interaction.customId
-      console.info(`Bot::scoresCmd >> button "${buttonId}" was pressed!`)
+      logger.info(`Button "${buttonId}" was pressed!`)
 
       if (buttonId === `${inputMods}_start_${hash}`) {
         currentPage = 1
@@ -141,10 +144,10 @@ export default async function scoresCmd (facade, client, interaction) {
     }
 
     // Listen for buttonpresses for 60 seconds
-    console.info('Bot::scoresCmd >> listening for button presses...')
+    logger.info('Listening for button presses...')
     client.on('interactionCreate', pageButtons)
     setTimeout(function () {
-      console.info('Bot::scoresCmd >> no longer listening for button presses')
+      logger.info('No longer listening for button presses!')
       client.off('interactionCreate', pageButtons)
       interaction.editReply({ embeds: [embed], components: [] })
     }, 60000)
