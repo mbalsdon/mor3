@@ -50,8 +50,6 @@ export default class OsuWrapper {
    *  const osu = await OsuWrapper.build()
    */
   static async build () {
-    console.info('OsuWrapper::build ()') // TODO: replace
-
     const headers = {
       Accept: 'application/json',
       'Content-Type': 'application/json'
@@ -90,7 +88,6 @@ export default class OsuWrapper {
    *  console.log(user.statistics.pp)
    */
   async getUser (user, searchParam = 'username', osuApiCooldown = MorConfig.OSU_API_COOLDOWN_MS) {
-    console.info(`OsuWrapper::getUser (${user}, ${searchParam}, ${osuApiCooldown})`) // TODO: replace
     if (!MorUtils.isString(user)) throw new TypeError(`user must be a string! Val=${user}`)
     if (searchParam !== 'username' && searchParam !== 'id') throw new TypeError(`searchParam must be one of 'id' or 'username'! Val=${searchParam}`)
     if (!MorUtils.isNonNegativeNumber(osuApiCooldown)) throw new TypeError(`osuApiCooldown must be a positive number! Val=${osuApiCooldown}`)
@@ -122,7 +119,6 @@ export default class OsuWrapper {
    *  console.log(score.beatmapset.artist)
    */
   async getScore (scoreId, osuApiCooldown = MorConfig.OSU_API_COOLDOWN_MS) {
-    console.info(`OsuWrapper::getScore (${scoreId}, ${osuApiCooldown})`) // TODO: replace
     if (!MorUtils.isPositiveNumericString(scoreId)) throw new TypeError(`scoreId must be a positive number string! Val=${scoreId}`)
     if (!MorUtils.isNonNegativeNumber(osuApiCooldown)) throw new TypeError(`osuApiCooldown must be a positive number! Val=${osuApiCooldown}`)
 
@@ -154,7 +150,6 @@ export default class OsuWrapper {
    *  console.log(tops[3].beatmap.version)
    */
   async getUserPlays (userId, type = 'best', osuApiCooldown = MorConfig.OSU_API_COOLDOWN_MS) {
-    console.info(`OsuWrapper::getUserPlays (${userId}, ${type}, ${osuApiCooldown})`) // TODO: replace
     if (!MorUtils.isPositiveNumericString(userId)) throw new TypeError(`userId must be a positive number string! Val=${userId}`)
     if (type !== 'best' && type !== 'firsts' && type !== 'recent') throw new TypeError(`type must be one of 'best' or 'firsts'! Val=${type}`)
     if (!MorUtils.isNonNegativeNumber(osuApiCooldown)) throw new TypeError(`osuApiCooldown must be a positive number! Val=${osuApiCooldown}`)
@@ -191,7 +186,6 @@ export default class OsuWrapper {
    *  console.log(difficultyAttributes.attributes.aim_difficulty)
    */
   async getDifficultyAttributes (beatmapId, modArray, osuApiCooldown = MorConfig.OSU_API_COOLDOWN_MS) {
-    console.info(`OsuWrapper::getDifficultyAttributes (${beatmapId}, [${modArray}], ${osuApiCooldown})`) // TODO: replace
     if (!MorUtils.isPositiveNumericString(beatmapId)) throw new TypeError(`beatmapId must be a positive number string! Val=${beatmapId}`)
     if (!Mods.isValidModArray(modArray)) throw new InvalidModsError(`modArray must be a valid mod array! Val=[${modArray}]`)
     if (!MorUtils.isNonNegativeNumber(osuApiCooldown)) throw new TypeError(`osuApiCooldown must be a positive number! Val=${osuApiCooldown}`)

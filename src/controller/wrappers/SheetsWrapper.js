@@ -39,8 +39,6 @@ export default class SheetsWrapper {
    *  const sheets = await SheetsWrapper.build()
    */
   static async build () {
-    console.info('SheetsWrapper::build ()') // TODO: replace
-
     const authClient = await SheetsWrapper.#AUTH.getClient()
     const sheetsClient = google.sheets({ version: 'v4', auth: authClient })
 
@@ -60,7 +58,6 @@ export default class SheetsWrapper {
    *  console.log(metadata.sheets[0])
    */
   async getMetadata (spreadsheetId, googleApiCooldown = MorConfig.GOOGLE_API_COOLDOWN_MS) {
-    console.info(`SheetsWrapper::getMetadata (${spreadsheetId}, ${googleApiCooldown})`) // TODO: replace
     if (!MorUtils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
     if (!MorUtils.isNonNegativeNumber(googleApiCooldown)) throw new TypeError(`googleApiCooldown must be a positive number! Val=${googleApiCooldown}`)
 
@@ -94,7 +91,6 @@ export default class SheetsWrapper {
    *  console.log(response.values[0][1])
    */
   async getRange (spreadsheetId, sheetName, startCell, endCell, valueRenderOption = 'FORMATTED_VALUE', majorDimension = 'ROWS', googleApiCooldown = MorConfig.GOOGLE_API_COOLDOWN_MS) {
-    console.info(`SheetsWrapper::getRange (${spreadsheetId}, ${sheetName}, ${startCell}, ${endCell}, ${valueRenderOption}, ${majorDimension})`) // TODO: replace
     if (!MorUtils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
     if (!MorUtils.isString(sheetName)) throw new TypeError(`sheetName must be a string! Val=${sheetName}`)
     if (!MorUtils.isValidCell(startCell)) throw new TypeError(`startCell must be a valid cell! Val=${startCell}`)
@@ -136,7 +132,6 @@ export default class SheetsWrapper {
    *  )
    */
   async appendRange (spreadsheetId, values, sheetName, valueInputOption = 'RAW', insertDataOption = 'INSERT_ROWS', googleApiCooldown = MorConfig.GOOGLE_API_COOLDOWN_MS) {
-    console.info(`SheetsWrapper::appendRange (${spreadsheetId}, array of ${values.length} values, ${sheetName}, ${valueInputOption}, ${insertDataOption})`) // TODO: replace
     if (!MorUtils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
     if (!MorUtils.is2DArray(values)) throw new TypeError(`values must be a 2D array! Val=${values}`)
     if (!MorUtils.isString(sheetName)) throw new TypeError(`sheetName must be a string! Val=${sheetName}`)
@@ -182,7 +177,6 @@ export default class SheetsWrapper {
    *  )
    */
   async updateRange (spreadsheetId, values, sheetName, startCell, endCell, valueInputOption = 'RAW', googleApiCooldown = MorConfig.GOOGLE_API_COOLDOWN_MS) {
-    console.info(`SheetsWrapper::updateCells (${spreadsheetId}, ${values}, ${sheetName}, ${startCell}, ${endCell})`) // TODO: replace
     if (!MorUtils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
     if (!MorUtils.is2DArray(values)) throw new TypeError(`values must be a 2D array! Val=${values}`)
     if (!MorUtils.isString(sheetName)) throw new TypeError(`sheetName must be a string! Val=${sheetName}`)
@@ -226,7 +220,6 @@ export default class SheetsWrapper {
    *  )
    */
   async insertDimension (spreadsheetId, sheetId, dimension, startIndex, endIndex, googleApiCooldown = MorConfig.GOOGLE_API_COOLDOWN_MS) {
-    console.info(`SheetsWrapper::insertDimension (${spreadsheetId}, ${sheetId}, ${dimension}, ${startIndex}, ${endIndex})`) // TODO: replace
     if (!MorUtils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
     if (!MorUtils.isString(sheetId)) throw new TypeError(`sheetId must be a string! Val=${sheetId}`)
     if (dimension !== 'ROWS' && dimension !== 'COLUMNS') throw new TypeError(`dimension must be one of 'ROWS' or 'COLUMNS'! Val=${dimension}`)
@@ -273,7 +266,6 @@ export default class SheetsWrapper {
    *  )
    */
   async deleteDimension (spreadsheetId, sheetId, dimension, startIndex, endIndex = -1, googleApiCooldown = MorConfig.GOOGLE_API_COOLDOWN_MS) {
-    console.info(`SheetsWrapper::deleteDimension (${spreadsheetId}, ${sheetId}, ${dimension}, ${startIndex}, ${endIndex})`) // TODO: replace
     if (!MorUtils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
     if (!MorUtils.isString(sheetId)) throw new TypeError(`sheetId must be a string! Val=${sheetId}`)
     if (dimension !== 'ROWS' && dimension !== 'COLUMNS') throw new TypeError(`dimension must be one of 'ROWS' or 'COLUMNS'! Val=${dimension}`)
@@ -322,7 +314,6 @@ export default class SheetsWrapper {
    *  )
    */
   async deleteMultipleDimensions (spreadsheetId, sheetIds, dimensions, startIndices, endIndices, googleApiCooldown = MorConfig.GOOGLE_API_COOLDOWN_MS) {
-    console.info(`SheetsWrapper::deleteMultipleDimensions (${spreadsheetId}, ${sheetIds}, ${dimensions}, ${startIndices}, ${endIndices})`) // TODO: replace
     if (!MorUtils.isString(spreadsheetId)) throw new TypeError(`spreadsheetId must be a string! Val=${spreadsheetId}`)
     if (!MorUtils.isStringArray(sheetIds)) throw new TypeError(`sheetIds must be an array of strings! Val=${sheetIds}`)
     if (!dimensions.every(d => d === 'ROWS' || d === 'COLUMNS')) throw new TypeError(`dimensions must be an array of 'ROWS' or 'COLUMNS'! Val=${dimensions}`)
