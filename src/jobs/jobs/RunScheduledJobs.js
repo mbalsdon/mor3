@@ -15,12 +15,12 @@ const logger = winston.loggers.get('jobs')
  */
 export default async function runScheduledJobs () {
   const startTimeMs = new Date(Date.now()).getTime()
-  logger.info(`runScheduledJobs initiated; running scheduled tasks... This may take a while!`)
+  logger.info('runScheduledJobs initiated; running scheduled tasks... This may take a while!')
 
   // Ordering matters; scrapeTopPlays should come before updateUsers
   await scrapeTopPlays()
   await updateUsers()
-  
+
   logger.info('Scheduled tasks completed! Updating the "last updated" tag on the sheet...')
 
   const mor = await MorFacade.build()

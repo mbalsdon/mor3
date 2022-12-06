@@ -1,5 +1,4 @@
 import Mods from '../../controller/utils/Mods.js'
-import MorConfig from '../../controller/utils/MorConfig.js'
 import { NotFoundError } from '../../controller/utils/MorErrors.js'
 
 import MorFacade from '../../controller/MorFacade.js'
@@ -32,7 +31,7 @@ export default async function scrapeTopPlays () {
   }
 
   const startTimeMs = new Date(Date.now()).getTime()
-  logger.info(`scrapeTopPlays job initiated; grabbing plays of tracked users... This may take a while!`)
+  logger.info('scrapeTopPlays job initiated; grabbing plays of tracked users... This may take a while!')
 
   const mor = await MorFacade.build()
 
@@ -93,5 +92,5 @@ export default async function scrapeTopPlays () {
 
   const endTimeMs = new Date(Date.now()).getTime()
   const durationMin = (endTimeMs - startTimeMs) / 6000
-  logger.info(`scrapeTopPlays completed! Duration=${durationMin.toFixed(2)}min`)
+  logger.info(`scrapeTopPlays completed! Inserted ${numInserted} new plays. Duration=${durationMin.toFixed(2)}min`)
 }

@@ -19,7 +19,7 @@ const logger = winston.loggers.get('jobs')
  */
 export default async function updateScores () {
   const startTimeMs = new Date(Date.now()).getTime()
-  logger.info(`updateScores job initiated; updating every score in the sheet... This will take a really long time!`)
+  logger.info('updateScores job initiated; updating every score in the sheet... This will take a really long time!')
 
   const mor = await MorFacade.build()
 

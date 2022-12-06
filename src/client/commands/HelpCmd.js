@@ -15,7 +15,7 @@ const logger = winston.loggers.get('bot')
  */
 export default async function helpCmd (interaction) {
   logger.info('Executing helpCmd...')
-  
+
   try {
     const embed = new EmbedBuilder()
       .setColor(MorConfig.BOT_EMBED_COLOR)

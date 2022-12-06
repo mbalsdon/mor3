@@ -12,7 +12,7 @@ const logger = winston.loggers.get('bot')
  */
 export default async function pingCmd (interaction) {
   logger.info('Executing pingCmd...')
-  
+
   try {
     await interaction.editReply('pong!')
   } catch (error) {

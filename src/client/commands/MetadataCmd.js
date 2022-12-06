@@ -16,7 +16,7 @@ const logger = winston.loggers.get('bot')
  */
 export default async function metadataCmd (facade, interaction) {
   logger.info('Executing metadataCmd...')
-  
+
   try {
     const lastUpdated = await facade.getSheetLastUpdated()
     const metadata = await facade.getSheetMetadata()

@@ -14,7 +14,7 @@ const logger = winston.loggers.get('bot')
  * @return {Promise<void>}
  */
 export default async function tracklistCmd (facade, interaction) {
-  logger.info(`Executing tracklistCmd...`)
+  logger.info('Executing tracklistCmd...')
 
   try {
     const users = await facade.getSheetUsers()

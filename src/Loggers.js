@@ -9,13 +9,13 @@ winston.loggers.add('bot', {
     winston.format.simple()
   ),
   transports: [
-    new winston.transports.DailyRotateFile({ 
+    new winston.transports.DailyRotateFile({
       level: process.env.LOG_LEVEL || 'info',
-      filename: './logs/bot_%DATE%.log', 
+      filename: './logs/bot_%DATE%.log',
       datePattern: 'YYYY-MM-DD',
       maxFiles: '7d'
     }),
-    new winston.transports.Console({ 
+    new winston.transports.Console({
       level: process.env.LOG_LEVEL || 'info'
     })
   ]
@@ -29,19 +29,19 @@ winston.loggers.add('jobs', {
     winston.format.simple()
   ),
   transports: [
-    new winston.transports.DailyRotateFile({ 
+    new winston.transports.DailyRotateFile({
       level: process.env.LOG_LEVEL || 'info',
       filename: './logs/jobs_%DATE%.log',
       datePattern: 'YYYY-MM-DD',
-      maxFiles: '7d' 
+      maxFiles: '7d'
     }),
-    new winston.transports.Console({ 
-      level: process.env.LOG_LEVEL || 'info',
+    new winston.transports.Console({
+      level: process.env.LOG_LEVEL || 'info'
     })
   ],
   exceptionHandlers: [
-    new winston.transports.File({ 
-      filename: 'exception.log' 
+    new winston.transports.File({
+      filename: 'exception.log'
     })
   ]
 })

@@ -57,7 +57,7 @@ export default class JobHandler {
       const cronTimer = v[0]
       const job = v[1]
       logger.info(`Scheduling job "${job.name}" with timer "${cronTimer}"`)
-      
+
       const scheduledJob = schedule.scheduleJob(cronTimer, job)
       scheduledJob.on('error', error => {
         logger.error(`Received error "${error.name}: ${error.message}"`)
