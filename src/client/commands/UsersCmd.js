@@ -1,6 +1,6 @@
-import MorConfig from '../../controller/MorConfig.js'
-import { SheetEmptyError } from '../../controller/MorErrors.js'
-import MorUtils from '../../controller/MorUtils.js'
+import MorConfig from '../../controller/utils/MorConfig.js'
+import { SheetEmptyError } from '../../controller/utils/MorErrors.js'
+import MorUtils from '../../controller/utils/MorUtils.js'
 
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js'
 
@@ -49,7 +49,7 @@ export default async function usersCmd (facade, client, interaction) {
       for (let i = 0; i < lim; i++) {
         const pageIndex = perPage * (page - 1) + i
         const u = users[pageIndex]
-        
+
         const usernameStr = `:flag_${u.countryCode.toLowerCase()}: [${u.username}](https://osu.ppy.sh/users/${u.userId})`
         const globalRankStr = `${(u.globalRank === 'null' ? 'n/a' : `#${u.globalRank}`)}`
         const ppStr = `${Math.round(parseFloat(u.pp)).toString()}pp`
@@ -61,7 +61,7 @@ export default async function usersCmd (facade, client, interaction) {
         const top2Str = `▸ :second_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #2s: ${(u.top2s === '-1' ? 'n/a' : u.top2s)}\n`
         const top3Str = `▸ :third_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #3s: ${(u.top3s === '-1' ? 'n/a' : u.top3s)}\n`
 
-        const userStr =  summaryStr + top1Str + top2Str + top3Str
+        const userStr = summaryStr + top1Str + top2Str + top3Str
         desc = desc + userStr
       }
       const pfpLink = users[perPage * (page - 1)].pfpLink

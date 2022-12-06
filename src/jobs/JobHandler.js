@@ -1,5 +1,5 @@
-import { ConstructorError } from '../controller/MorErrors.js'
-import MorUtils from '../controller/MorUtils.js'
+import { ConstructorError } from '../controller/utils/MorErrors.js'
+import MorUtils from '../controller/utils/MorUtils.js'
 
 import * as cron from 'node-cron'
 
@@ -16,14 +16,14 @@ export default class JobHandler {
    * @example
    *  function foo () { console.log('hello') }
    *  const bar = () => { console.log('world!') }
-   *  const jobs = { 
+   *  const jobs = {
    *    a: ['0 2,5 * * *', foo],
    *    b: ['0 0 0 0 5', bar]
    *  }
    *  const jobHandler = new JobHandler(jobs)
    */
   constructor (jobs) {
-    if (MorUtils.isEmptyObject(jobs)) throw new ConstructorError(`jobs is empty!`)
+    if (MorUtils.isEmptyObject(jobs)) throw new ConstructorError('jobs is empty!')
     for (const [k, v] of Object.entries(jobs)) {
       if (!MorUtils.isArray(v)) throw new ConstructorError(`jobs[${k}] is not an array! jobs[${k}]=${v}`)
       if (v.length !== 2) throw new ConstructorError(`jobs[${v}] must be of length 2! jobs[${k}]=[${v}]`)
@@ -44,7 +44,7 @@ export default class JobHandler {
    *  const jobs = {
    *    foo: ['0 2,5 * * *', foo],
    *    bar: ['0 0 0 0 5', bar],
-   *    waa: ['* * 10 * * *', myFunc]  
+   *    waa: ['* * 10 * * *', myFunc]
    *  }
    *  const jobHandler = new JobHandler(jobs)
    *  jobHandler.start()

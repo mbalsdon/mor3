@@ -1,6 +1,6 @@
-import MorConfig from './MorConfig.js'
-import { ConstructorError } from './MorErrors.js'
-import MorUtils from './MorUtils.js'
+import MorConfig from '../utils/MorConfig.js'
+import { ConstructorError } from '../utils/MorErrors.js'
+import MorUtils from '../utils/MorUtils.js'
 
 import 'dotenv/config'
 import { google } from 'googleapis'

@@ -1,21 +1,22 @@
 import helpCmd from './commands/HelpCmd.js'
 import metadataCmd from './commands/MetadataCmd.js'
 import pingCmd from './commands/PingCmd.js'
-import usersCmd from './commands/UsersCmd.js'
-import userCmd from './commands/UserCmd.js'
 import scoresCmd from './commands/ScoresCmd.js'
-import tracklistCmd from './commands/TracklistCmd.js'
-import trackCmd from './commands/TrackCmd.js'
-import untrackCmd from './commands/UntrackCmd.js'
 import submitCmd from './commands/SubmitCmd.js'
+import trackCmd from './commands/TrackCmd.js'
+import tracklistCmd from './commands/TracklistCmd.js'
 import unsubmitCmd from './commands/UnsubmitCmd.js'
+import untrackCmd from './commands/UntrackCmd.js'
+import userCmd from './commands/UserCmd.js'
+import usersCmd from './commands/UsersCmd.js'
 
-import { ConstructorError } from '../controller/MorErrors.js'
+import { ConstructorError } from '../controller/utils/MorErrors.js'
+import MorUtils from '../controller/utils/MorUtils.js'
+
 import MorFacade from '../controller/MorFacade.js'
 
 import 'dotenv/config'
 import { Client, GatewayIntentBits } from 'discord.js'
-import MorUtils from '../controller/MorUtils.js'
 
 /**
  * MOR Discord Bot client - To run the bot, build it and then call start.

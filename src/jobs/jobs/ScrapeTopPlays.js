@@ -1,6 +1,7 @@
-import Mods from '../../controller/Mods.js'
-import MorConfig from '../../controller/MorConfig.js'
-import { NotFoundError } from '../../controller/MorErrors.js'
+import Mods from '../../controller/utils/Mods.js'
+import MorConfig from '../../controller/utils/MorConfig.js'
+import { NotFoundError } from '../../controller/utils/MorErrors.js'
+
 import MorFacade from '../../controller/MorFacade.js'
 
 /**

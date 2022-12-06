@@ -1,14 +1,13 @@
-import DriveWrapper from './DriveWrapper.js'
-import Mods from './Mods.js'
-import MorConfig from './MorConfig.js'
-import { AlreadyExistsError, ConstructorError, InvalidModsError, NotFoundError } from './MorErrors.js'
-import MorScore from './MorScore.js'
-import MorUser from './MorUser.js'
-import MorUtils from './MorUtils.js'
-import OsuWrapper from './OsuWrapper.js'
-import SheetsWrapper from './SheetsWrapper.js'
+import Mods from './utils/Mods.js'
+import MorConfig from './utils/MorConfig.js'
+import { AlreadyExistsError, ConstructorError, InvalidModsError, NotFoundError } from './utils/MorErrors.js'
+import MorScore from './utils/MorScore.js'
+import MorUser from './utils/MorUser.js'
+import MorUtils from './utils/MorUtils.js'
 
-import 'dotenv/config'
+import DriveWrapper from './wrappers/DriveWrapper.js'
+import OsuWrapper from './wrappers/OsuWrapper.js'
+import SheetsWrapper from './wrappers/SheetsWrapper.js'
 
 /**
  * MOR3 client - Wraps osu!API v2 client, Google Sheets API v4 client, and Google Drive API v3 client

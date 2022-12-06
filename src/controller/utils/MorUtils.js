@@ -22,7 +22,7 @@ export default class MorUtils {
 
   /**
    * Returns true if input is a function
-   * @param {*} v 
+   * @param {*} v
    * @return {boolean}
    */
   static isFunction (v) {
@@ -185,7 +185,7 @@ export default class MorUtils {
 
   /**
    * Returns true if input is an array
-   * @param {*} v 
+   * @param {*} v
    * @return {boolean}
    */
   static isArray (v) {

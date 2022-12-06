@@ -1,8 +1,9 @@
-import Mods from '../../controller/Mods.js'
-import MorConfig from '../../controller/MorConfig.js'
-import { NotFoundError } from '../../controller/MorErrors.js'
+import Mods from '../../controller/utils/Mods.js'
+import MorConfig from '../../controller/utils/MorConfig.js'
+import { NotFoundError } from '../../controller/utils/MorErrors.js'
+import MorScore from '../../controller/utils/MorScore.js'
+
 import MorFacade from '../../controller/MorFacade.js'
-import MorScore from '../../controller/MorScore.js'
 
 import * as fs from 'fs'
 
@@ -93,7 +94,7 @@ export default async function updateScores () {
   const seen = {}
   combinedScores = combinedScores.filter(i => {
     const k = i.scoreId
-    return seen.hasOwnProperty(k) ? false : (seen[k] = true)
+    return Object.prototype.hasOwnProperty.call(seen, k) ? false : (seen[k] = true)
   })
 
   combinedScores.sort((a, b) => { return parseFloat(b.pp) - parseFloat(a.pp) })

@@ -1,4 +1,4 @@
-import MorUtils from '../../controller/MorUtils.js'
+import MorUtils from '../../controller/utils/MorUtils.js'
 
 /**
  * Pings the bot and replies when ping is received

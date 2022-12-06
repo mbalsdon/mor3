@@ -1,7 +1,7 @@
-import Mods from '../../controller/Mods.js'
-import MorConfig from '../../controller/MorConfig.js'
-import { InvalidModsError, SheetEmptyError } from '../../controller/MorErrors.js'
-import MorUtils from '../../controller/MorUtils.js'
+import Mods from '../../controller/utils/Mods.js'
+import MorConfig from '../../controller/utils/MorConfig.js'
+import { InvalidModsError, SheetEmptyError } from '../../controller/utils/MorErrors.js'
+import MorUtils from '../../controller/utils/MorUtils.js'
 
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js'
 

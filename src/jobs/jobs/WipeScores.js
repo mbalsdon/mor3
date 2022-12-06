@@ -1,4 +1,5 @@
-import Mods from '../../controller/Mods.js'
+import Mods from '../../controller/utils/Mods.js'
+
 import MorFacade from '../../controller/MorFacade.js'
 
 /**

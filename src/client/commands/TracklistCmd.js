@@ -1,4 +1,4 @@
-import MorUtils from '../../controller/MorUtils.js'
+import MorUtils from '../../controller/utils/MorUtils.js'
 
 import * as fs from 'fs'
 

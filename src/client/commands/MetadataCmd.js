@@ -1,5 +1,5 @@
-import MorConfig from '../../controller/MorConfig.js'
-import MorUtils from '../../controller/MorUtils.js'
+import MorConfig from '../../controller/utils/MorConfig.js'
+import MorUtils from '../../controller/utils/MorUtils.js'
 
 import { EmbedBuilder } from '@discordjs/builders'
 

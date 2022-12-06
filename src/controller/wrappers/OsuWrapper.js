@@ -1,7 +1,7 @@
-import Mods from './Mods.js'
-import MorConfig from './MorConfig.js'
-import { NotFoundError, ConstructorError, InvalidModsError } from './MorErrors.js'
-import MorUtils from './MorUtils.js'
+import Mods from '../utils/Mods.js'
+import MorConfig from '../utils/MorConfig.js'
+import { NotFoundError, ConstructorError, InvalidModsError } from '../utils/MorErrors.js'
+import MorUtils from '../utils/MorUtils.js'
 
 import 'dotenv/config'
 import fetch from 'node-fetch'
