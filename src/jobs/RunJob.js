@@ -5,6 +5,10 @@ import updateScores from './jobs/UpdateScores.js'
 import updateUsers from './jobs/UpdateUsers.js'
 import wipeScores from './jobs/WipeScores.js'
 
+import '../Loggers.js'
+import * as winston from 'winston'
+const logger = winston.loggers.get('jobs')
+
 /*
  * Basic command handler script for MOR jobs
  * Example:
@@ -21,7 +25,7 @@ const commands = {
 }
 
 const args = process.argv.slice(2)
-console.info(`::RunJob.js (${args})`) // TODO: replace
+logger.info(`Manual call to ${args} job, executing...`)
 
 if (args.length !== 1) throw new Error(`${args} is not a valid input! Valid jobs: ${Object.keys(commands)}`)
 

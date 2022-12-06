@@ -7,6 +7,10 @@ import MorFacade from '../../controller/MorFacade.js'
 
 import * as fs from 'fs'
 
+import '../../Loggers.js'
+import * as winston from 'winston'
+const logger = winston.loggers.get('jobs')
+
 /**
  * Takes every score in the MOR sheet and refreshes their data.
  *
@@ -14,16 +18,16 @@ import * as fs from 'fs'
  * Suggested that you turn off the bot and any scheduled jobs before running this.
  */
 export default async function updateScores () {
-  console.time('::updateScores () >> Time elapsed') // TODO: replace
-  console.info('::updateScores () >> Refreshing the entire sheet... This will take a very long time!') // TODO: replace
+  const startTimeMs = new Date(Date.now()).getTime()
+  logger.info(`updateScores job initiated; updating every score in the sheet... This will take a really long time!`)
 
   const mor = await MorFacade.build()
 
-  console.info('::updateScores () >> Creating cache (if it doesn\'t exist)...') // TODO: replace
+  logger.info('Creating cache (if it doesn\'t exist...')
   if (!fs.existsSync(MorConfig.JOBS_CACHE)) fs.mkdirSync(MorConfig.JOBS_CACHE)
   if (!fs.existsSync(MorConfig.UPDATE_SCORES_CACHE)) fs.writeFileSync(MorConfig.UPDATE_SCORES_CACHE, JSON.stringify({ currentModSheet: Mods.SUBMITTED, scores: [] }))
 
-  console.info('::updateScores () >> Reading cache...') // TODO: replace
+  logger.info('Reading from cache...')
   const saveData = JSON.parse(fs.readFileSync(MorConfig.UPDATE_SCORES_CACHE))
 
   // Remove modsheets that have already been updated
@@ -53,21 +57,22 @@ export default async function updateScores () {
       }
     }
 
-    console.info(`::updateScores () >> Updating ${mods} scores and adding them to the cache...`) // TODO: replace
+    logger.info(`Updating ${mods} scores and adding them to the cache...`)
     for (let i = index; i < dict[mods].length; i++) {
       try {
+        logger.info(`Grabbing osu!API data for score ${dict[mods][i]} and adding it to the cache...`)
         const score = await mor.getOsuScore(dict[mods][i])
         cache.scores.push(score)
         fs.writeFileSync(MorConfig.UPDATE_SCORES_CACHE, JSON.stringify(cache))
       } catch (error) {
         if (error instanceof NotFoundError) {
-          console.info(`::updateScores () >> Couldn't find score ${dict[mods][i]}, skipping...`) // TODO: replace
+          logger.warn(`Couldn't find score ${dict[mods][i]}, skipping...`)
           continue
         } else throw error
       }
     }
 
-    console.info(`::updateScores () >> Grabbing updated ${mods} scores from cache...`) // TODO: replace
+    logger.info(`Finished caching ${mods} scores! Retrieving them from the cache and updating the ${mods} sheet...`)
     const updatedCache = JSON.parse(fs.readFileSync(MorConfig.UPDATE_SCORES_CACHE))
     const updatedScores = updatedCache.scores.map(s => {
       return new MorScore([s.scoreId, s.userId, s.username, s.beatmap, s.mods, s.accuracy, s.pp, s.starRating, s.date, s.beatmapImgLink])
@@ -75,14 +80,14 @@ export default async function updateScores () {
 
     if (mods !== Mods.SUBMITTED) updatedScores.sort((a, b) => { return parseFloat(b.pp) - parseFloat(a.pp) })
 
-    console.info(`::updateScores() >> Updating ${mods} sheet and resetting cache...`) // TODO: replace
     if (updatedScores.length === 0) await mor.wipeSheet(mods)
     else await mor.replaceSheetScores(mods, updatedScores)
 
+    logger.info('Resetting the cache...')
     fs.writeFileSync(MorConfig.UPDATE_SCORES_CACHE, JSON.stringify({ currentModSheet: Mods.SUBMITTED, scores: [] }))
   }
 
-  console.info(`::updateScores () >> Updating ${Mods.COMBINED} sheet...`) // TODO: replace
+  logger.info(`Updating the ${Mods.COMBINED} sheet...`)
   let combinedScores = []
   for (const mods of Mods.validModStrings()) {
     if (mods === Mods.COMBINED) continue
@@ -104,6 +109,7 @@ export default async function updateScores () {
   dateString = dateString.slice(0, dateString.length - 5) + '+00:00'
   await mor.setSheetLastUpdated(dateString)
 
-  console.info(`::updateScores () >> Job completed at ${dateString}`) // TODO: replace
-  console.timeEnd('::updateScores () >> Time elapsed') // TODO: replace
+  const endTimeMs = new Date(Date.now()).getTime()
+  const durationMin = (endTimeMs - startTimeMs) / 6000
+  logger.info(`updateScores completed! Duration=${durationMin.toFixed(2)}min`)
 }

@@ -3,6 +3,10 @@ import MorUtils from '../controller/utils/MorUtils.js'
 
 import * as cron from 'node-cron'
 
+import '../Loggers.js'
+import * as winston from 'winston'
+const logger = winston.loggers.get('jobs')
+
 /**
  * Wrapper class for scheduled jobs
  */
@@ -50,10 +54,11 @@ export default class JobHandler {
    *  jobHandler.start()
    */
   start () {
-    console.info('JobHandler::start ()') // TODO: replace
+    logger.info('Starting JobHandler...')
     for (const v of Object.values(this.#JOBS)) {
-      console.info(`JobHandler::start >> Scheduling job "${v[1].name}" with cron timer "${v[0]}"`)
+      logger.info(`Scheduling job "${v[1].name}" with cron timer "${v[0]}"`)
       cron.schedule(v[0], v[1])
     }
+    logger.info('JobHandler successfully started!')
   }
 }
