@@ -1,7 +1,7 @@
 import { ConstructorError } from '../controller/utils/MorErrors.js'
 import MorUtils from '../controller/utils/MorUtils.js'
 
-import * as cron from 'node-cron'
+import * as schedule from 'node-schedule'
 
 import '../Loggers.js'
 import * as winston from 'winston'
@@ -31,12 +31,10 @@ export default class JobHandler {
     for (const [k, v] of Object.entries(jobs)) {
       if (!MorUtils.isArray(v)) throw new ConstructorError(`jobs[${k}] is not an array! jobs[${k}]=${v}`)
       if (v.length !== 2) throw new ConstructorError(`jobs[${v}] must be of length 2! jobs[${k}]=[${v}]`)
-      // Valid cron string check is done by node-cron
+      // Valid cron string check is done by node-schedule
       if (!MorUtils.isFunction(v[1])) throw new ConstructorError(`jobs[${k}][1] must be a function! jobs[${k}][1]=${v}]`)
     }
     this.#JOBS = jobs
-    // start
-    // idk
   }
 
   /**
@@ -56,9 +54,18 @@ export default class JobHandler {
   start () {
     logger.info('Starting JobHandler...')
     for (const v of Object.values(this.#JOBS)) {
-      logger.info(`Scheduling job "${v[1].name}" with cron timer "${v[0]}"`)
-      cron.schedule(v[0], v[1])
+      const cronTimer = v[0]
+      const job = v[1]
+      logger.info(`Scheduling job "${job.name}" with timer "${cronTimer}"`)
+      
+      const scheduledJob = schedule.scheduleJob(cronTimer, job)
+      scheduledJob.on('error', error => {
+        logger.error(`Received error "${error.name}: ${error.message}"`)
+        logger.warn(`Stopping scheduler for "${job.name}"...`)
+        scheduledJob.cancel()
+      })
     }
+
     logger.info('JobHandler successfully started!')
   }
 }
