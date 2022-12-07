@@ -50,11 +50,6 @@ export default async function userCmd (facade, interaction) {
       .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} profile for ${user.username}`, iconURL: MorConfig.SERVER_ICON_URL, url: `https://osu.ppy.sh/users/${user.id}` })
       .setDescription(descStr)
       .setThumbnail(user.pfpLink)
-      // .addFields(
-      //   { name: '1', value: '1', inline: true},
-      //   { name: '2', value: '2', inline: true},
-      //   { name: '3', value: '3', inline: true}
-      // )
       .setFooter({ text: `Last update: ${MorUtils.prettifyDate(lastUpdated)}` })
 
     await interaction.editReply({ embeds: [embed] })
