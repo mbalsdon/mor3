@@ -94,6 +94,6 @@ export default async function updateUsers () {
   await mor.replaceSheetUsers(updatedUsers)
 
   const endTimeMs = new Date(Date.now()).getTime()
-  const durationMin = (endTimeMs - startTimeMs) / 6000
+  const durationMin = (endTimeMs - startTimeMs) / 60000
   logger.info(`updateUsers completed! Duration=${durationMin.toFixed(2)}min`)
 }

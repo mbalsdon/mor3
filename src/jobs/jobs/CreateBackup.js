@@ -20,6 +20,6 @@ export default async function createBackup () {
   await mor.backupFile(MorConfig.SHEETS.SPREADSHEET.ID, fileName, MorConfig.DRIVE.BACKUP_FOLDER_ID)
 
   const endTimeMs = new Date(Date.now()).getTime()
-  const durationMin = (endTimeMs - startTimeMs) / 6000
+  const durationMin = (endTimeMs - startTimeMs) / 60000
   logger.info(`createBackup job completed! Duration=${durationMin.toFixed(2)}min`)
 }

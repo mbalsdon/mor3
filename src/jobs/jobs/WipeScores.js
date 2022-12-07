@@ -30,6 +30,6 @@ export default async function wipeScores () {
   }
 
   const endTimeMs = new Date(Date.now()).getTime()
-  const durationMin = (endTimeMs - startTimeMs) / 6000
+  const durationMin = (endTimeMs - startTimeMs) / 60000
   logger.info(`wipeScores completed! Duration=${durationMin.toFixed(2)}min`)
 }

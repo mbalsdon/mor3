@@ -41,7 +41,7 @@ winston.loggers.add('jobs', {
   ],
   exceptionHandlers: [
     new winston.transports.File({
-      filename: 'exception.log'
+      filename: './logs/exception.log'
     })
   ]
 })
