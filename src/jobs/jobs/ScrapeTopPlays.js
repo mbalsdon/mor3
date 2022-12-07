@@ -91,6 +91,6 @@ export default async function scrapeTopPlays () {
   await mor.replaceSheetScores(Mods.COMBINED, combinedScores)
 
   const endTimeMs = new Date(Date.now()).getTime()
-  const durationMin = (endTimeMs - startTimeMs) / 6000
+  const durationMin = (endTimeMs - startTimeMs) / 60000
   logger.info(`scrapeTopPlays completed! Inserted ${numInserted} new plays. Duration=${durationMin.toFixed(2)}min`)
 }

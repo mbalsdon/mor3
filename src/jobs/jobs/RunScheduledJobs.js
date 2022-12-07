@@ -29,6 +29,6 @@ export default async function runScheduledJobs () {
   await mor.setSheetLastUpdated(dateString)
 
   const endTimeMs = new Date(Date.now()).getTime()
-  const durationMin = (endTimeMs - startTimeMs) / 6000
+  const durationMin = (endTimeMs - startTimeMs) / 60000
   logger.info(`runScheduledJobs completed! Duration=${durationMin.toFixed(2)}min`)
 }

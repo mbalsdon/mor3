@@ -110,6 +110,6 @@ export default async function updateScores () {
   await mor.setSheetLastUpdated(dateString)
 
   const endTimeMs = new Date(Date.now()).getTime()
-  const durationMin = (endTimeMs - startTimeMs) / 6000
+  const durationMin = (endTimeMs - startTimeMs) / 60000
   logger.info(`updateScores completed! Duration=${durationMin.toFixed(2)}min`)
 }
