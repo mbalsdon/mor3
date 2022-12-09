@@ -47,7 +47,7 @@ export default async function userCmd (facade, interaction) {
 
     const embed = new EmbedBuilder()
       .setColor(MorConfig.BOT_EMBED_COLOR)
-      .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} profile for ${user.username}`, iconURL: MorConfig.SERVER_ICON_URL, url: `https://osu.ppy.sh/users/${user.id}` })
+      .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} Profile for ${user.username}`, iconURL: MorConfig.SERVER_ICON_URL, url: `https://osu.ppy.sh/users/${user.id}` })
       .setDescription(descStr)
       .setThumbnail(user.pfpLink)
       .setFooter({ text: `Last update: ${MorUtils.prettifyDate(lastUpdated)}` })
