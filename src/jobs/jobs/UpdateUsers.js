@@ -46,7 +46,7 @@ export default async function updateUsers () {
       } else throw error
     }
 
-    logger.info(`Counting top25s for user ${user.username}...`)
+    // Count top25s
     let [top1s, top2s, top3s, top5s, top10s, top25s] = [0, 0, 0, 0, 0, 0]
     for (const key of Object.keys(dict)) {
       const scores = dict[key]

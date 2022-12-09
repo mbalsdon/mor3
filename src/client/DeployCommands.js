@@ -126,6 +126,29 @@ const commands = [
           { name: 'date_set', value: 'date_set' }
         ))
     .setDMPermission(false)
+    .setDefaultMemberPermissions(userPermFlags),
+
+  new SlashCommandBuilder()
+    .setName('leaderboard')
+    .setDescription('Displays top plays on a map set by tracked users')
+    .addStringOption(option =>
+      option.setName('id')
+        .setDescription('ID of the beatmap you want to look at the leaderboard of')
+        .setRequired(true))
+    .addStringOption(option =>
+      option.setName('mods')
+        .setDescription('Mod combo of the scores you want to look at (defaults to COMBINED)')
+        .setRequired(false))
+    .addStringOption(option =>
+      option.setName('sort')
+        .setDescription('The data to sort the scores by (defaults to pp)')
+        .setRequired(false)
+        .addChoices(
+          { name: 'accuracy', value: 'accuracy' },
+          { name: 'pp', value: 'pp' },
+          { name: 'date_set', value: 'date_set' }
+        ))
+    .setDMPermission(false)
     .setDefaultMemberPermissions(userPermFlags)
 ]
   .map(command => command.toJSON())

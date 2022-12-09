@@ -60,9 +60,9 @@ export default async function usersCmd (facade, client, interaction) {
         const playtimeStr = `${u.playtime}hrs`
 
         const summaryStr = `**${pageIndex + 1}. ${usernameStr} (${globalRankStr} | ${ppStr} | ${accStr} | ${playtimeStr})**\n`
-        const top1Str = `▸ :first_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #1s: ${(u.top1s === '-1' ? 'n/a' : u.top1s)}\n`
-        const top2Str = `▸ :second_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #2s: ${(u.top2s === '-1' ? 'n/a' : u.top2s)}\n`
-        const top3Str = `▸ :third_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #3s: ${(u.top3s === '-1' ? 'n/a' : u.top3s)}\n`
+        const top1Str = `▸ :first_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} Mod Leaderboard #1s: ${(u.top1s === '-1' ? 'n/a' : u.top1s)}\n`
+        const top2Str = `▸ :second_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} Mod Leaderboard #2s: ${(u.top2s === '-1' ? 'n/a' : u.top2s)}\n`
+        const top3Str = `▸ :third_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} Mod Leaderboard #3s: ${(u.top3s === '-1' ? 'n/a' : u.top3s)}\n`
 
         const userStr = summaryStr + top1Str + top2Str + top3Str
         desc = desc + userStr

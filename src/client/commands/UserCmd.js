@@ -32,12 +32,12 @@ export default async function userCmd (facade, interaction) {
     const accStr = `▸ **:dart: Profile Accuracy:** ${user.accuracy}%\n`
     const playtimeStr = `▸ **:desktop: Total Playtime:** ${user.playtime} hours\n\n`
 
-    const top1Str = `▸ **:first_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #1s:** ${(user.top1s === '-1' ? 'n/a' : user.top1s)}\n`
-    const top2Str = `▸ **:second_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #2s:** ${(user.top2s === '-1' ? 'n/a' : user.top2s)}\n`
-    const top3Str = `▸ **:third_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} #3s:** ${(user.top3s === '-1' ? 'n/a' : user.top3s)}\n`
-    const top5Str = `▸ **:medal: ${MorConfig.SHEETS.SPREADSHEET.NAME} Top 5s:** ${(user.top5s === '-1' ? 'n/a' : user.top5s)}\n`
-    const top10Str = `▸ **:military_medal: ${MorConfig.SHEETS.SPREADSHEET.NAME} Top 10s:** ${(user.top10s === '-1' ? 'n/a' : user.top10s)}\n`
-    const top25Str = `▸ **:small_orange_diamond: ${MorConfig.SHEETS.SPREADSHEET.NAME} Top 25s:** ${(user.top25s === '-1' ? 'n/a' : user.top25s)}\n`
+    const top1Str = `▸ **:first_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} Mod Leaderboard #1s:** ${(user.top1s === '-1' ? 'n/a' : user.top1s)}\n`
+    const top2Str = `▸ **:second_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} Mod Leaderboard #2s:** ${(user.top2s === '-1' ? 'n/a' : user.top2s)}\n`
+    const top3Str = `▸ **:third_place: ${MorConfig.SHEETS.SPREADSHEET.NAME} Mod Leaderboard #3s:** ${(user.top3s === '-1' ? 'n/a' : user.top3s)}\n`
+    const top5Str = `▸ **:medal: ${MorConfig.SHEETS.SPREADSHEET.NAME} Mod Leaderboard Top 5s:** ${(user.top5s === '-1' ? 'n/a' : user.top5s)}\n`
+    const top10Str = `▸ **:military_medal: ${MorConfig.SHEETS.SPREADSHEET.NAME} Mod Leaderboard Top 10s:** ${(user.top10s === '-1' ? 'n/a' : user.top10s)}\n`
+    const top25Str = `▸ **:small_orange_diamond: ${MorConfig.SHEETS.SPREADSHEET.NAME} Mod Leaderboard Top 25s:** ${(user.top25s === '-1' ? 'n/a' : user.top25s)}\n`
 
     const autotrackStr = (user.autotrack === 'TRUE' ? '' : '\n**:warning: NOTE:** This user\'s plays are not being automatically tracked!')
 
@@ -47,14 +47,9 @@ export default async function userCmd (facade, interaction) {
 
     const embed = new EmbedBuilder()
       .setColor(MorConfig.BOT_EMBED_COLOR)
-      .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} profile for ${user.username}`, iconURL: MorConfig.SERVER_ICON_URL, url: `https://osu.ppy.sh/users/${user.id}` })
+      .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} Profile for ${user.username}`, iconURL: MorConfig.SERVER_ICON_URL, url: `https://osu.ppy.sh/users/${user.id}` })
       .setDescription(descStr)
       .setThumbnail(user.pfpLink)
-      // .addFields(
-      //   { name: '1', value: '1', inline: true},
-      //   { name: '2', value: '2', inline: true},
-      //   { name: '3', value: '3', inline: true}
-      // )
       .setFooter({ text: `Last update: ${MorUtils.prettifyDate(lastUpdated)}` })
 
     await interaction.editReply({ embeds: [embed] })
