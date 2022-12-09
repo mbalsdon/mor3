@@ -45,7 +45,7 @@ export default async function scoresCmd (facade, client, interaction) {
     const buildEmbed = function (page) {
       if (page < 1 || page > numPages) throw new RangeError(`Page must be between 1 and ${numPages} - this should never happen!`)
 
-      // Avoid OOB errors (may have to display less than 'perPage' users if you're on the last page)
+      // Avoid OOB errors (may have to display less than 'perPage' scores if you're on the last page)
       const lim = (page === numPages && scores.length % perPage !== 0) ? scores.length % perPage : perPage
 
       // Build and concatenate score strings
