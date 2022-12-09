@@ -1,4 +1,5 @@
 import helpCmd from './commands/HelpCmd.js'
+import leaderboardCmd from './commands/LeaderboardCmd.js'
 import metadataCmd from './commands/MetadataCmd.js'
 import pingCmd from './commands/PingCmd.js'
 import scoresCmd from './commands/ScoresCmd.js'
@@ -111,6 +112,7 @@ export default class Bot {
       else if (commandName === 'submit') await submitCmd(this.#FACADE, interaction)
       else if (commandName === 'unsubmit') await unsubmitCmd(this.#FACADE, interaction)
       else if (commandName === 'scores') await scoresCmd(this.#FACADE, this.#DISCORD, interaction)
+      else if (commandName === 'leaderboard') await leaderboardCmd(this.#FACADE, this.#DISCORD, interaction)
     })
 
     // Attempt to restart the bot on error

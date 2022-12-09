@@ -157,6 +157,21 @@ export default class MorFacade {
   }
 
   /**
+   * Retrieves osu! beatmap; makes up to 1 osu!API request
+   * @see {@link https://osu.ppy.sh/docs/index.html#beatmap} (osu! API v2 Beatmap object)
+   * @param {string} beatmapId ID of the beatmap
+   * @return {Promise<*>} osu!API v2 Beatmap object
+   * @example
+   *  const mor = await MorFacade.build()
+   *  const beatmap = await mor.getOsuBeatmap('739846')
+   *  console.log(beatmap.beatmapset.artist)
+   */
+  async getOsuBeatmap (beatmapId) {
+    const beatmap = await this.#OSU.getBeatmap(beatmapId)
+    return beatmap
+  }
+
+  /**
    * Retrieves mor3 spreadsheet metadata; makes up to 1 Google API request
    * @see {@link https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets} (Google Sheets API v4 Spreadsheets object)
    * @return {Promise<*>} Google Sheets API v4 Spreadsheets object

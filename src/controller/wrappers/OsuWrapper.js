@@ -90,7 +90,7 @@ export default class OsuWrapper {
   async getUser (user, searchParam = 'username', osuApiCooldown = MorConfig.OSU_API_COOLDOWN_MS) {
     if (!MorUtils.isString(user)) throw new TypeError(`user must be a string! Val=${user}`)
     if (searchParam !== 'username' && searchParam !== 'id') throw new TypeError(`searchParam must be one of 'id' or 'username'! Val=${searchParam}`)
-    if (!MorUtils.isNonNegativeNumber(osuApiCooldown)) throw new TypeError(`osuApiCooldown must be a positive number! Val=${osuApiCooldown}`)
+    if (!MorUtils.isNonNegativeNumber(osuApiCooldown)) throw new TypeError(`osuApiCooldown must be a non-negative number! Val=${osuApiCooldown}`)
 
     const url = new URL(`${OsuWrapper.#API_URL}/users/${user}/osu`)
     const params = { key: searchParam }
@@ -120,7 +120,7 @@ export default class OsuWrapper {
    */
   async getScore (scoreId, osuApiCooldown = MorConfig.OSU_API_COOLDOWN_MS) {
     if (!MorUtils.isPositiveNumericString(scoreId)) throw new TypeError(`scoreId must be a positive number string! Val=${scoreId}`)
-    if (!MorUtils.isNonNegativeNumber(osuApiCooldown)) throw new TypeError(`osuApiCooldown must be a positive number! Val=${osuApiCooldown}`)
+    if (!MorUtils.isNonNegativeNumber(osuApiCooldown)) throw new TypeError(`osuApiCooldown must be a non-negative number! Val=${osuApiCooldown}`)
 
     const url = new URL(`${OsuWrapper.#API_URL}/scores/osu/${scoreId}`)
     const params = { key: 'id' }
@@ -152,7 +152,7 @@ export default class OsuWrapper {
   async getUserPlays (userId, type = 'best', osuApiCooldown = MorConfig.OSU_API_COOLDOWN_MS) {
     if (!MorUtils.isPositiveNumericString(userId)) throw new TypeError(`userId must be a positive number string! Val=${userId}`)
     if (type !== 'best' && type !== 'firsts' && type !== 'recent') throw new TypeError(`type must be one of 'best' or 'firsts'! Val=${type}`)
-    if (!MorUtils.isNonNegativeNumber(osuApiCooldown)) throw new TypeError(`osuApiCooldown must be a positive number! Val=${osuApiCooldown}`)
+    if (!MorUtils.isNonNegativeNumber(osuApiCooldown)) throw new TypeError(`osuApiCooldown must be a non-negative number! Val=${osuApiCooldown}`)
 
     const url = new URL(`${OsuWrapper.#API_URL}/users/${userId}/scores/${type}`)
     const params = {
@@ -171,14 +171,41 @@ export default class OsuWrapper {
   }
 
   /**
+   * Retrieves osu! beatmap data from osu!API v2
+   * @see {@link https://osu.ppy.sh/docs/index.html#beatmap} (osu! API v2 Beatmap object)
+   * @param {string} beatmapId ID of the beatmap
+   * @param {number} osuApiCooldown minimum time osu!API calls should take
+   * @throws {@link TypeError} if parameters are invalid
+   * @throws {@link NotFoundError} if beatmap could not be found
+   * @return {Promise<*>} osu!API v2 Beatmap object
+   * @example
+   *  const osu = await OsuWrapper.build()
+   *  const beatmap = await osu.getBeatmap('739846')
+   *  console.log(beatmap.count_spinners)
+   */
+  async getBeatmap (beatmapId, osuApiCooldown = MorConfig.OSU_API_COOLDOWN_MS) {
+    if (!MorUtils.isPositiveNumericString(beatmapId)) throw new TypeError(`beatmapId must be a positive number string! Val=${beatmapId}`)
+    if (!MorUtils.isNonNegativeNumber(osuApiCooldown)) throw new TypeError(`osuApiCooldown must be a non-negative number! Val=${osuApiCooldown}`)
+
+    const url = new URL(`${OsuWrapper.#API_URL}/beatmaps/${beatmapId}`)
+    const headers = this.#buildHeaders()
+
+    const [response] = await Promise.all([fetch(url, { method: 'GET', headers }), MorUtils.sleep(osuApiCooldown)])
+    if (response.status === 404) throw new NotFoundError(`osu!API search returned no results! beatmapId=${beatmapId}`)
+    const data = await response.json()
+
+    return data
+  }
+
+  /**
    * Retrieves osu! beatmap's difficulty attributes from osu!API v2
    * @see {@link https://osu.ppy.sh/docs/index.html#beatmapdifficultyattributes} (osu!API v2 BeatmapDifficultyAttributes object)
+   * @param {string} beatmapId ID of the beatmap
+   * @param {string[]} modArray array of valid MOR mod strings
+   * @param {number} osuApiCooldown minimum time osu!API calls should take
    * @throws {@link TypeError} if parameters are invalid
    * @throws {@link InvalidModsError} if mods are invalid
    * @throws {@link NotFoundError} if beatmap could not be found
-   * @param {string} beatmapId beatmap's ID
-   * @param {string[]} modArray array of valid MOR mod strings
-   * @param {number} osuApiCooldown minimum time osu!API calls should take
    * @return {Promise<*>} Array of osu!API v2 BeatmapDifficultyAttributes objects
    * @example
    *  const osu = await OsuWrapper.build()
@@ -188,7 +215,7 @@ export default class OsuWrapper {
   async getDifficultyAttributes (beatmapId, modArray, osuApiCooldown = MorConfig.OSU_API_COOLDOWN_MS) {
     if (!MorUtils.isPositiveNumericString(beatmapId)) throw new TypeError(`beatmapId must be a positive number string! Val=${beatmapId}`)
     if (!Mods.isValidModArray(modArray)) throw new InvalidModsError(`modArray must be a valid mod array! Val=[${modArray}]`)
-    if (!MorUtils.isNonNegativeNumber(osuApiCooldown)) throw new TypeError(`osuApiCooldown must be a positive number! Val=${osuApiCooldown}`)
+    if (!MorUtils.isNonNegativeNumber(osuApiCooldown)) throw new TypeError(`osuApiCooldown must be a non-negative number! Val=${osuApiCooldown}`)
 
     const url = new URL(`${OsuWrapper.#API_URL}/beatmaps/${beatmapId}/attributes`)
     const headers = this.#buildHeaders()
@@ -196,7 +223,7 @@ export default class OsuWrapper {
 
     const [response] = await Promise.all([fetch(url, { method: 'POST', headers, body: JSON.stringify(body) }), MorUtils.sleep(osuApiCooldown)])
     if (response.status === 404) throw new NotFoundError(`osu!API search returned no results! beatmapId=${beatmapId}, modArray=[${modArray}]`)
-    const data = response.json()
+    const data = await response.json()
 
     return data
   }

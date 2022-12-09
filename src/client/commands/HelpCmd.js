@@ -22,15 +22,16 @@ export default async function helpCmd (interaction) {
       .setAuthor({ name: `${MorConfig.SHEETS.SPREADSHEET.NAME} Commands`, iconURL: MorConfig.SERVER_ICON_URL, url: 'https://github.com/mbalsdon/mor3' })
       .setDescription('`help` - Documentation on the bot\'s commands\n' +
             '`ping` - Checks if the bot is alive\n' +
-            '`metadata` - Displays mor3 sheet metadata\n' +
+            `\`metadata\` - Displays ${MorConfig.SHEETS.SPREADSHEET.NAME} sheet metadata\n` +
             '`users` - Displays list of tracked users, sorted by PP\n' +
-            '`user` - Displays a user\'s stats\n' +
+            '`user` - Displays a tracked user\'s stats\n' +
             '`track` - Adds a user to be tracked [MODERATORS ONLY]\n' +
             '`untrack` - Removes a user from being tracked [MODERATORS ONLY]\n' +
             '`tracklist` - Lists all tracked users in a .txt file\n' +
             '`submit` - Manually submits a score to the database\n' +
             '`unsubmit` - Removes a submitted score from the database [MODERATORS ONLY]\n' +
-            '`scores` - Displays list of scores for a given mod combo, sorted by PP\n')
+            '`scores` - Displays list of scores set by tracked users, sorted by PP\n' +
+            '`leaderboard` - Displays top plays on a map set by tracked users, sorted by PP\n')
       .setFooter({ text: 'https://github.com/mbalsdon/mor3' })
 
     await interaction.editReply({ embeds: [embed] })
