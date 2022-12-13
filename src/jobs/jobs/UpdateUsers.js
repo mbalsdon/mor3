@@ -18,7 +18,7 @@ const logger = winston.loggers.get('jobs')
  */
 export default async function updateUsers () {
   const startTimeMs = new Date(Date.now()).getTime()
-  logger.info(`updateUsers job initiated; updating data on the ${MorConfig.SHEETS.USERS.NAME}sheet... This may take a while!`)
+  logger.info(`updateUsers job initiated; updating data on the ${MorConfig.SHEETS.USERS.NAME} sheet... This may take a while!`)
 
   const mor = await MorFacade.build()
 
