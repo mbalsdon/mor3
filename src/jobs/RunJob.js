@@ -16,12 +16,23 @@ const logger = winston.loggers.get('jobs')
  */
 
 const commands = {
-  updateUsers,
+  createBackup,
+  runScheduledJobs,
   scrapeTopPlays,
   updateScores,
-  runScheduledJobs,
-  wipeScores,
-  createBackup
+  updateUsers,
+  wipeScores
+}
+
+commands['help'] = () => {
+  console.info('\nList of currently supported jobs:\n\n' + 
+                'createBackup: Create a backup file for the MOR spreadsheet and put it in Google Drive\n' +
+                'runScheduledJobs: Run scheduled MOR job scripts, then set the Last Updated tag\n' +
+                'scrapeTopPlays: Retrieve submitted scores and the top 100s + firsts + recents of tracked users and insert them into the MOR3 spreadsheet\n' +
+                'updateScores: Refresh score data (mainly used after PP reworks - takes a very long time!)\n' +
+                'updateUsers: Refresh user data\n' +
+                'wipeScores: Delete all scores in the MOR3 spreadsheet\n'
+  )
 }
 
 const args = process.argv.slice(2)
