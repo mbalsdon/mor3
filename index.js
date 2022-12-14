@@ -1,4 +1,4 @@
-import Bot from './src/client/Bot.js'
+import Bot from './src/bot/Bot.js'
 
 import createBackup from './src/jobs/jobs/CreateBackup.js'
 import runScheduledJobs from './src/jobs/jobs/RunScheduledJobs.js'

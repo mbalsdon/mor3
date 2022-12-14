@@ -106,8 +106,8 @@ NOTE: Every 14 days, a backup for the sheet will be made through a call to `crea
 - **./mor3** - Contains the project source code. This includes `index.js`, which initializes the Discord bot and job handler, `mor_config.json`, which stores environment variables, and any external dependencies.
 - **./mor3/logs** - Local storage for project logs, which are deleted after 7 days.
 
-- **./mor3/src/client** - Contains code for the Discord bot
-- **./mor3/src/client/commands** - Contains functions for the Discord bot's commands
+- **./mor3/src/bot** - Contains code for the Discord bot
+- **./mor3/src/bot/commands** - Contains functions for the Discord bot's commands
 
 - **./mor3/src/controller** - Contains backend code that works with the osu! API and Google APIs
 - **./mor3/src/controller/utils** - Contains custom types, enums, and general utility functions
