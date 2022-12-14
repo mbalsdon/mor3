@@ -5,6 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "setup": "node ./setup.js",
     "start": "node ./src/client/DeployCommands.js && node index.js",
     "watch": "node ./src/client/DeployCommands.js && nodemon index.js",
     "job": "node src/jobs/RunJob.js",
