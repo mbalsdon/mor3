@@ -2,7 +2,7 @@
  * Basic setup script for the project
  * @example
  *  $ cd /path/to/mor3
- *  $ node setup.js
+ *  $ npm run setup
  */
 
 import * as readline from 'readline'
