@@ -3,7 +3,7 @@ import MorConfig from '../controller/utils/MorConfig.js'
 import { SlashCommandBuilder, Routes, PermissionFlagsBits } from 'discord.js'
 import { REST } from '@discordjs/rest'
 
-import '../Loggers.js'
+import '../../src/controller/utils/Loggers.js'
 import * as winston from 'winston'
 const logger = winston.loggers.get('bot')
 

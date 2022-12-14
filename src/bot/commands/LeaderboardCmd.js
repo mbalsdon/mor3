@@ -5,7 +5,7 @@ import MorUtils from '../../controller/utils/MorUtils.js'
 
 import { ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle } from 'discord.js'
 
-import '../../Loggers.js'
+import '../../controller/utils/Loggers.js'
 import * as winston from 'winston'
 const logger = winston.loggers.get('bot')
 

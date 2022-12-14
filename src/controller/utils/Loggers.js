@@ -1,4 +1,4 @@
-import MorConfig from './controller/utils/MorConfig.js'
+import MorConfig from './MorConfig.js'
 
 import * as winston from 'winston'
 import 'winston-daily-rotate-file'

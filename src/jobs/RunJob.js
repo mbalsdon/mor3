@@ -5,7 +5,7 @@ import updateScores from './jobs/UpdateScores.js'
 import updateUsers from './jobs/UpdateUsers.js'
 import wipeScores from './jobs/WipeScores.js'
 
-import '../Loggers.js'
+import '../controller/utils/Loggers.js'
 import * as winston from 'winston'
 const logger = winston.loggers.get('jobs')
 
