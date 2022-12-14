@@ -127,23 +127,18 @@ NOTE: Every 14 days, a backup for the sheet will be made through a call to `crea
 
 ## Frequently Asked Questions
 
-**Q**: What does MOR3 stand for?
+- **Q: What does MOR3 stand for?**
+- **A**: MOR3 stands for "Mouse-Only Records 3". While it has evolved past that, the original motivation for this project was to store data from mouse-only osu! players in order to figure out who was ranked the highest and who had the best plays. Since osu! only provides game-wide leaderboards, and since a large majority of the playerbase uses tablet+keyboard or mouse+keyboard to play, for nearly a decade it was very hard to find information on mouse-only players past asking a few knowledge-holders who had been in the community for a long time or the occasional Reddit post.
 
-**A**: MOR3 stands for "Mouse-Only Records 3". While it has evolved past that, the original motivation for this project was to store data from mouse-only osu! players in order to figure out who was ranked the highest and who had the best plays. Since osu! only provides game-wide leaderboards, and since a large majority of the playerbase uses tablet+keyboard or mouse+keyboard to play, for nearly a decade it was very hard to find information on mouse-only players past asking a few knowledge-holders who had been in the community for a long time or the occasional Reddit post.
-
-
-**Q**: Why are you using Google Sheets as a database?
-
-**A**: After looking at a few database options, I realized that Google Sheets might be my best option. I wanted a NoSQL database that was easy to work with, free, could store a large amount of data, and allowed people with little to no knowledge to look at and understand what was being stored. Of course, the main downside of using something that wasn't intended to be a database is speed, however after running a few performance tests I found that the Sheets API is more than efficient enough for a Discord bot. You may notice that some commands take upwards of \~8 seconds to run, however this is purely due to the Google API ratelimit. If you pay for a higher ratelimit (I haven't looked into this) and edit `GOOGLE_API_COOLDOWN_MS` in `mor_config.json`, you can bring command speeds down to around 1\~2 seconds.
+- **Q: Why are you using Google Sheets as a database?**
+- **A**: After looking at a few database options, I realized that Google Sheets might be my best option. I wanted a NoSQL database that was easy to work with, free, could store a large amount of data, and allowed people with little to no knowledge to look at and understand what was being stored. Of course, the main downside of using something that wasn't intended to be a database is speed, however after running a few performance tests I found that the Sheets API is more than efficient enough for a Discord bot. You may notice that some commands take upwards of \~8 seconds to run, however this is purely due to the Google API ratelimit. If you pay for a higher ratelimit (I haven't looked into this) and edit `GOOGLE_API_COOLDOWN_MS` in `mor_config.json`, you can bring command speeds down to around 1\~2 seconds.
 
 (Also, I think it's kind of funny to tell people that I'm using a spreadsheet as a database 😋)
 
 
-**Q**: Why did you write the Wrapper classes by hand when packages already exist for them?
+- **Q: Why did you write the Wrapper classes by hand when packages already exist for them?**
+- **A**: I wanted to learn a bit about making web requests. Since this was a personal project more than anything, I took it as a learning experience.
 
-**A**: I wanted to learn a bit about making web requests. Since this was a personal project more than anything, I took it as a learning experience.
 
-
-**Q**: Why is the project written in pure JavaScript?
-
-**A**: When I originally started this project, all of my classes at university had been done with statically-typed languages like C/C++ and Java. I chose JavaScript for this project mainly to learn the language since it is so widely used today, and so that I could gain a better understanding of dynamic typing. After going through the hell of trying to write good code with JS, I can proudly say that I will be using TypeScript from now on.
+- **Q: Why is the project written in pure JavaScript?**
+- **A**: When I originally started this project, all of my classes at university had been done with statically-typed languages like C/C++ and Java. I chose JavaScript for this project mainly to learn the language since it is so widely used today, and so that I could gain a better understanding of dynamic typing. After going through the hell of trying to write good code with JS, I can proudly say that I will be using TypeScript from now on.
