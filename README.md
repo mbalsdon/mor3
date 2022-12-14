@@ -133,7 +133,7 @@ NOTE: Every 14 days, a backup for the sheet will be made through a call to `crea
 - **Q: Why are you using Google Sheets as a database?**
 - **A**: After looking at a few database options, I realized that Google Sheets might be my best option. I wanted a NoSQL database that was easy to work with, free, could store a large amount of data, and allowed people with little to no knowledge to look at and understand what was being stored. Of course, the main downside of using something that wasn't intended to be a database is speed, however after running a few performance tests I found that the Sheets API is more than efficient enough for a Discord bot. You may notice that some commands take upwards of \~8 seconds to run, however this is purely due to the Google API ratelimit. If you pay for a higher ratelimit (I haven't looked into this) and edit `GOOGLE_API_COOLDOWN_MS` in `mor_config.json`, you can bring command speeds down to around 1\~2 seconds.
 
-(Also, I think it's kind of funny to tell people that I'm using a spreadsheet as a database 😋)
+  (Also, I think it's kind of funny to tell people that I'm using a spreadsheet as a database 😋)
 
 
 - **Q: Why did you write the Wrapper classes by hand when packages already exist for them?**
