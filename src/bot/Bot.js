@@ -11,15 +11,15 @@ import untrackCmd from './commands/UntrackCmd.js'
 import userCmd from './commands/UserCmd.js'
 import usersCmd from './commands/UsersCmd.js'
 
+import MorConfig from '../controller/utils/MorConfig.js'
 import { ConstructorError } from '../controller/utils/MorErrors.js'
 import MorUtils from '../controller/utils/MorUtils.js'
 
 import MorFacade from '../controller/MorFacade.js'
 
-import 'dotenv/config'
 import { Client, GatewayIntentBits } from 'discord.js'
 
-import '../Loggers.js'
+import '../controller/utils/Loggers.js'
 import * as winston from 'winston'
 const logger = winston.loggers.get('bot')
 
@@ -124,6 +124,6 @@ export default class Bot {
     })
 
     // Authenticate the bot; must be the last line of code
-    await this.#DISCORD.login(process.env.DISCORD_API_BOT_TOKEN)
+    await this.#DISCORD.login(MorConfig.DISCORD_API_BOT_TOKEN)
   }
 }

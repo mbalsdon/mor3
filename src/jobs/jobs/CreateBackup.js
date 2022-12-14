@@ -2,7 +2,7 @@ import MorConfig from '../../controller/utils/MorConfig.js'
 
 import MorFacade from '../../controller/MorFacade.js'
 
-import '../../Loggers.js'
+import '../../controller/utils/Loggers.js'
 import * as winston from 'winston'
 const logger = winston.loggers.get('jobs')
 

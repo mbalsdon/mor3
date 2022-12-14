@@ -17,6 +17,7 @@ import * as fs from 'fs'
 export default class MorConfig {
   static #cfg = JSON.parse(fs.readFileSync('./mor_config.json'))
 
+  static LOG_LEVEL = this.#cfg.LOG_LEVEL
   static BOT_EMBED_COLOR = this.#cfg.BOT_EMBED_COLOR
   static LAST_UPDATE_CELL = this.#cfg.LAST_UPDATE_CELL
   static JOBS_CACHE = this.#cfg.JOBS_CACHE
@@ -25,6 +26,13 @@ export default class MorConfig {
   static GOOGLE_API_COOLDOWN_MS = this.#cfg.GOOGLE_API_COOLDOWN_MS
   static SERVER_ICON_URL = this.#cfg.SERVER_ICON_URL
   static NUM_PROCESSORS = this.#cfg.NUM_PROCESSORS
+
   static SHEETS = this.#cfg.SHEETS
   static DRIVE = this.#cfg.DRIVE
+
+  static OSU_API_CLIENT_ID = this.#cfg.OSU_API_CLIENT_ID
+  static OSU_API_CLIENT_SECRET = this.#cfg.OSU_API_CLIENT_SECRET
+  static GOOGLE_APPLICATION_CREDENTIALS = this.#cfg.GOOGLE_APPLICATION_CREDENTIALS
+  static DISCORD_API_CLIENT_ID = this.#cfg.DISCORD_API_CLIENT_ID
+  static DISCORD_API_BOT_TOKEN = this.#cfg.DISCORD_API_BOT_TOKEN
 }

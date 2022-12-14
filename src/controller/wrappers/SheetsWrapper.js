@@ -2,7 +2,6 @@ import MorConfig from '../utils/MorConfig.js'
 import { ConstructorError } from '../utils/MorErrors.js'
 import MorUtils from '../utils/MorUtils.js'
 
-import 'dotenv/config'
 import { google } from 'googleapis'
 
 /**
@@ -13,7 +12,7 @@ export default class SheetsWrapper {
   #SHEETS_CLIENT
 
   static #AUTH = new google.auth.GoogleAuth({
-    keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+    keyFile: MorConfig.GOOGLE_APPLICATION_CREDENTIALS,
     scopes: 'https://www.googleapis.com/auth/spreadsheets'
   })
 

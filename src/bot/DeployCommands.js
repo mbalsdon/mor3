@@ -1,13 +1,14 @@
-import 'dotenv/config'
+import MorConfig from '../controller/utils/MorConfig.js'
+
 import { SlashCommandBuilder, Routes, PermissionFlagsBits } from 'discord.js'
 import { REST } from '@discordjs/rest'
 
-import '../Loggers.js'
+import '../../src/controller/utils/Loggers.js'
 import * as winston from 'winston'
 const logger = winston.loggers.get('bot')
 
-const token = process.env.DISCORD_API_BOT_TOKEN
-const clientId = process.env.DISCORD_API_CLIENT_ID
+const token = MorConfig.DISCORD_API_BOT_TOKEN
+const clientId = MorConfig.DISCORD_API_CLIENT_ID
 const moderatorPermFlags = PermissionFlagsBits.ModerateMembers
 const userPermFlags = PermissionFlagsBits.SendMessages
 

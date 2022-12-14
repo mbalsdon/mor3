@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "setup": "node --es-module-specifier-resolution=node ./setup.js",
-    "start": "node --es-module-specifier-resolution=node ./src/client/DeployCommands.js && node --es-module-specifier-resolution=node index.js",
-    "watch": "node --es-module-specifier-resolution=node ./src/client/DeployCommands.js && nodemon --es-module-specifier-resolution=node index.js",
+    "start": "node --es-module-specifier-resolution=node ./src/bot/DeployCommands.js && node --es-module-specifier-resolution=node index.js",
+    "watch": "node --es-module-specifier-resolution=node ./src/bot/DeployCommands.js && nodemon --es-module-specifier-resolution=node index.js",
     "job": "node --es-module-specifier-resolution=node src/jobs/RunJob.js",
     "lint": "./node_modules/.bin/eslint src --ext .js"
   },
@@ -16,7 +16,6 @@
   "dependencies": {
     "@discordjs/rest": "^1.0.0",
     "discord.js": "^14.0.3",
-    "dotenv": "^16.0.1",
     "googleapis": "^100.0.0",
     "node-fetch": "^3.2.6",
     "node-schedule": "^2.1.0",

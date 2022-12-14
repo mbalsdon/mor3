@@ -2,7 +2,7 @@ import MorUtils from '../../controller/utils/MorUtils.js'
 
 import * as fs from 'fs'
 
-import '../../Loggers.js'
+import '../../controller/utils/Loggers.js'
 import * as winston from 'winston'
 const logger = winston.loggers.get('bot')
 
