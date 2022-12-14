@@ -29,7 +29,7 @@ console.log(
 
 console.log('Welcome to the MOR3 setup tool! This tool will configure your environment and get things working.\n')
 console.log('If you have any issues or questions, DM spreadnuts#1566 on Discord or open an issue at https://github.com/mbalsdon/mor3.')
-console.log('If you input any incorrect or outdated information, it can be manually edited by accessing mor_config.json and .env, or by re-running the setup tool.\n')
+console.log('If you input any incorrect or outdated information, it can be manually edited by accessing mor_config.json, or by re-running the setup tool.\n')
 await question('Press ENTER to continue.\n')
 
 const NAME = await question('Please enter your Discord server\'s name (This doesn\'t have to be exact, it\'s just used to give the bot and spreadsheet a name): ')
@@ -124,18 +124,16 @@ const morConfig = {
 
   DRIVE: {
     BACKUP_FOLDER_ID: BACKUP_FOLDER_ID
-  }
+  },
+
+  OSU_API_CLIENT_ID: OSU_API_CLIENT_ID,
+  OSU_API_CLIENT_SECRET: OSU_API_CLIENT_SECRET,
+  GOOGLE_APPLICATION_CREDENTIALS: GOOGLE_APPLICATION_CREDENTIALS,
+  DISCORD_API_CLIENT_ID: DISCORD_API_CLIENT_ID,
+  DISCORD_API_BOT_TOKEN: DISCORD_API_BOT_TOKEN
 }
 fs.writeFileSync('./mor_config.json', JSON.stringify(morConfig))
-
-console.log('Creating .env...')
-const env = 'LOG_LEVEL = info\n\n' +
-            `OSU_API_CLIENT_ID = ${OSU_API_CLIENT_ID}\n` +
-            `OSU_API_CLIENT_SECRET = ${OSU_API_CLIENT_SECRET}\n\n` +
-            `GOOGLE_APPLICATION_CREDENTIALS = ${GOOGLE_APPLICATION_CREDENTIALS}\n\n` +
-            `DISCORD_API_CLIENT_ID = ${DISCORD_API_CLIENT_ID}\n` +
-            `DISCORD_API_BOT_TOKEN = ${DISCORD_API_BOT_TOKEN}`
-fs.writeFileSync('./.env', env)
+console.log('Done!\n')
 
 console.log('😎 Setup complete! There are a few more configuration settings that have been set with default values. If you wish to change them, their values can be found and edited in mor_config.json, located in the root directory of this project.')
 console.log(`You can invite the bot to your server with the following link: https://discord.com/api/oauth2/authorize?client_id=${DISCORD_API_CLIENT_ID}&permissions=35840&scope=bot%20applications.commands`)

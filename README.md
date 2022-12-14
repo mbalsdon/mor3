@@ -103,7 +103,7 @@ NOTE: Every 14 days, a backup for the sheet will be made through a call to `crea
 
 ##### Directory Structure
 
-- **./mor3** - Contains the project source code. This includes `index.js`, which initializes the Discord bot and job handler, `mor_config.json`/`.env`, which both store environment variables, and any external dependencies.
+- **./mor3** - Contains the project source code. This includes `index.js`, which initializes the Discord bot and job handler, `mor_config.json`, which stores environment variables, and any external dependencies.
 - **./mor3/logs** - Local storage for project logs, which are deleted after 7 days.
 
 - **./mor3/src/client** - Contains code for the Discord bot
@@ -119,7 +119,6 @@ NOTE: Every 14 days, a backup for the sheet will be made through a call to `crea
 ##### Dependencies
 
 - **Discord.js** - For interfacing with the Discord bot client
-- **dotenv** - For storing environment variables
 - **googleapis** - For interfacing with Google API clients
 - **node-fetch** - For making web requests
 - **node-schedule** - For scheduling job scripts

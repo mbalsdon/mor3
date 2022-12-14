@@ -3,7 +3,6 @@ import MorConfig from '../utils/MorConfig.js'
 import { NotFoundError, ConstructorError, InvalidModsError } from '../utils/MorErrors.js'
 import MorUtils from '../utils/MorUtils.js'
 
-import 'dotenv/config'
 import fetch from 'node-fetch'
 
 /**
@@ -56,8 +55,8 @@ export default class OsuWrapper {
     }
 
     const data = {
-      client_id: process.env.OSU_API_CLIENT_ID,
-      client_secret: process.env.OSU_API_CLIENT_SECRET,
+      client_id: MorConfig.OSU_API_CLIENT_ID,
+      client_secret: MorConfig.OSU_API_CLIENT_SECRET,
       grant_type: 'client_credentials',
       scope: 'public'
     }
