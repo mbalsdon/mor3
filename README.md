@@ -113,8 +113,9 @@ NOTE: Every 14 days, a backup for the sheet will be made through a call to `crea
 - **mor3/src/controller/utils** - Contains custom types, enums, and general utility functions
 - **mor3/src/controller/wrappers** - Contains interfaces for the osu! API and Google APIs
 
-- **mor3/src/jobs** - Contains backend code for working with the database
+- **mor3/src/jobs** - Contains code for job scripts
 - **mor3/src/jobs/jobs** - Contains the actual script code for each job
+- **mor3/src/jobs/cache** - Currently only used by UpdateScores.js, which caches data in case of an error since it takes so long to run.
 
 ### Dependencies
 
