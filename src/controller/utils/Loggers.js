@@ -3,19 +3,24 @@ import MorConfig from './MorConfig.js'
 import * as winston from 'winston'
 import 'winston-daily-rotate-file'
 
+const DATE_PATTERN = 'YYYY-MM-DD'
+const ROTATE_TIME = '7d'
+const FORMAT = winston.format.combine(
+  winston.format.errors({ stack: true }),
+  winston.format.timestamp(),
+  winston.format.simple()
+)
+
 winston.loggers.add('bot', {
   level: MorConfig.LOG_LEVEL || 'info',
   defaultMeta: { service: 'bot' },
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.simple()
-  ),
+  format: FORMAT,
   transports: [
     new winston.transports.DailyRotateFile({
       level: MorConfig.LOG_LEVEL || 'info',
       filename: './logs/bot_%DATE%.log',
-      datePattern: 'YYYY-MM-DD',
-      maxFiles: '7d'
+      datePattern: DATE_PATTERN,
+      maxFiles: ROTATE_TIME
     }),
     new winston.transports.Console({
       level: MorConfig.LOG_LEVEL || 'info'
@@ -26,24 +31,16 @@ winston.loggers.add('bot', {
 winston.loggers.add('jobs', {
   level: MorConfig.LOG_LEVEL || 'info',
   defaultMeta: { service: 'jobs' },
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.simple()
-  ),
+  format: FORMAT,
   transports: [
     new winston.transports.DailyRotateFile({
       level: MorConfig.LOG_LEVEL || 'info',
       filename: './logs/jobs_%DATE%.log',
-      datePattern: 'YYYY-MM-DD',
-      maxFiles: '7d'
+      datePattern: DATE_PATTERN,
+      maxFiles: ROTATE_TIME
     }),
     new winston.transports.Console({
       level: MorConfig.LOG_LEVEL || 'info'
-    })
-  ],
-  exceptionHandlers: [
-    new winston.transports.File({
-      filename: './logs/exception.log'
     })
   ]
 })

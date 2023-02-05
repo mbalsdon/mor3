@@ -117,7 +117,7 @@ export default class Bot {
 
     // Attempt to restart the bot on error
     this.#DISCORD.on('error', error => {
-      logger.error(`Received error "${error.name}: ${error.message}"`)
+      logger.error(error)
 
       this.#DISCORD.removeAllListeners()
       Bot.restart()

@@ -60,7 +60,7 @@ export default class JobHandler {
 
       const scheduledJob = schedule.scheduleJob(cronTimer, job)
       scheduledJob.on('error', error => {
-        logger.error(`Received error "${error.name}: ${error.message}"`)
+        logger.error(error)
         logger.warn(`Stopping scheduler for "${job.name}"...`)
         scheduledJob.cancel()
       })
