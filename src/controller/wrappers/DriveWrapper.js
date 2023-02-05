@@ -42,7 +42,7 @@ export default class DriveWrapper {
    *  const drive = await DriveWrapper.build()
    */
   static async build () {
-    logger.debug(`Executing DriveWrapper::build() ...`)
+    logger.debug('Executing DriveWrapper::build() ...')
 
     const authClient = await DriveWrapper.#AUTH.getClient()
     const driveClient = google.drive({ version: 'v3', auth: authClient })
@@ -65,7 +65,7 @@ export default class DriveWrapper {
    */
   async copyFile (fileId, name, folderId, googleApiCooldown = MorConfig.GOOGLE_API_COOLDOWN_MS) {
     logger.debug(`Executing DriveWrapper::copyFile(fileId=${fileId}, name=${name}, folderId=${folderId}, googleApiCooldown=${googleApiCooldown}) ...`)
-    
+
     if (!MorUtils.isString(fileId)) throw new TypeError(`fileId must be a string! Val=${fileId}`)
     if (!MorUtils.isString(name)) throw new TypeError(`name must be a string! Val=${name}`)
     if (!MorUtils.isString(folderId)) throw new TypeError(`folderId must be a string! Val=${folderId}`)

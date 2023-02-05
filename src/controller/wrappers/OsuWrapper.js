@@ -53,7 +53,7 @@ export default class OsuWrapper {
    *  const osu = await OsuWrapper.build()
    */
   static async build () {
-    logger.debug(`Executing OsuWrapper::build() ...`)
+    logger.debug('Executing OsuWrapper::build() ...')
 
     const headers = {
       Accept: 'application/json',

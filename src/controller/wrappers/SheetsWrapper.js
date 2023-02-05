@@ -42,7 +42,7 @@ export default class SheetsWrapper {
    *  const sheets = await SheetsWrapper.build()
    */
   static async build () {
-    logger.debug(`Executing SheetsWrapper::build() ...`)
+    logger.debug('Executing SheetsWrapper::build() ...')
 
     const authClient = await SheetsWrapper.#AUTH.getClient()
     const sheetsClient = google.sheets({ version: 'v4', auth: authClient })

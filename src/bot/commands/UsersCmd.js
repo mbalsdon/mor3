@@ -52,7 +52,7 @@ export default async function usersCmd (facade, client, interaction) {
       const lim = (page === numPages && filteredUsers.length % perPage !== 0) ? filteredUsers.length % perPage : perPage
 
       // Build and concatenate player strings
-      let desc = `\`COUNTRY CODE: ${countryCodeFlag}\`\n` + 
+      let desc = `\`COUNTRY CODE: ${countryCodeFlag}\`\n` +
                  `\`SORT BY: ${sortFlag}\`\n\n`
       for (let i = 0; i < lim; i++) {
         const pageIndex = perPage * (page - 1) + i

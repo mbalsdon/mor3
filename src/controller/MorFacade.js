@@ -50,7 +50,7 @@ export default class MorFacade {
    *  const mor = await MorFacade.build()
    */
   static async build () {
-    logger.debug(`Executing MorFacade::build() ...`)
+    logger.debug('Executing MorFacade::build() ...')
 
     const [osuWrapper, sheetsWrapper, driveWrapper] = await Promise.all([OsuWrapper.build(), SheetsWrapper.build(), DriveWrapper.build()])
     return new MorFacade(osuWrapper, sheetsWrapper, driveWrapper)
@@ -195,7 +195,7 @@ export default class MorFacade {
    *  console.log(metadata.sheets[0])
    */
   async getSheetMetadata () {
-    logger.debug(`Executing MorFacade::getSheetMetadata() ...`)
+    logger.debug('Executing MorFacade::getSheetMetadata() ...')
 
     const response = await this.#SHEETS.getMetadata(MorConfig.SHEETS.SPREADSHEET.ID)
     return response
@@ -210,7 +210,7 @@ export default class MorFacade {
    *  console.log(lastUpdated)
    */
   async getSheetLastUpdated () {
-    logger.debug(`Executing MorFacade::getSheetLastUpdated() ...`)
+    logger.debug('Executing MorFacade::getSheetLastUpdated() ...')
 
     const response = await this.#SHEETS.getRange(
       MorConfig.SHEETS.SPREADSHEET.ID,
@@ -311,7 +311,7 @@ export default class MorFacade {
    *  console.log(users[0].userId)
    */
   async getSheetUsers () {
-    logger.debug(`Executing MorFacade::getSheetUsers() ...`)
+    logger.debug('Executing MorFacade::getSheetUsers() ...')
 
     const response = await this.#SHEETS.getRange(
       MorConfig.SHEETS.SPREADSHEET.ID,
@@ -340,7 +340,7 @@ export default class MorFacade {
    *  console.log(userIDs[0])
    */
   async getSheetUserIds () {
-    logger.debug(`Executing MorFacade::getSheetUserIds() ...`)
+    logger.debug('Executing MorFacade::getSheetUserIds() ...')
 
     const response = await this.#SHEETS.getRange(
       MorConfig.SHEETS.SPREADSHEET.ID,
@@ -363,7 +363,7 @@ export default class MorFacade {
    *  console.log(usernames[0])
    */
   async getSheetUsernames () {
-    logger.debug(`Executing MorFacade::getSheetUsernames() ...`)
+    logger.debug('Executing MorFacade::getSheetUsernames() ...')
 
     const response = await this.#SHEETS.getRange(
       MorConfig.SHEETS.SPREADSHEET.ID,
