@@ -1,7 +1,7 @@
 {
-  "name": "mor3-backend",
-  "version": "1.0.0",
-  "description": "mouseonlyrecords v3 backend",
+  "name": "mor3",
+  "version": "1.1.0",
+  "description": "A Discord bot for creating localized osu! leaderboards.",
   "main": "index.js",
   "type": "module",
   "scripts": {
