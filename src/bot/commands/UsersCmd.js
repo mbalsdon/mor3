@@ -17,8 +17,9 @@ const logger = winston.loggers.get('bot')
  * @return {Promise<void>}
  */
 export default async function usersCmd (facade, client, interaction) {
+  const countryCodeFlag = interaction.options.getString('country_code') === null ? 'COMBINED' : interaction.options.getString('country_code')
   const sortFlag = interaction.options.getString('sort') === null ? 'pp' : interaction.options.getString('sort')
-  logger.info(`Executing usersCmd... sort=${sortFlag}`)
+  logger.info(`Executing usersCmd... countryCode=${countryCodeFlag}, sort=${sortFlag}`)
 
   try {
     let currentPage = 1
@@ -27,14 +28,17 @@ export default async function usersCmd (facade, client, interaction) {
     const lastUpdated = await facade.getSheetLastUpdated()
     const users = await facade.getSheetUsers()
 
-    if (sortFlag === 'accuracy') users.sort((a, b) => { return parseFloat(b.accuracy) - parseFloat(a.accuracy) })
-    else if (sortFlag === 'playtime') users.sort((a, b) => { return parseInt(b.playtime) - parseInt(a.playtime) })
-    else if (sortFlag === 'top1s') users.sort((a, b) => { return parseInt(b.top1s) - parseInt(a.top1s) })
-    else if (sortFlag === 'top2s') users.sort((a, b) => { return parseInt(b.top2s) - parseInt(a.top2s) })
-    else if (sortFlag === 'top3s') users.sort((a, b) => { return parseInt(b.top3s) - parseInt(a.top3s) })
+    const filteredUsers = (countryCodeFlag === 'COMBINED') ? users : users.filter(u => countryCodeFlag === u.countryCode)
+    if (users.length !== 0 && filteredUsers.length === 0) throw new SheetEmptyError(`No users found for country code "${countryCodeFlag}"!`)
 
-    const numPages = Math.ceil(users.length / perPage)
-    if (numPages === 0) throw new SheetEmptyError(`The ${MorConfig.SHEETS.USERS.NAME} sheet is empty!`)
+    if (sortFlag === 'accuracy') filteredUsers.sort((a, b) => { return parseFloat(b.accuracy) - parseFloat(a.accuracy) })
+    else if (sortFlag === 'playtime') filteredUsers.sort((a, b) => { return parseInt(b.playtime) - parseInt(a.playtime) })
+    else if (sortFlag === 'top1s') filteredUsers.sort((a, b) => { return parseInt(b.top1s) - parseInt(a.top1s) })
+    else if (sortFlag === 'top2s') filteredUsers.sort((a, b) => { return parseInt(b.top2s) - parseInt(a.top2s) })
+    else if (sortFlag === 'top3s') filteredUsers.sort((a, b) => { return parseInt(b.top3s) - parseInt(a.top3s) })
+
+    const numPages = Math.ceil(filteredUsers.length / perPage)
+    if (numPages === 0) throw new SheetEmptyError(`The "${MorConfig.SHEETS.USERS.NAME}" sheet is empty!`)
 
     /**
      * Builds a users embed for the given page
@@ -45,13 +49,14 @@ export default async function usersCmd (facade, client, interaction) {
       if (page < 1 || page > numPages) throw new RangeError(`Page must be between 1 and ${numPages} - this should never happen!`)
 
       // Avoid OOB errors (may have to display less than 'perPage' users if you're on the last page)
-      const lim = (page === numPages && users.length % perPage !== 0) ? users.length % perPage : perPage
+      const lim = (page === numPages && filteredUsers.length % perPage !== 0) ? filteredUsers.length % perPage : perPage
 
       // Build and concatenate player strings
-      let desc = `\`SORT BY: ${sortFlag}\`\n\n`
+      let desc = `\`COUNTRY CODE: ${countryCodeFlag}\`\n` + 
+                 `\`SORT BY: ${sortFlag}\`\n\n`
       for (let i = 0; i < lim; i++) {
         const pageIndex = perPage * (page - 1) + i
-        const u = users[pageIndex]
+        const u = filteredUsers[pageIndex]
 
         const usernameStr = `:flag_${u.countryCode.toLowerCase()}: [${u.username}](https://osu.ppy.sh/users/${u.userId})`
         const globalRankStr = `${(u.globalRank === 'null' ? 'n/a' : `#${u.globalRank}`)}`
@@ -67,7 +72,7 @@ export default async function usersCmd (facade, client, interaction) {
         const userStr = summaryStr + top1Str + top2Str + top3Str
         desc = desc + userStr
       }
-      const pfpLink = users[perPage * (page - 1)].pfpLink
+      const pfpLink = filteredUsers[perPage * (page - 1)].pfpLink
 
       const embed = new EmbedBuilder()
         .setColor(MorConfig.BOT_EMBED_COLOR)
@@ -163,7 +168,7 @@ export default async function usersCmd (facade, client, interaction) {
   } catch (error) {
     if (error instanceof SheetEmptyError) {
       await interaction.editReply({
-        content: `\`\`\`The "${MorConfig.SHEETS.USERS.NAME}" sheet is empty!\n\n` +
+        content: `\`\`\`${error.message}\n\n` +
                                          `${MorUtils.DISCORD_BOT_ERROR_STR}\`\`\``
       })
     } else {

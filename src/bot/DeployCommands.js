@@ -35,6 +35,10 @@ const commands = [
     .setName('users')
     .setDescription('Displays list of tracked users')
     .addStringOption(option =>
+      option.setName('country_code')
+        .setDescription('The country code to filter users by (defaults to COMBINED)')
+        .setRequired(false))
+    .addStringOption(option =>
       option.setName('sort')
         .setDescription('The data to sort the users by (defaults to pp)')
         .setRequired(false)
