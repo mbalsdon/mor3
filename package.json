@@ -1,6 +1,6 @@
 {
   "name": "mor3",
-  "version": "1.0.0",
+  "version": "1.4.0",
   "description": "mouseonlyrecords v3 backend",
   "main": "index.js",
   "type": "module",
