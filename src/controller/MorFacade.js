@@ -9,6 +9,10 @@ import DriveWrapper from './wrappers/DriveWrapper.js'
 import OsuWrapper from './wrappers/OsuWrapper.js'
 import SheetsWrapper from './wrappers/SheetsWrapper.js'
 
+import './utils/Loggers.js'
+import * as winston from 'winston'
+const logger = winston.loggers.get('debug')
+
 /**
  * MOR3 client - Wraps osu!API v2 client, Google Sheets API v4 client, and Google Drive API v3 client
  * @see {@link OsuWrapper}
@@ -46,6 +50,8 @@ export default class MorFacade {
    *  const mor = await MorFacade.build()
    */
   static async build () {
+    logger.debug(`Executing MorFacade::build() ...`)
+
     const [osuWrapper, sheetsWrapper, driveWrapper] = await Promise.all([OsuWrapper.build(), SheetsWrapper.build(), DriveWrapper.build()])
     return new MorFacade(osuWrapper, sheetsWrapper, driveWrapper)
   }
@@ -61,6 +67,8 @@ export default class MorFacade {
    *  console.log(user.pp)
    */
   async getOsuUser (username, searchParam = 'username') {
+    logger.debug(`Executing MorFacade::getOsuUser(username=${username}, searchParam=${searchParam}) ...`)
+
     const response = await this.#OSU.getUser(username, searchParam)
     return new MorUser([
       response.id.toString(),
@@ -88,6 +96,8 @@ export default class MorFacade {
    *  console.log(score.mods)
    */
   async getOsuScore (scoreId) {
+    logger.debug(`Executing MorFacade::getOsuScore(scoreId=${scoreId}) ...`)
+
     const data = await this.#OSU.getScore(scoreId)
     const modString = Mods.parseModKey(data.mods)
 
@@ -125,6 +135,8 @@ export default class MorFacade {
    *  console.log(myFirsts.map(s => s.scoreId))
    */
   async getOsuUserScores (userId, type = 'best') {
+    logger.debug(`Executing MorFacade::getOsuUserScores(userId=${userId}, type=${type}) ...`)
+
     const scores = await this.#OSU.getUserPlays(userId, type)
 
     const ret = []
@@ -167,6 +179,8 @@ export default class MorFacade {
    *  console.log(beatmap.beatmapset.artist)
    */
   async getOsuBeatmap (beatmapId) {
+    logger.debug(`Executing MorFacade::getOsuBeatmap(beatmapId=${beatmapId}) ...`)
+
     const beatmap = await this.#OSU.getBeatmap(beatmapId)
     return beatmap
   }
@@ -181,6 +195,8 @@ export default class MorFacade {
    *  console.log(metadata.sheets[0])
    */
   async getSheetMetadata () {
+    logger.debug(`Executing MorFacade::getSheetMetadata() ...`)
+
     const response = await this.#SHEETS.getMetadata(MorConfig.SHEETS.SPREADSHEET.ID)
     return response
   }
@@ -194,6 +210,8 @@ export default class MorFacade {
    *  console.log(lastUpdated)
    */
   async getSheetLastUpdated () {
+    logger.debug(`Executing MorFacade::getSheetLastUpdated() ...`)
+
     const response = await this.#SHEETS.getRange(
       MorConfig.SHEETS.SPREADSHEET.ID,
       MorConfig.SHEETS.MAIN.NAME,
@@ -216,6 +234,8 @@ export default class MorFacade {
    *  await mor.setSheetLastUpdated('2022-11-10T06:28:29+00:00')
    */
   async setSheetLastUpdated (date) {
+    logger.debug(`Executing MorFacade::setSheetLastUpdated(date=${date}) ...`)
+
     if (!MorUtils.isValidDate(date)) throw new TypeError(`date must be a valid date string! Val=${date}`)
 
     const response = await this.#SHEETS.updateRange(
@@ -241,6 +261,8 @@ export default class MorFacade {
    *  console.log(user.pfpLink)
    */
   async getSheetUser (username) {
+    logger.debug(`Executing MorFacade::getSheetUser(username=${username}) ...`)
+
     const usernames = await this.getSheetUsernames()
     const index = usernames.map(u => u.toLowerCase()).indexOf(username.toLowerCase())
     if (index !== -1) {
@@ -271,6 +293,8 @@ export default class MorFacade {
    *  console.log(rank)
    */
   async getSheetUserRank (username) {
+    logger.debug(`Executing MorFacade::getSheetUserRank(username=${username}) ...`)
+
     const usernames = await this.getSheetUsernames()
     const index = usernames.map(u => u.toLowerCase()).indexOf(username.toLowerCase())
     if (index === -1) throw new NotFoundError(`${MorConfig.SHEETS.SPREADSHEET.NAME} sheet search returned no results! username=${username}`)
@@ -287,6 +311,8 @@ export default class MorFacade {
    *  console.log(users[0].userId)
    */
   async getSheetUsers () {
+    logger.debug(`Executing MorFacade::getSheetUsers() ...`)
+
     const response = await this.#SHEETS.getRange(
       MorConfig.SHEETS.SPREADSHEET.ID,
       MorConfig.SHEETS.USERS.NAME,
@@ -314,6 +340,8 @@ export default class MorFacade {
    *  console.log(userIDs[0])
    */
   async getSheetUserIds () {
+    logger.debug(`Executing MorFacade::getSheetUserIds() ...`)
+
     const response = await this.#SHEETS.getRange(
       MorConfig.SHEETS.SPREADSHEET.ID,
       MorConfig.SHEETS.USERS.NAME,
@@ -335,6 +363,8 @@ export default class MorFacade {
    *  console.log(usernames[0])
    */
   async getSheetUsernames () {
+    logger.debug(`Executing MorFacade::getSheetUsernames() ...`)
+
     const response = await this.#SHEETS.getRange(
       MorConfig.SHEETS.SPREADSHEET.ID,
       MorConfig.SHEETS.USERS.NAME,
@@ -358,6 +388,8 @@ export default class MorFacade {
    *  console.log(scores[3].beatmapImgLink)
    */
   async getSheetScores (mods) {
+    logger.debug(`Executing MorFacade::getSheetScores(mods=${mods}) ...`)
+
     if (!Mods.isValidModString(mods)) {
       throw new InvalidModsError(`mods must be a valid mod string! Val=${mods}\n` +
       `Valid mod strings: ${Mods.validModStrings().join(' ')}`)
@@ -392,6 +424,8 @@ export default class MorFacade {
    *  console.log(nmScoreIds[0])
    */
   async getSheetScoreIds (mods) {
+    logger.debug(`Executing MorFacade::getSheetScoreIds(mods=${mods}) ...`)
+
     if (!Mods.isValidModString(mods)) {
       throw new InvalidModsError(`mods must be a valid mod string! Val=${mods}\n` +
       `Valid mod strings: ${Mods.validModStrings().join(' ')}`)
@@ -427,6 +461,8 @@ export default class MorFacade {
    *  }
    */
   async addSheetUser (username, autotrack) {
+    logger.debug(`Executing MorFacade::addSheetUser(username=${username}, autotrack=${autotrack}) ...`)
+
     if (!MorUtils.isBooleanString(autotrack)) throw new TypeError(`autotrack must either be TRUE or FALSE! Val=${autotrack}`)
 
     const [user, sheetUsers] = await Promise.all([this.getOsuUser(username), this.getSheetUsers()])
@@ -485,6 +521,8 @@ export default class MorFacade {
    *  }
    */
   async deleteSheetUser (username) {
+    logger.debug(`Executing MorFacade::deleteSheetUser(username=${username}) ...`)
+
     const users = await this.getSheetUsers()
     const userIndex = users.map(u => { return u.username.toLowerCase() }).indexOf(username.toLowerCase())
     if (userIndex === -1) throw new NotFoundError(`${MorConfig.SHEETS.SPREADSHEET.NAME} sheet returned no results! username=${username}`)
@@ -514,6 +552,8 @@ export default class MorFacade {
    *  }
    */
   async addSubmittedScore (scoreId) {
+    logger.debug(`Executing MorFacade::addSubmittedScore(scoreId=${scoreId}) ...`)
+
     const submittedScores = await this.getSheetScores(Mods.SUBMITTED)
     const ssIndex = submittedScores.map(ss => { return ss.scoreId }).indexOf(scoreId)
     if (ssIndex !== -1) throw new AlreadyExistsError(`${MorConfig.SHEETS.SUBMITTED.NAME} sheet already contains that score! scoreId=${scoreId}`)
@@ -548,6 +588,8 @@ export default class MorFacade {
    *  }
    */
   async deleteSubmittedScore (scoreId) {
+    logger.debug(`Executing MorFacade::deleteSubmittedScore(scoreId=${scoreId}) ...`)
+
     if (!MorUtils.isPositiveNumericString(scoreId)) throw new TypeError(`scoreId must be a positive number string! Val=${scoreId}`)
 
     const submittedScores = await this.getSheetScores(Mods.SUBMITTED)
@@ -612,6 +654,8 @@ export default class MorFacade {
    *  await mor.replaceSheetUsers(users)
    */
   async replaceSheetUsers (users) {
+    logger.debug(`Executing MorFacade::replaceSheetUsers(users=${users}) ...`)
+
     if (!MorUtils.isMorUserArray(users)) throw new TypeError(`users must be a valid MorUser array! Val=${users}`)
 
     let hasOneRow = false
@@ -659,6 +703,8 @@ export default class MorFacade {
    *  await mor.replaceSheetScores(Mods.DT, myDtTops)
    */
   async replaceSheetScores (mods, scores) {
+    logger.debug(`Executing MorFacade::replaceSheetScores(mods=${mods}, scores=${scores}) ...`)
+
     if (!Mods.isValidModString(mods)) {
       throw new InvalidModsError(`mods must be a valid mod string! Val=${mods}\n` +
       `Valid mod strings: ${Mods.validModStrings().join(' ')}`)
@@ -707,6 +753,8 @@ export default class MorFacade {
    *  await mor.wipeSheet(Mods.EZHDDTFL)
    */
   async wipeSheet (mods) {
+    logger.debug(`Executing MorFacade::wipeSheet(mods=${mods}) ...`)
+
     if (!Mods.isValidModString(mods)) {
       throw new InvalidModsError(`mods must be a valid mod string! Val=${mods}\n` +
       `Valid mod strings: ${Mods.validModStrings().join(' ')}`)
@@ -753,6 +801,8 @@ export default class MorFacade {
    *  await mor.backupFile('1K3AwhYhTViLFT6PTLzprTykzcLAa1CoumWL7-hSmBQM', 'My Backup File')
    */
   async backupFile (fileId, name) {
+    logger.debug(`Executing MorFacade::backupFile(fileId=${fileId}, name=${name}) ...`)
+
     const ret = await this.#DRIVE.copyFile(fileId, name, MorConfig.DRIVE.BACKUP_FOLDER_ID)
     return ret
   }

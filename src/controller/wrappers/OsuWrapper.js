@@ -5,6 +5,10 @@ import MorUtils from '../utils/MorUtils.js'
 
 import fetch from 'node-fetch'
 
+import '../utils/Loggers.js'
+import * as winston from 'winston'
+const logger = winston.loggers.get('debug')
+
 /**
  * Wrapper class for osu!API v2
  * @see {@link https://osu.ppy.sh/docs/}
@@ -49,6 +53,8 @@ export default class OsuWrapper {
    *  const osu = await OsuWrapper.build()
    */
   static async build () {
+    logger.debug(`Executing OsuWrapper::build() ...`)
+
     const headers = {
       Accept: 'application/json',
       'Content-Type': 'application/json'
@@ -87,6 +93,8 @@ export default class OsuWrapper {
    *  console.log(user.statistics.pp)
    */
   async getUser (user, searchParam = 'username', osuApiCooldown = MorConfig.OSU_API_COOLDOWN_MS) {
+    logger.debug(`Executing OsuWrapper::getUser(user=${user}, searchParam=${searchParam}, osuApiCooldown=${osuApiCooldown}) ...`)
+
     if (!MorUtils.isString(user)) throw new TypeError(`user must be a string! Val=${user}`)
     if (searchParam !== 'username' && searchParam !== 'id') throw new TypeError(`searchParam must be one of 'id' or 'username'! Val=${searchParam}`)
     if (!MorUtils.isNonNegativeNumber(osuApiCooldown)) throw new TypeError(`osuApiCooldown must be a non-negative number! Val=${osuApiCooldown}`)
@@ -118,6 +126,8 @@ export default class OsuWrapper {
    *  console.log(score.beatmapset.artist)
    */
   async getScore (scoreId, osuApiCooldown = MorConfig.OSU_API_COOLDOWN_MS) {
+    logger.debug(`Executing OsuWrapper::getScore(scoreId=${scoreId}, osuApiCooldown=${osuApiCooldown}) ...`)
+
     if (!MorUtils.isPositiveNumericString(scoreId)) throw new TypeError(`scoreId must be a positive number string! Val=${scoreId}`)
     if (!MorUtils.isNonNegativeNumber(osuApiCooldown)) throw new TypeError(`osuApiCooldown must be a non-negative number! Val=${osuApiCooldown}`)
 
@@ -149,6 +159,8 @@ export default class OsuWrapper {
    *  console.log(tops[3].beatmap.version)
    */
   async getUserPlays (userId, type = 'best', osuApiCooldown = MorConfig.OSU_API_COOLDOWN_MS) {
+    logger.debug(`Executing OsuWrapper::getUserPlays(userId=${userId}, type=${type}, osuApiCooldown=${osuApiCooldown}) ...`)
+
     if (!MorUtils.isPositiveNumericString(userId)) throw new TypeError(`userId must be a positive number string! Val=${userId}`)
     if (type !== 'best' && type !== 'firsts' && type !== 'recent') throw new TypeError(`type must be one of 'best' or 'firsts'! Val=${type}`)
     if (!MorUtils.isNonNegativeNumber(osuApiCooldown)) throw new TypeError(`osuApiCooldown must be a non-negative number! Val=${osuApiCooldown}`)
@@ -183,6 +195,8 @@ export default class OsuWrapper {
    *  console.log(beatmap.count_spinners)
    */
   async getBeatmap (beatmapId, osuApiCooldown = MorConfig.OSU_API_COOLDOWN_MS) {
+    logger.debug(`Executing OsuWrapper::getBeatmap(beatmapId=${beatmapId}, osuApiCooldown=${osuApiCooldown}) ...`)
+
     if (!MorUtils.isPositiveNumericString(beatmapId)) throw new TypeError(`beatmapId must be a positive number string! Val=${beatmapId}`)
     if (!MorUtils.isNonNegativeNumber(osuApiCooldown)) throw new TypeError(`osuApiCooldown must be a non-negative number! Val=${osuApiCooldown}`)
 
@@ -212,6 +226,8 @@ export default class OsuWrapper {
    *  console.log(difficultyAttributes.attributes.aim_difficulty)
    */
   async getDifficultyAttributes (beatmapId, modArray, osuApiCooldown = MorConfig.OSU_API_COOLDOWN_MS) {
+    logger.debug(`Executing OsuWrapper::getDifficultyAttributes(beatmapId=${beatmapId}, modArray=${modArray}, osuApiCooldown=${osuApiCooldown}) ...`)
+
     if (!MorUtils.isPositiveNumericString(beatmapId)) throw new TypeError(`beatmapId must be a positive number string! Val=${beatmapId}`)
     if (!Mods.isValidModArray(modArray)) throw new InvalidModsError(`modArray must be a valid mod array! Val=[${modArray}]`)
     if (!MorUtils.isNonNegativeNumber(osuApiCooldown)) throw new TypeError(`osuApiCooldown must be a non-negative number! Val=${osuApiCooldown}`)

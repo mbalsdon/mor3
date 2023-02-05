@@ -4,6 +4,10 @@ import MorUtils from '../utils/MorUtils.js'
 
 import { google } from 'googleapis'
 
+import '../utils/Loggers.js'
+import * as winston from 'winston'
+const logger = winston.loggers.get('debug')
+
 /**
  * Wrapper class for Google Drive API v3
  * @see {@link https://developers.google.com/drive/api}
@@ -38,6 +42,8 @@ export default class DriveWrapper {
    *  const drive = await DriveWrapper.build()
    */
   static async build () {
+    logger.debug(`Executing DriveWrapper::build() ...`)
+
     const authClient = await DriveWrapper.#AUTH.getClient()
     const driveClient = google.drive({ version: 'v3', auth: authClient })
 
@@ -58,6 +64,8 @@ export default class DriveWrapper {
    *  await drive.copyFile('1K3AwhYhTViLFT6PTLzprTykzcLAa1CoumWL7-hSmBQM', 'My Copied File', '1OUK20m4bHM-d_a91YzMnJ71r6uJe6WXi')
    */
   async copyFile (fileId, name, folderId, googleApiCooldown = MorConfig.GOOGLE_API_COOLDOWN_MS) {
+    logger.debug(`Executing DriveWrapper::copyFile(fileId=${fileId}, name=${name}, folderId=${folderId}, googleApiCooldown=${googleApiCooldown}) ...`)
+    
     if (!MorUtils.isString(fileId)) throw new TypeError(`fileId must be a string! Val=${fileId}`)
     if (!MorUtils.isString(name)) throw new TypeError(`name must be a string! Val=${name}`)
     if (!MorUtils.isString(folderId)) throw new TypeError(`folderId must be a string! Val=${folderId}`)
