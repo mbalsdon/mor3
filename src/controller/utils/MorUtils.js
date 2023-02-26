@@ -265,7 +265,7 @@ export default class MorUtils {
 
     const d = new Date(dateString)
 
-    const date = ('0' + (d.getDate() + 1)).slice(-2)
+    const date = ('0' + (d.getUTCDate())).slice(-2)
     let month = ''
     switch (d.getMonth() + 1) {
       case 1:
@@ -304,9 +304,9 @@ export default class MorUtils {
       case 12:
         month = 'December'
     }
-    const year = d.getFullYear()
-    const hours = ('0' + (d.getUTCHours() + 1)).slice(-2)
-    const minutes = ('0' + (d.getUTCMinutes() + 1)).slice(-2)
+    const year = d.getUTCFullYear()
+    const hours = ('0' + (d.getUTCHours())).slice(-2)
+    const minutes = ('0' + (d.getUTCMinutes())).slice(-2)
 
     const pwetty = `${date} ${month} ${year} at ${hours}:${minutes}`
     return pwetty
