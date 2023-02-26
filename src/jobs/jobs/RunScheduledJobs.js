@@ -1,5 +1,6 @@
 import MorFacade from '../../controller/MorFacade.js'
 
+import removeDuplicates from './RemoveDuplicates.js'
 import scrapeTopPlays from './ScrapeTopPlays.js'
 import updateUsers from './UpdateUsers.js'
 
@@ -20,6 +21,7 @@ export default async function runScheduledJobs () {
   // Ordering matters; scrapeTopPlays should come before updateUsers
   await scrapeTopPlays()
   await updateUsers()
+  await removeDuplicates()
 
   logger.info('Scheduled tasks completed! Updating the "last updated" tag on the sheet...')
 

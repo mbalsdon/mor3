@@ -1,4 +1,5 @@
 import createBackup from './jobs/CreateBackup.js'
+import removeDuplicates from './jobs/RemoveDuplicates.js'
 import runScheduledJobs from './jobs/RunScheduledJobs.js'
 import scrapeTopPlays from './jobs/ScrapeTopPlays.js'
 import updateScores from './jobs/UpdateScores.js'
@@ -17,6 +18,7 @@ const logger = winston.loggers.get('jobs')
 
 const commands = {
   createBackup,
+  removeDuplicates,
   runScheduledJobs,
   scrapeTopPlays,
   updateScores,
@@ -27,6 +29,7 @@ const commands = {
 commands.help = () => {
   console.info('\nList of currently supported jobs:\n\n' +
                 'createBackup: Create a backup file for the MOR spreadsheet and put it in Google Drive\n' +
+                'removeDuplicates: Remove duplicate scores\n' +
                 'runScheduledJobs: Run scheduled MOR job scripts, then set the Last Updated tag\n' +
                 'scrapeTopPlays: Retrieve submitted scores and the top 100s + firsts + recents of tracked users and insert them into the MOR3 spreadsheet\n' +
                 'updateScores: Refresh score data (mainly used after PP reworks - takes a very long time!)\n' +
