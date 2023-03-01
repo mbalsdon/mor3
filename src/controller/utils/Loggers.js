@@ -53,19 +53,19 @@ winston.loggers.add('jobs', {
 
 // Logger for backend layer processes
 winston.loggers.add('debug', {
-  level: 'debug',
+  level: MorConfig.LOG_LEVEL || 'debug',
   format: FORMAT,
   transports: [
     // Log-rotated file
     new winston.transports.DailyRotateFile({
-      level: 'debug',
+      level: MorConfig.LOG_LEVEL || 'debug',
       filename: './logs/debug_%DATE%.log',
       datePattern: DATE_PATTERN,
       maxFiles: ROTATE_TIME
     }),
     // Stdout
     new winston.transports.Console({
-      level: 'debug'
+      level: MorConfig.LOG_LEVEL || 'debug'
     })
   ]
 })
